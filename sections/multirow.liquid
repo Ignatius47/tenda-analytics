@@ -1,0 +1,3387 @@
+{% comment %}
+  Tenda Homepage - Floating Action Bubble (FAB) Insights Drawer
+  Features: Android-style notification bubble with drawer expansion
+{% endcomment %}
+
+<!-- Calendly Integration -->
+<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+
+<style>
+  :root {
+    --font-body-size: 1.125rem;
+    --font-heading-line-height: 1.3;
+    --font-body-line-height: 1.6;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: #1F1F21;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: var(--font-body-size);
+    line-height: var(--font-body-line-height);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6,
+  .hero-title,
+  .section-title,
+  .card-title {
+    line-height: var(--font-heading-line-height);
+    padding-bottom: 0.2em;
+    overflow: visible !important;
+  }
+
+  /* ===================================
+     CUSTOM NEON SCROLLBAR
+     =================================== */
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #121212;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #E3FC02;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(227, 252, 2, 0.4);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #f6ff4d;
+  }
+  
+  /* ===================================
+     BLOOMBERG-STYLE DATA TICKER
+     =================================== */
+
+  /* Ticker Container - Floating below header */
+  .tenda-ticker-wrap {
+    position: fixed;
+    top: 90px;  /* 12px below header (assuming 78px header) */
+    left: 0;
+    width: 100%;
+    height: 32px;
+    background: rgba(18, 18, 20, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 0.5px solid rgba(227, 252, 2, 0.12);
+    border-bottom: 0.5px solid rgba(227, 252, 2, 0.12);
+    overflow: hidden;
+    z-index: 9996;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  /* The Scrolling Content - Seamless Loop */
+  .tenda-ticker-content {
+    display: flex;
+    white-space: nowrap;
+    animation: ticker-move 60s linear infinite;
+    will-change: transform;
+  }
+
+  /* Pause on hover for readability */
+  .tenda-ticker-wrap:hover .tenda-ticker-content {
+    animation-play-state: paused;
+  }
+
+  /* Individual Ticker Items */
+  .tenda-ticker-item {
+    color: #E3FC02;
+    font-size: 0.75rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 0 4rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Category Labels */
+  .ticker-label {
+    font-weight: 800;
+    font-size: 0.7rem;
+    background: rgba(227, 252, 2, 0.15);
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 1.5px;
+  }
+
+  /* Separator Dots */
+  .ticker-separator {
+    width: 4px;
+    height: 4px;
+    background: rgba(227, 252, 2, 0.4);
+    border-radius: 50%;
+    margin: 0 2rem;
+  }
+
+  /* Seamless Loop Animation */
+  @keyframes ticker-move {
+    0% { 
+      transform: translateX(0); 
+    }
+    100% { 
+      transform: translateX(-50%); 
+    }
+  }
+
+  /* Mobile: Faster scroll, smaller text */
+  @media (max-width: 768px) {
+    .tenda-ticker-wrap {
+      top: 78px;
+      height: 28px;
+    }
+
+    .tenda-ticker-content {
+      animation: ticker-move 40s linear infinite;
+    }
+
+    .tenda-ticker-item {
+      font-size: 0.7rem;
+      letter-spacing: 1.5px;
+      padding: 0 3rem;
+    }
+
+    .ticker-label {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+    }
+
+    .ticker-separator {
+      margin: 0 1.5rem;
+    }
+  }
+
+  /* Tablet */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .tenda-ticker-wrap {
+      top: 84px;
+      height: 30px;
+    }
+
+    .tenda-ticker-content {
+      animation: ticker-move 50s linear infinite;
+    }
+  }
+
+  /* ===================================
+     INSIGHTS PILL - MAC TASKBAR STYLE
+     =================================== */
+
+  /* The Pill (Collapsed State) */
+  .insight-bubble-trigger {
+    position: fixed;
+    right: 20px;
+    bottom: 100px;
+    padding: 12px 20px;
+    border-radius: 980px;  /* Pill shape */
+    background: rgba(227, 252, 2, 0.12);
+    border: 1.5px solid rgba(227, 252, 2, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    z-index: 9998;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);  /* Mac bounce */
+    box-shadow: 0 4px 24px rgba(227, 252, 2, 0.3),
+                0 0 0 0 rgba(227, 252, 2, 0.4);
+    animation: pill-breathe 3s infinite ease-in-out;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 700;
+    color: #E3FC02;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* Pill Icon */
+  .insight-bubble-trigger::before {
+    content: '⚡';
+    font-size: 18px;
+    line-height: 1;
+    display: inline-block;
+  }
+
+  /* Notification Badge */
+  .insight-bubble-trigger::after {
+    content: '2';
+    background: #E3FC02;
+    color: #000;
+    font-size: 10px;
+    font-weight: 900;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(227, 252, 2, 0.6);
+    margin-left: 4px;
+  }
+
+  /* Breathing Animation */
+  @keyframes pill-breathe {
+    0%, 100% { 
+      box-shadow: 0 4px 24px rgba(227, 252, 2, 0.3),
+                  0 0 0 0 rgba(227, 252, 2, 0.4);
+    }
+    50% { 
+      box-shadow: 0 6px 32px rgba(227, 252, 2, 0.5),
+                  0 0 0 8px rgba(227, 252, 2, 0);
+    }
+  }
+
+  /* Hover State - Mac Bounce */
+  .insight-bubble-trigger:hover {
+    background: rgba(227, 252, 2, 0.2);
+    border-color: rgba(227, 252, 2, 0.8);
+    transform: scale(1.05) translateY(-4px);
+    box-shadow: 0 8px 40px rgba(227, 252, 2, 0.5);
+  }
+
+  /* Active/Pressed State */
+  .insight-bubble-trigger:active {
+    transform: scale(0.98) translateY(0);
+  }
+
+  /* Hidden when drawer opens */
+  .insight-bubble-trigger.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8) translateY(20px);
+  }
+
+  /* Shrink on deep scroll */
+  .insight-bubble-trigger.scrolled {
+    padding: 10px 16px;
+    font-size: 12px;
+    bottom: 95px;
+  }
+
+  .insight-bubble-trigger.scrolled::before {
+    font-size: 16px;
+  }
+
+  .insight-bubble-trigger.scrolled::after {
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
+  }
+
+  /* Mobile: Smaller pill */
+  @media (max-width: 768px) {
+    .insight-bubble-trigger {
+      right: 16px;
+      bottom: 160px;
+      padding: 10px 16px;
+      font-size: 12px;
+    }
+
+    .insight-bubble-trigger::before {
+      font-size: 16px;
+    }
+
+    .insight-bubble-trigger::after {
+      width: 16px;
+      height: 16px;
+      font-size: 9px;
+    }
+
+    .insight-bubble-trigger.scrolled {
+      padding: 8px 14px;
+      font-size: 11px;
+      bottom: 155px;
+    }
+  }
+
+  /* Tablet */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .insight-bubble-trigger {
+      right: 18px;
+      bottom: 120px;
+    }
+  }
+
+  /* ===================================
+     INSIGHTS DRAWER - MAC TASKBAR EXPANSION
+     =================================== */
+
+  .insight-drawer-wrapper {
+    position: fixed;
+    right: 20px;
+    bottom: 100px;  /* Same position as pill */
+    width: 400px;
+    max-width: calc(100vw - 40px);
+    max-height: 0;
+    z-index: 9999;
+    background: rgba(18, 18, 20, 0.96);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1.5px solid rgba(227, 252, 2, 0.4);
+    border-radius: 24px;
+    padding: 0;
+    overflow: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #E3FC02 #121214;
+    scrollbar-gutter: stable;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    
+    /* Mac Taskbar Animation */
+    transform-origin: bottom right;
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);  /* Mac bounce */
+  }
+
+  /* Open State - Mac Bounce */
+  .insight-drawer-wrapper.open {
+    max-height: 70vh;
+    padding: 2rem;
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 
+                0 0 40px rgba(227, 252, 2, 0.25),
+                0 0 100px rgba(227, 252, 2, 0.1);
+    overflow-y: auto;
+  }
+
+  /* Precision Scrollbar */
+  .insight-drawer-wrapper::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .insight-drawer-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 10px 0;
+  }
+
+  .insight-drawer-wrapper::-webkit-scrollbar-thumb {
+    background: #E3FC02;
+    border-radius: 10px;
+  }
+
+  .insight-drawer-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #f6ff4d;
+  }
+
+  /* Close Button - Always visible on mobile */
+  .drawer-close-btn {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10;
+    opacity: 1;
+  }
+
+  .drawer-close-btn::before,
+  .drawer-close-btn::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 2px;
+    background: #ffffff;
+    border-radius: 2px;
+  }
+
+  .drawer-close-btn::before {
+    transform: rotate(45deg);
+  }
+
+  .drawer-close-btn::after {
+    transform: rotate(-45deg);
+  }
+
+  .drawer-close-btn:hover {
+    background: rgba(227, 252, 2, 0.15);
+    border-color: rgba(227, 252, 2, 0.4);
+    transform: scale(1.1) rotate(90deg);
+  }
+
+  .drawer-close-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* Drawer Header */
+  .drawer-header {
+    margin-bottom: 1.5rem;
+    padding-right: 2.5rem;
+  }
+
+  .drawer-header h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #E3FC02;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+
+  .drawer-header p {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.4;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .insight-drawer-wrapper {
+      right: 16px;
+      left: 16px;
+      bottom: 20px;
+      width: auto;
+    }
+
+    .insight-drawer-wrapper.open {
+      max-height: 65vh;
+      padding: 1.5rem;
+    }
+
+    /* Make X button more prominent on mobile */
+    .drawer-close-btn {
+      top: 1rem;
+      right: 1rem;
+      width: 40px;
+      height: 40px;
+      background: rgba(227, 252, 2, 0.12);
+      border: 2px solid rgba(227, 252, 2, 0.3);
+    }
+
+    .drawer-close-btn::before,
+    .drawer-close-btn::after {
+      width: 18px;
+      height: 2.5px;
+    }
+
+    .drawer-header {
+      padding-right: 3rem;
+    }
+
+    .drawer-header h3 {
+      font-size: 1.25rem;
+    }
+  }
+
+  /* Tablet */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .insight-drawer-wrapper {
+      right: 18px;
+      width: 380px;
+    }
+
+    .insight-drawer-wrapper.open {
+      max-height: 68vh;
+    }
+  }
+
+  /* Precision Scrollbar */
+  .insight-drawer-wrapper::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .insight-drawer-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 10px 0;
+  }
+
+  .insight-drawer-wrapper::-webkit-scrollbar-thumb {
+    background: #E3FC02;
+    border-radius: 10px;
+  }
+
+  .insight-drawer-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #f6ff4d;
+  }
+
+  /* Close Button */
+  .drawer-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+  }
+
+  .drawer-close-btn::before,
+  .drawer-close-btn::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 2px;
+    background: #ffffff;
+  }
+
+  .drawer-close-btn::before {
+    transform: rotate(45deg);
+  }
+
+  .drawer-close-btn::after {
+    transform: rotate(-45deg);
+  }
+
+  .drawer-close-btn:hover {
+    background: rgba(227, 252, 2, 0.2);
+    border-color: #E3FC02;
+    transform: scale(1.1);
+  }
+
+  /* Drawer Header */
+  .drawer-header {
+    margin-bottom: 1.5rem;
+    padding-right: 2rem;
+  }
+
+  .drawer-header h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #E3FC02;
+    margin-bottom: 0.5rem;
+  }
+
+  .drawer-header p {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* ===================================
+     BACKDROP BLUR OVERLAY - ENHANCED
+     =================================== */
+
+  .drawer-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(20px) brightness(0.4);
+    -webkit-backdrop-filter: blur(20px) brightness(0.4);
+    z-index: 9997;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .drawer-backdrop.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* Mobile: Stronger blur */
+  @media (max-width: 768px) {
+    .drawer-backdrop {
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(25px) brightness(0.3);
+      -webkit-backdrop-filter: blur(25px) brightness(0.3);
+    }
+  }
+
+  /* ===================================
+     MINI INSIGHT CARDS (unchanged)
+     =================================== */
+
+  .mini-insight-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px);
+    border: 0.5px solid rgba(227, 252, 2, 0.2);
+    border-top: 2px solid #E3FC02;
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .mini-insight-card:hover {
+    border-color: #E3FC02;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 30px rgba(227, 252, 2, 0.15);
+    transform: translateY(-4px);
+  }
+
+  .mini-badge {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    background: rgba(227, 252, 2, 0.15);
+    border: 1px solid rgba(227, 252, 2, 0.3);
+    border-radius: 6px;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #E3FC02;
+    margin-bottom: 0.75rem;
+  }
+
+  .mini-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0.75rem 0;
+    line-height: 1.3;
+    padding-bottom: 0.1em;
+  }
+
+  .mini-excerpt {
+    font-size: 0.875rem;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .mini-btn-neon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: transparent;
+    color: #E3FC02;
+    border: 1.5px solid #E3FC02;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(227, 252, 2, 0.15);
+  }
+
+  .mini-btn-neon:hover {
+    background: #E3FC02;
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(227, 252, 2, 0.4);
+  }
+
+  .mini-btn-neon svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+
+  .mini-btn-neon:hover svg {
+    transform: scale(1.1);
+  }
+
+  /* ===================================
+     CALENDLY STYLES
+     =================================== */
+  
+  .calendly-overlay {
+    background-color: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(20px) !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 99999 !important;
+  }
+
+  .calendly-popup,
+  .calendly-popup-content {
+    width: 90% !important;
+    height: 85% !important;
+    max-width: 1080px !important;
+    background: #121212 !important;
+    border-radius: 24px !important;
+    border: 1.5px solid #E3FC02 !important;
+    box-shadow: 0 0 30px rgba(227, 252, 2, 0.3) !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+  }
+
+  .calendly-popup ::-webkit-scrollbar,
+  .calendly-inline-widget ::-webkit-scrollbar {
+    width: 6px !important;
+  }
+
+  .calendly-popup ::-webkit-scrollbar-track,
+  .calendly-inline-widget ::-webkit-scrollbar-track {
+    background: #121212 !important;
+  }
+
+  .calendly-popup ::-webkit-scrollbar-thumb,
+  .calendly-inline-widget ::-webkit-scrollbar-thumb {
+    background: #E3FC02 !important;
+    border-radius: 10px !important;
+  }
+
+  .calendly-close-overlay {
+    position: absolute !important;
+    right: 30px !important;
+    top: 30px !important;
+    left: auto !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 50% !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    width: 44px !important;
+    height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    z-index: 999999 !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .calendly-close-overlay:hover {
+    background: rgba(227, 252, 2, 0.2) !important;
+    border-color: #E3FC02 !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 0 20px rgba(227, 252, 2, 0.4) !important;
+  }
+
+  .calendly-close-overlay::before,
+  .calendly-close-overlay::after {
+    content: '' !important;
+    position: absolute !important;
+    width: 20px !important;
+    height: 3px !important;
+    background: #ffffff !important;
+    border-radius: 2px !important;
+  }
+
+  .calendly-close-overlay::before {
+    transform: rotate(45deg) !important;
+  }
+
+  .calendly-close-overlay::after {
+    transform: rotate(-45deg) !important;
+  }
+
+  /* ===================================
+     PREMIUM LIVE DIVIDER
+     =================================== */
+  
+  .section-divider {
+    height: 1px;
+    width: 80%;
+    margin: 70px auto;
+    background: linear-gradient(90deg, 
+      rgba(227, 252, 2, 0) 0%, 
+      rgba(227, 252, 2, 0.8) 50%, 
+      rgba(227, 252, 2, 0) 100%
+    );
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: dividerDraw 1.2s ease-out 0.3s forwards;
+  }
+
+  @keyframes dividerDraw {
+    0% {
+      transform: scaleX(0);
+      opacity: 0;
+    }
+    100% {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+  }
+
+  .section-divider::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -100%;
+    width: 50%;
+    height: 5px;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.6), 
+      transparent
+    );
+    animation: shimmerTravel 4s infinite linear 1.5s;
+    filter: blur(2px);
+  }
+
+  @keyframes shimmerTravel {
+    0% { left: -100%; }
+    100% { left: 150%; }
+  }
+
+  .section-divider:hover {
+    background: linear-gradient(90deg, 
+      rgba(227, 252, 2, 0) 0%, 
+      rgba(227, 252, 2, 1) 50%, 
+      rgba(227, 252, 2, 0) 100%
+    );
+    box-shadow: 0 0 20px rgba(227, 252, 2, 0.5);
+    transition: all 0.3s ease;
+  }
+
+  /* ===================================
+     ANIMATIONS
+     =================================== */
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(227, 252, 2, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(227, 252, 2, 0.6);
+    }
+  }
+
+  .animate-fadeInUp {
+    animation: fadeInUp 1s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 1s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-slideInLeft {
+    animation: slideInLeft 1s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  .animate-delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .animate-delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .animate-delay-600 {
+    animation-delay: 0.6s;
+  }
+
+  .animate-delay-800 {
+    animation-delay: 0.8s;
+  }
+
+  /* Container System */
+  .container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* Section Spacing */
+  .section {
+    padding: 3rem 0;
+    position: relative;
+  }
+
+  /* Button Styles */
+  .btn-primary {
+    background-color: #E3FC02;
+    color: #1F1F21;
+    padding: 1rem 2.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.4s ease;
+    border: none;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(227, 252, 2, 0.3);
+  }
+
+  .btn-primary:hover {
+    background-color: transparent;
+    color: #E3FC02;
+    padding: 1rem 2.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.4s ease;
+    border: 2px solid #E3FC02;
+    display: inline-block;
+    text-decoration: none;
+    text-align: 
+  }
+
+  .btn-secondary {
+    background-color: transparent;
+    color: #E3FC02;
+    padding: 1rem 2.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.4s ease;
+    border: 2px solid #E3FC02;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .btn-secondary:hover {
+    background-color: #E3FC02;
+    color: #1F1F21;
+    transform: translateY(-3px);
+  }
+
+  /* Card Icon Animation */
+  .card-icon {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 1.5rem;
+    transition: transform 0.4s ease;
+    flex-shrink: 0;
+  }
+
+  .card:hover .card-icon,
+  .step-item:hover .card-icon {
+    transform: scale(1.1) rotate(5deg);
+  }
+
+  /* ===================================
+     MASTER POLISH - UNIVERSAL FLEXBOX SYSTEM
+     =================================== */
+
+  .grid,
+  .grid-3,
+  .grid-steps,
+  .what-we-offer-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 2.5rem !important;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .card,
+  .step-item {
+    flex: 0 1 450px !important;
+    min-height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border: 1px solid rgba(227, 252, 2, 0.1) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 2.5rem !important;
+    border-radius: 1.25rem;
+    box-sizing: border-box !important;
+    transition: all 0.4s ease;
+  }
+
+  .card:hover,
+  .step-item:hover {
+    border-color: #E3FC02;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 40px rgba(227, 252, 2, 0.2);
+    transform: translateY(-10px);
+  }
+
+  .step-header {
+    display: flex !important;
+    align-items: center !important;
+    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .card-text {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.7;
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    font-weight: 500;
+    max-width: 65ch !important;
+  }
+
+  .coming-soon-badge {
+    background: #E3FC02;
+    color: #1F1F21;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+    display: inline-flex !important;
+    margin-left: auto;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .badge-container {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .step-number {
+    background-color: #E3FC02;
+    color: #1F1F21;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.75rem;
+    box-shadow: 0 5px 20px rgba(227, 252, 2, 0.4);
+    flex-shrink: 0;
+  }
+
+  .step-icon {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+  }
+
+  .step-item {
+    max-width: 100%;
+  }
+
+  /* Typography - Responsive with clamp */
+  .hero-title {
+    font-size: clamp(2.5rem, 5vw + 1rem, 5.5rem);
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.2em;
+    overflow: visible;
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 4vw + 0.5rem, 3rem);
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    text-align: center;
+    padding-bottom: 0.2em;
+    overflow: visible;
+  }
+
+  .section-subtitle {
+    font-size: clamp(1.125rem, 2vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.75);
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    line-height: 1.7;
+    font-weight: 500;
+  }
+
+  .card-title {
+    font-size: clamp(1.375rem, 2vw, 1.75rem);
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    padding-bottom: 0.15em;
+    overflow: visible;
+  }
+
+  .accent-text {
+    color: #E3FC02;
+  }
+
+  /* Floating Background Elements */
+  .bg-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .bg-glow-1 {
+    width: 300px;
+    height: 300px;
+    background: #E3FC02;
+    top: 10%;
+    right: 5%;
+  }
+
+  .bg-glow-2 {
+    width: 400px;
+    height: 400px;
+    background: #E3FC02;
+    bottom: 10%;
+    left: 5%;
+  }
+
+  .bg-glow-3 {
+    width: 250px;
+    height: 250px;
+    background: #E3FC02;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Link Styles */
+  .link-arrow {
+    color: #E3FC02;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .link-arrow:hover {
+    transform: translateX(5px);
+  }
+
+  /* Button Container */
+  .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem !important;
+    justify-content: center;
+  }
+
+  /* About Us Section Specific */
+  .about-us-section .btn-group {
+    justify-content: center;
+  }
+
+  .about-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center !important;
+    gap: 4rem;
+  }
+
+  .about-content {
+    flex: 1 1 450px;
+  }
+
+  .about-image {
+    flex: 1 1 500px;
+  }
+
+  /* Mobile: Stack text above image */
+  @media (max-width: 1023px) {
+    .about-grid {
+      gap: 3rem;
+    }
+
+    .about-content {
+      order: 1;
+      flex: 1 1 100%;
+      text-align: center;
+    }
+
+    .about-content .hero-title {
+      font-size: clamp(2.5rem, 8vw, 3.5rem) !important;
+    }
+
+    .about-content .card-text {
+      max-width: 100% !important;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .about-image {
+      order: 2;
+      flex: 1 1 100%;
+    }
+  }
+
+  /* Responsive Design */
+  @media (min-width: 640px) {
+    .section {
+      padding: 4rem 0;
+    }
+
+    .container {
+      padding: 0 2rem;
+    }
+
+    .btn-group {
+      justify-content: flex-start;
+    }
+
+    .grid,
+    .grid-3,
+    .grid-steps {
+      gap: 3rem !important;
+    }
+
+    .card,
+    .step-item {
+      flex: 0 1 400px !important;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .section {
+      padding: 5rem 0;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .section {
+      padding: 6rem 0;
+    }
+
+    .container {
+      padding: 0 3rem;
+    }
+
+    .section-subtitle {
+      max-width: 900px;
+    }
+
+    /* About Us Desktop */
+    .about-us-section .btn-group {
+      justify-content: flex-start;
+    }
+
+    .about-grid {
+      gap: 5rem;
+    }
+
+    .grid,
+    .grid-3,
+    .grid-steps {
+      gap: 3.5rem !important;
+    }
+
+    .card,
+    .step-item {
+      flex: 0 1 420px !important;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .container {
+      max-width: 1400px;
+    }
+
+    .card,
+    .step-item {
+      flex: 0 1 450px !important;
+    }
+  }
+
+     /* ===================================
+     DUAL-PANEL ENTRY MODAL - UPDATED
+     =================================== */
+
+  .tenda-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(25px) brightness(0.6);
+    -webkit-backdrop-filter: blur(25px) brightness(0.6);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .tenda-modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .tenda-modal-content {
+    width: 92%;
+    max-width: 1100px;
+    background: rgba(18, 18, 20, 0.96);
+    backdrop-filter: blur(40px) saturate(150%);
+    -webkit-backdrop-filter: blur(40px) saturate(150%);
+    border: 1.5px solid rgba(227, 252, 2, 0.3);
+    border-radius: 32px;
+    box-shadow: 
+      0 0 0 1px rgba(227, 252, 2, 0.15),
+      0 60px 140px rgba(0, 0, 0, 0.9),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    position: relative;
+    overflow: hidden;
+    transform: scale(0.92) translateY(40px);
+    transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: grid;
+    grid-template-columns: 40% 60%;
+    min-height: 600px;
+  }
+
+  .tenda-modal-overlay.active .tenda-modal-content {
+    transform: scale(1) translateY(0);
+  }
+
+  .modal-image-panel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 32px 0 0 32px;
+  }
+
+  .modal-image-panel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.75) contrast(1.1);
+  }
+
+  .modal-image-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at center,
+      transparent 0%,
+      rgba(18, 18, 20, 0.3) 50%,
+      rgba(18, 18, 20, 0.95) 100%
+    );
+    pointer-events: none;
+  }
+
+  .modal-image-panel::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(227, 252, 2, 0.6) 30%,
+      rgba(227, 252, 2, 1) 50%,
+      rgba(227, 252, 2, 0.6) 70%,
+      transparent 100%
+    );
+    box-shadow: 0 0 20px rgba(227, 252, 2, 0.5);
+    z-index: 1;
+  }
+
+  .modal-content-panel {
+    padding: 4rem 4.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    text-align: left;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10;
+  }
+
+  .modal-close::before,
+  .modal-close::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 2.5px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  .modal-close::before {
+    transform: rotate(45deg);
+  }
+
+  .modal-close::after {
+    transform: rotate(-45deg);
+  }
+
+  .modal-close:hover {
+    background: rgba(227, 252, 2, 0.15);
+    border-color: rgba(227, 252, 2, 0.5);
+    transform: scale(1.1) rotate(90deg);
+  }
+
+  .modal-close:hover::before,
+  .modal-close:hover::after {
+    background: #E3FC02;
+  }
+
+  .leak-icon {
+    width: 10px;
+    height: 10px;
+    background: #E3FC02;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(227, 252, 2, 0.8);
+    animation: leakPulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes leakPulse {
+    0%, 100% { 
+      opacity: 1; 
+      transform: scale(1);
+      box-shadow: 0 0 12px rgba(227, 252, 2, 0.8);
+    }
+    50% { 
+      opacity: 0.6; 
+      transform: scale(0.85);
+      box-shadow: 0 0 20px rgba(227, 252, 2, 1);
+    }
+  }
+
+  .modal-headline {
+    font-size: clamp(2.25rem, 3.5vw, 3rem);
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  }
+
+  .modal-headline .accent {
+    color: #E3FC02;
+    display: block;
+  }
+
+  .modal-subtitle {
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    font-weight: 400;
+  }
+
+  .modal-benefits {
+    margin-bottom: 2.5rem;
+  }
+
+  .modal-benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.125rem;
+    font-weight: 500;
+  }
+
+  .modal-benefit-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .modal-newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-input-wrapper {
+    position: relative;
+  }
+
+  .modal-email-input,
+  .modal-phone-input {
+    width: 100%;
+    padding: 1.125rem 1.5rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1.5px solid rgba(227, 252, 2, 0.25);
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .modal-email-input::placeholder,
+  .modal-phone-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .modal-email-input:focus,
+  .modal-phone-input:focus {
+    outline: none;
+    border-color: rgba(227, 252, 2, 0.6);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 
+      0 0 0 4px rgba(227, 252, 2, 0.12),
+      inset 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .phone-input-group {
+    display: flex;
+    gap: 10px;
+  }
+
+  .country-code-select {
+    width: 110px;
+    padding: 1.125rem 1rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1.5px solid rgba(227, 252, 2, 0.25);
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23E3FC02' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+  }
+
+  .country-code-select:focus {
+    outline: none;
+    border-color: rgba(227, 252, 2, 0.6);
+    box-shadow: 0 0 0 4px rgba(227, 252, 2, 0.12);
+  }
+
+  .country-code-select option {
+    background: #1F1F21;
+    color: #ffffff;
+  }
+
+  .modal-phone-input {
+    flex: 1;
+  }
+
+  .modal-submit-btn {
+    width: 100%;
+    padding: 1.25rem 2rem;
+    background: #E3FC02;
+    color: #000000;
+    border: none;
+    border-radius: 12px;
+    font-weight: 900;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 8px 30px rgba(227, 252, 2, 0.4);
+    animation: comingSoonGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes comingSoonGlow {
+    0%, 100% {
+      box-shadow: 0 8px 30px rgba(227, 252, 2, 0.4);
+    }
+    50% {
+      box-shadow: 0 12px 40px rgba(227, 252, 2, 0.7),
+                  0 0 60px rgba(227, 252, 2, 0.3);
+    }
+  }
+
+  .modal-submit-btn:hover {
+    background: #ffffff;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 50px rgba(227, 252, 2, 0.6);
+  }
+
+  .modal-submit-btn:active {
+    transform: scale(0.98);
+  }
+
+  .modal-legal {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  .modal-legal a {
+    color: rgba(227, 252, 2, 0.8);
+    text-decoration: underline;
+  }
+
+  .modal-legal a:hover {
+    color: #E3FC02;
+  }
+
+  .modal-success {
+    display: none;
+    padding: 4rem 3rem;
+    text-align: center;
+    grid-column: 1 / -1;
+  }
+
+  .modal-success.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: successReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes successReveal {
+    0% { opacity: 0; transform: scale(0.9) translateY(30px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-success-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, rgba(227, 252, 2, 0.2) 0%, rgba(227, 252, 2, 0.1) 100%);
+    border: 3px solid rgba(227, 252, 2, 0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    margin-bottom: 2rem;
+    animation: successCheckmark 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s backwards;
+  }
+
+  @keyframes successCheckmark {
+    0% { opacity: 0; transform: scale(0) rotate(-180deg); }
+    60% { transform: scale(1.15) rotate(15deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+
+  .modal-success-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #E3FC02;
+    margin-bottom: 1.25rem;
+    text-shadow: 0 0 30px rgba(227, 252, 2, 0.5);
+  }
+
+  .modal-success-message {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.25rem;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 900px) {
+    .tenda-modal-content {
+      grid-template-columns: 1fr;
+      max-width: 95%;
+      min-height: auto;
+    }
+
+    .modal-image-panel {
+      display: none;
+    }
+
+    .modal-content-panel {
+      padding: 3rem 2rem;
+      border-radius: 32px;
+    }
+
+    .modal-headline {
+      font-size: 2rem;
+    }
+
+    .modal-subtitle {
+      font-size: 1.0625rem;
+    }
+
+    .modal-benefit-item {
+      font-size: 0.95rem;
+    }
+
+    .modal-close {
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 40px;
+      height: 40px;
+    }
+
+    .country-code-select {
+      width: 100px;
+      padding: 1.125rem 0.75rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .phone-input-group {
+      flex-direction: column;
+    }
+
+    .country-code-select {
+      width: 100%;
+    }
+
+    .modal-content-panel {
+      padding: 2.5rem 1.75rem;
+    }
+
+    .modal-headline {
+      font-size: 1.75rem;
+    }
+
+    .modal-subtitle {
+      font-size: 1rem;
+    }
+
+    .modal-benefit-item {
+      font-size: 0.9375rem;
+      gap: 12px;
+    }
+
+    .modal-legal {
+      font-size: 0.7rem;
+    }
+  }
+
+  
+  /* ===================================
+   GITHUB-STYLE INTERACTIVE BACKGROUND
+   PATCH FOR TENDA HOMEPAGE
+   =================================== */
+
+/* Update Body Styling */
+body {
+  background-color: #1F1F21;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ===================================
+   1. VECTOR GRID FOUNDATION
+   =================================== */
+
+/* Fixed 50px Grid Pattern */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(rgba(227, 252, 2, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(227, 252, 2, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: center center;
+}
+
+/* Grid Pulse Animation on Interaction */
+@keyframes grid-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1.5;
+  }
+}
+
+body:hover::before {
+  animation: grid-pulse 3s ease-in-out infinite;
+}
+
+/* ===================================
+   2. MOUSE SPOTLIGHT - INTERACTIVE GLOW
+   =================================== */
+
+/* Cursor-Following Radial Gradient */
+#mouseSpotlight {
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(227, 252, 2, 0.08) 0%,
+    rgba(227, 252, 2, 0.04) 30%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+#mouseSpotlight.active {
+  opacity: 1;
+}
+
+/* Enhanced Spotlight on Click */
+#mouseSpotlight.pulse {
+  animation: spotlight-pulse 0.6s ease-out;
+}
+
+@keyframes spotlight-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ===================================
+   3. FLOATING DATA NODES - ANIMATED DEPTH
+   =================================== */
+
+/* Nodes Container */
+.data-nodes-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Individual Data Node */
+.data-node {
+  position: absolute;
+  border-radius: 50%;
+  background: #E3FC02;
+  box-shadow: 0 0 8px rgba(227, 252, 2, 0.6);
+  animation: float-node ease-in-out infinite;
+  will-change: transform;
+  transition: transform 0.3s ease;
+}
+
+/* Node Size Variations */
+.data-node.small {
+  width: 2px;
+  height: 2px;
+  opacity: 0.4;
+  animation-duration: 8s;
+}
+
+.data-node.medium {
+  width: 3px;
+  height: 3px;
+  opacity: 0.5;
+  animation-duration: 10s;
+}
+
+.data-node.large {
+  width: 4px;
+  height: 4px;
+  opacity: 0.6;
+  animation-duration: 12s;
+}
+
+/* Floating Animation - 3D Parallax Effect */
+@keyframes float-node {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px);
+  }
+  50% {
+    transform: translateY(-40px) translateX(-10px);
+  }
+  75% {
+    transform: translateY(-20px) translateX(15px);
+  }
+}
+
+/* Parallax Speed Variations */
+.data-node[data-speed="slow"] {
+  animation-duration: 15s;
+}
+
+.data-node[data-speed="fast"] {
+  animation-duration: 6s;
+}
+
+/* ===================================
+   4. GRID FADE MASKS - VIDEO INTEGRATION
+   =================================== */
+
+/* Top Gradient Fade */
+.grid-fade-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(180deg, #000000 0%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Bottom Gradient Fade */
+.grid-fade-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(0deg, #000000 0%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ===================================
+   5. "PLUGGED IN" SECTION BORDERS
+   =================================== */
+
+/* Enhanced Section Borders */
+.section {
+  position: relative;
+  z-index: 10;
+  border-top: 1px solid rgba(227, 252, 2, 0.05);
+  border-bottom: 1px solid rgba(227, 252, 2, 0.05);
+}
+
+/* Animated Top Border on Hover */
+.section::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(227, 252, 2, 0.3) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.section:hover::before {
+  opacity: 1;
+}
+
+/* Animated Bottom Border on Hover */
+.section::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(227, 252, 2, 0.3) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.section:hover::after {
+  opacity: 1;
+}
+
+/* ===================================
+   6. Z-INDEX HIERARCHY
+   =================================== */
+
+/* Ensure content sits above background layers */
+.section,
+.container,
+.hero-video-wrapper,
+main,
+header,
+footer,
+.tenda-ticker-wrap,
+.insight-bubble-trigger,
+.insight-drawer-wrapper,
+.drawer-backdrop {
+  position: relative;
+  z-index: 10;
+}
+
+/* Background layers stay behind */
+body::before,
+#mouseSpotlight,
+.data-nodes-layer,
+.grid-fade-top,
+.grid-fade-bottom {
+  z-index: 0 !important;
+}
+
+/* Exceptions for modals */
+.tenda-modal-overlay,
+.calendly-overlay,
+.waitlist-modal-overlay {
+  z-index: 10000 !important;
+}
+
+/* ===================================
+   7. RESPONSIVE OPTIMIZATIONS
+   =================================== */
+
+/* Mobile: Reduce background complexity */
+@media (max-width: 768px) {
+  body::before {
+    background-size: 75px 75px;
+    opacity: 0.5;
+  }
+
+  #mouseSpotlight {
+    width: 400px;
+    height: 400px;
+    display: none; /* Disable on mobile for performance */
+  }
+
+  .data-node {
+    display: none; /* Hide nodes on mobile */
+  }
+
+  .grid-fade-top,
+  .grid-fade-bottom {
+    height: 100px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  body::before {
+    background-size: 60px 60px;
+  }
+
+  #mouseSpotlight {
+    width: 500px;
+    height: 500px;
+  }
+
+  .data-node {
+    opacity: 0.5;
+  }
+}
+
+/* Desktop: Full effects */
+@media (min-width: 1025px) {
+  body::before {
+    background-size: 50px 50px;
+  }
+
+  #mouseSpotlight {
+    width: 600px;
+    height: 600px;
+  }
+}
+
+/* ===================================
+   8. PERFORMANCE OPTIMIZATIONS
+   =================================== */
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none !important;
+  }
+
+  #mouseSpotlight {
+    display: none;
+  }
+
+  .data-node {
+    animation: none !important;
+    display: none;
+  }
+
+  .section::before,
+  .section::after {
+    transition: none;
+  }
+}
+
+/* GPU acceleration for smooth animations */
+#mouseSpotlight,
+.data-node {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+
+</style>
+<!-- Updated Entry Modal HTML -->
+<div class="tenda-modal-overlay" id="entryModal">
+  <div class="tenda-modal-content">
+    
+    <!-- Left Panel: Atmospheric Image -->
+    <div class="modal-image-panel">
+      <img src="{{ 'modal-data-leak.webp' | asset_url }}" alt="Data visualization showing retail analytics" />
+    </div>
+
+    <!-- Right Panel: Content -->
+    <div class="modal-content-panel">
+      <!-- Close Button -->
+      <div class="modal-close" id="modalCloseBtn"></div>
+      
+      <!-- Default State -->
+      <div id="modalDefaultState">
+        <!-- Headline -->
+        <h2 class="modal-headline">
+          Retail is leaking money
+          <span class="accent">in places you can't see.</span>
+        </h2>
+        
+        <!-- Subtitle -->
+        <p class="modal-subtitle">
+          Want simple, no‑jargon tips on where it's leaking in your business and what to do about it?
+        </p>
+        
+        <!-- Benefits List with Leak Icons -->
+        <div class="modal-benefits">
+          <div class="modal-benefit-item">
+            <span class="leak-icon"></span>
+            <span>Quick "money leak" checklists you can use with your team</span>
+          </div>
+          <div class="modal-benefit-item">
+            <span class="leak-icon"></span>
+            <span>Practical playbooks from real African retail and service brands</span>
+          </div>
+          <div class="modal-benefit-item">
+            <span class="leak-icon"></span>
+            <span>Simple tools to turn your POS data into daily decisions</span>
+          </div>
+        </div>
+        
+        <!-- Newsletter Form with Phone Number -->
+        <form class="modal-newsletter-form" id="modalNewsletterForm" action="/contact#newsletter" method="post">
+          <input type="hidden" name="form_type" value="customer" />
+          <input type="hidden" name="utf8" value="✓" />
+          <input type="hidden" name="contact[tags]" value="newsletter,subscriber" />
+          
+          <!-- Email Input -->
+          <div class="modal-input-wrapper">
+            <input 
+              type="email" 
+              name="contact[email]" 
+              class="modal-email-input" 
+              placeholder="your@email.com" 
+              required 
+            />
+          </div>
+          
+          <!-- Phone Input with Country Code -->
+          <div class="phone-input-group">
+            <select class="country-code-select" name="contact[country_code]">
+              <option value="+254" selected>🇰🇪 +254</option>
+              <option value="+256">🇺🇬 +256</option>
+              <option value="+255">🇹🇿 +255</option>
+              <option value="+250">🇷🇼 +250</option>
+              <option value="+27">🇿🇦 +27</option>
+              <option value="+234">🇳🇬 +234</option>
+              <option value="+1">🇺🇸 +1</option>
+              <option value="+44">🇬🇧 +44</option>
+            </select>
+            
+            <input 
+              type="tel" 
+              name="contact[phone]" 
+              class="modal-phone-input" 
+              placeholder="712345678" 
+              pattern="[0-9]{9,10}"
+              required
+            />
+          </div>
+          
+          <!-- Submit Button with Glow -->
+          <button type="submit" class="modal-submit-btn">
+            GET TIPS
+          </button>
+        </form>
+        
+        <!-- Legal Notice -->
+        <p class="modal-legal">
+          No spam, just smarter retail. By submitting, you consent to receive Tenda Analytics marketing materials and industry updates. <a href="/pages/privacy-policy">T&Cs apply</a>.
+        </p>
+      </div>
+    </div>
+    
+    <!-- Success State (Spans Both Columns) -->
+    <div class="modal-success" id="modalSuccessState">
+      <div class="modal-success-icon">✓</div>
+      <h3 class="modal-success-title">Welcome!</h3>
+      <p class="modal-success-message">
+        Check your inbox for your first dose of operational intelligence.
+      </p>
+    </div>
+  </div>
+</div>
+
+    <div class="ticker-separator"></div>
+
+<!-- Main Wrapper -->
+<div style="background-color:rgb(0, 0, 0); min-height: 100vh;">
+
+  <!-- About Us Section -->
+  <section class="section about-us-section" style="position: relative; padding: 6rem 0;">
+    <div class="bg-glow bg-glow-1 animate-float"></div>
+    <div class="container">
+      <!-- Top CTAs -->
+<div class="btn-group animate-fadeIn" 
+     style="margin-bottom: 3rem; gap: 1.5rem; display: flex; justify-content: center; align-items: center;">
+  
+  <a href="javascript:void(0);" 
+     onclick="Calendly.initPopupWidget({url: 'https://calendly.com/tendaafrika/30min', primaryColor: 'E3FC02', backgroundColor: '121212', textColor: 'FFFFFF'});return false;" 
+     class="btn-primary">
+     Book a Strategy Call
+  </a>
+
+  <a href="/pages/waitlist" class="btn-secondary">
+     Join Our Waitlist
+  </a>
+
+</div>
+
+      <!-- Premium Live Divider -->
+      <div class="section-divider" 
+           style="
+              width: 100%;
+              height: 2px;
+              margin: 3rem 0 4rem 0;
+              background: linear-gradient(
+                  90deg,
+                  transparent 0%,
+                  rgba(227, 252, 2, 0.6) 20%,
+                  rgba(227, 252, 2, 1) 50%,
+                  rgba(227, 252, 2, 0.6) 80%,
+                  transparent 100%
+              );
+              box-shadow: 0 0 20px rgba(227, 252, 2, 0.4);
+              border-radius: 50px;
+           ">
+      </div>
+
+      <!-- About Content Grid -->
+      <div class="about-grid" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4rem;">
+        
+        <!-- Text Content -->
+        <div class="about-content animate-slideInLeft" style="flex: 1 1 450px;">
+          <h2 class="hero-title" style="margin-bottom: 2rem;">
+            About us
+          </h2>
+          <p class="card-text" style="font-size: clamp(1.125rem, 2vw, 1.25rem); color: rgba(255,255,255,0.9); margin-bottom: 2.5rem; max-width: 550px; line-height: 1.7;">
+            Built for operators who care about numbers. We exist to help African retail and service businesses move from vibes and guesswork to clear, data-driven decisions about stock, pricing and growth.
+          </p>
+          <a href="/pages/about-us" class="btn-primary" style="padding: 1.25rem 3rem;">Learn More</a>
+        </div>
+
+        <!-- Image -->
+        <div class="about-image animate-fadeIn animate-delay-200" style="flex: 1 1 500px;">
+          <div style="position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 20px rgba(227, 252, 2, 0.1);">
+            <img src="{{ 'about-laptop-desk.webp' | asset_url }}" 
+                 alt="Workspace with laptop showing data analytics" 
+                 style="width: 100%; height: auto; display: block; filter: brightness(0.8);">
+            
+            <!-- Neon gradient overlay -->
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(227, 252, 2, 0.08) 0%, transparent 50%); pointer-events: none;"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider" 
+       style="
+          width: 100%;
+          height: 2px;
+          margin: 3rem 0 4rem 0;
+          background: linear-gradient(
+              90deg,
+              transparent 0%,
+              rgba(227, 252, 2, 0.6) 20%,
+              rgba(227, 252, 2, 1) 50%,
+              rgba(227, 252, 2, 0.6) 80%,
+              transparent 100%
+          );
+          box-shadow: 0 0 20px rgba(227, 252, 2, 0.4);
+          border-radius: 50px;
+       ">
+  </div>
+
+  <!-- Who We Help Section -->
+  <section class="section" style="position: relative;">
+    <div class="bg-glow bg-glow-2 animate-float animate-delay-400"></div>
+    <div class="container">
+      <h2 class="section-title animate-fadeIn">Who we help</h2>
+      <p class="section-subtitle animate-fadeIn animate-delay-200">
+        We work with ambitious African businesses that want data to guide their growth.
+      </p>
+      
+      <div class="grid grid-3">
+        <!-- Card 1: Retail Brands -->
+        <div class="card animate-fadeInUp">
+          <img src="{{ 'icon-retail.png' | asset_url }}" alt="Retail brands icon" class="card-icon">
+          <h3 class="card-title">Retail brands</h3>
+          <p class="card-text">
+            Fashion, beauty and FMCG brands that want better visibility on sales, stock and customers so they can grow revenue while protecting margin.
+          </p>
+        </div>
+
+        <!-- Card 2: Service Businesses -->
+        <div class="card animate-fadeInUp animate-delay-200">
+          <img src="{{ 'icon-services.png' | asset_url }}" alt="Service businesses icon" class="card-icon">
+          <h3 class="card-title">Service businesses</h3>
+          <p class="card-text">
+            Clinics, salons, training providers and experience-led brands that need to understand utilisation, repeat bookings and which offers actually move the needle.
+          </p>
+        </div>
+
+        <!-- Card 3: Digital & Tech Products -->
+        <div class="card animate-fadeInUp animate-delay-400">
+          <img src="{{ 'icon-digital.png' | asset_url }}" alt="Digital & tech products icon" class="card-icon">
+          <h3 class="card-title">Digital & tech products</h3>
+          <p class="card-text">
+            Marketplaces, apps and web3 products that care about user growth, activation and retention and want data to guide spend and roadmap decisions.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider" 
+       style="
+          width: 100%;
+          height: 2px;
+          margin: 3rem 0 4rem 0;
+          background: linear-gradient(
+              90deg,
+              transparent 0%,
+              rgba(227, 252, 2, 0.6) 20%,
+              rgba(227, 252, 2, 1) 50%,
+              rgba(227, 252, 2, 0.6) 80%,
+              transparent 100%
+          );
+          box-shadow: 0 0 20px rgba(227, 252, 2, 0.4);
+          border-radius: 50px;
+       ">
+  </div>
+
+  <!-- How Tenda Works Section -->
+  <section class="section" style="position: relative;">
+    <div class="bg-glow bg-glow-3 animate-float animate-delay-200"></div>
+    <div class="container">
+      <h2 class="section-title animate-fadeIn">How Tenda works</h2>
+      <p class="section-subtitle animate-fadeIn animate-delay-200">
+        Three simple steps to turn your data into decisions that grow your business.
+      </p>
+      
+      <div class="grid grid-steps">
+        <!-- Step 1 -->
+        <div class="step-item animate-slideInLeft">
+          <div class="step-header">
+            <div class="step-number">1</div>
+            <img src="{{ 'icon-connect.png' | asset_url }}" alt="Connect data icon" class="step-icon">
+          </div>
+          <h3 class="card-title">Connect your data</h3>
+          <p class="card-text">
+            We connect your POS, ecommerce, booking and inventory tools into one source of truth so you finally see what's really happening across your business.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-item animate-slideInLeft animate-delay-200">
+          <div class="step-header">
+            <div class="step-number">2</div>
+            <img src="{{ 'icon-kpi.png' | asset_url }}" alt="KPI icon" class="step-icon">
+          </div>
+          <h3 class="card-title">Agree the right KPIs</h3>
+          <p class="card-text">
+            Together we choose the 3–5 numbers that matter most revenue, margin, stock health and customer growth and build simple dashboards around them.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-item animate-slideInLeft animate-delay-400">
+          <div class="step-header">
+            <div class="step-number">3</div>
+            <img src="{{ 'icon-execute.png' | asset_url }}" alt="Execute icon" class="step-icon">
+          </div>
+          <h3 class="card-title">Execute and optimise</h3>
+          <p class="card-text">
+            We help you act on the insights with changes to assortment, pricing, campaigns and systems, then track results so every month your numbers move in the right direction.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider" 
+       style="
+          width: 100%;
+          height: 2px;
+          margin: 3rem 0 4rem 0;
+          background: linear-gradient(
+              90deg,
+              transparent 0%,
+              rgba(227, 252, 2, 0.6) 20%,
+              rgba(227, 252, 2, 1) 50%,
+              rgba(227, 252, 2, 0.6) 80%,
+              transparent 100%
+          );
+          box-shadow: 0 0 20px rgba(227, 252, 2, 0.4);
+          border-radius: 50px;
+       ">
+  </div>
+
+  <!-- What We Offer Section -->
+  <section class="section" style="position: relative;">
+    <div class="container">
+      <h2 class="section-title animate-fadeIn">What we offer</h2>
+      <p class="section-subtitle animate-fadeIn animate-delay-200">
+        Three ways to work with Tenda, whether you need hands-on support, self-serve tools, or a complete analytics platform.
+      </p>
+      
+      <div class="grid grid-3 what-we-offer-grid">
+        <!-- Tenda Advisory -->
+        <div class="card animate-fadeInUp" style="background: linear-gradient(135deg, rgba(227, 252, 2, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);">
+          <img src="{{ 'icon-advisory.png' | asset_url }}" alt="Advisory icon" class="card-icon">
+          <h3 class="card-title">Growth and Advisory Services</h3>
+          <p class="card-text" style="margin-bottom: 1.5rem;">
+            Hands-on strategy and execution support for retail and service brands covering growth strategy, campaigns, operations and data so you can scale with confidence.
+          </p>
+          <a href="/pages/growth-advisory" class="link-arrow" style="margin-top: auto;">
+            Learn more →
+          </a>
+        </div>
+
+        <!-- Tenda Platform -->
+        <div class="card animate-fadeInUp animate-delay-200" style="background: linear-gradient(135deg, rgba(227, 252, 2, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);">
+          <img src="{{ 'icon-consulting.png' | asset_url }}" alt="Platform icon" class="card-icon">
+          <h3 class="card-title">Data Consulting And Analytics</h3>
+          <p class="card-text" style="margin-bottom: 1.5rem;">
+            A BI workspace built for African operators, bringing your sales, stock and customer data into one place with dashboards designed for daily decisions.
+          </p>
+          <a href="/pages/data-consulting-analytics" class="link-arrow" style="margin-top: auto;">
+            Learn more →
+          </a>
+        </div>
+
+        <!-- Tenda Digital Products -->
+        <div class="card animate-fadeInUp animate-delay-400" style="background: linear-gradient(135deg, rgba(227, 252, 2, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);">
+          <img src="{{ 'icon-products.png' | asset_url }}" alt="Digital products icon" class="card-icon">
+          <h3 class="card-title">Digital Products</h3>
+          <p class="card-text" style="margin-bottom: 1.5rem;">
+            Plug‑and‑play templates, playbooks and tools that help you track KPIs, plan campaigns and manage your business even before you're ready for full advisory or platform access.
+          </p>
+          <a href="/collections/all" class="link-arrow" style="color: rgba(227, 252, 2, 0.6); margin-top: auto;">
+            Coming soon →
+          </a>
+        </div>
+
+        <!-- Tenda BI Platform -->
+        <div class="card animate-fadeInUp animate-delay-600" style="background: linear-gradient(135deg, rgba(227, 252, 2, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%); border-color: rgba(227, 252, 2, 0.3);">
+          <div class="badge-container">
+            <img src="{{ 'icon-platform.png' | asset_url }}" alt="BI Platform icon" class="card-icon" style="margin-bottom: 0; width: 50px; height: 50px;">
+            <span class="coming-soon-badge">Coming Soon</span>
+          </div>
+          <h3 class="card-title">Tenda BI Platform</h3>
+          <p class="card-text" style="margin-bottom: 1.5rem;">
+            A comprehensive business intelligence workspace built specifically for African operators, bringing your sales, stock, and customer data into one powerful platform with dashboards designed for daily decisions.
+          </p>
+          <a href="/pages/waitlist" class="link-arrow" style="color: rgba(227, 252, 2, 0.6); margin-top: auto;">
+            Join waitlist →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================
+       TENDA INSIGHTS HUB - CLOSING SECTION
+       =================================== -->
+
+       
+
+  <section id="homepage-blog-overview"
+  style="
+    padding: 100px 0;
+    background: #000000;
+    position: relative;
+  ">
+
+  <!-- Integrated Neon Divider -->
+  <div style="
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(227, 252, 2, 0.6) 20%,
+        rgba(227, 252, 2, 1) 50%,
+        rgba(227, 252, 2, 0.6) 80%,
+        transparent 100%
+      );
+      box-shadow: 0 0 20px rgba(227, 252, 2, 0.4);
+      border-radius: 50px;
+    ">
+  </div>
+    
+    <!-- Vertical Neon Accent Line (Drawer-style) -->
+    <div style="position: absolute; right: 0; top: 15%; bottom: 15%; width: 2px; background: linear-gradient(180deg, transparent 0%, rgba(227, 252, 2, 0.6) 20%, rgba(227, 252, 2, 1) 50%, rgba(227, 252, 2, 0.6) 80%, transparent 100%); box-shadow: -2px 0 12px rgba(227, 252, 2, 0.4);"></div>
+    
+    <div class="container" style="max-width: 1280px; margin: 0 auto; padding: 0 2rem;">
+      
+      <style>
+/* GRID */
+.insights-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+gap:2rem;
+margin-bottom:4rem;
+}
+
+/* CARD BASE */
+.blog-preview-card{
+position:relative;
+padding:2rem;
+border-radius:18px;
+background:rgba(255,255,255,0.03);
+backdrop-filter:blur(20px);
+-webkit-backdrop-filter:blur(20px);
+border:1px solid rgba(227,252,2,0.15);
+transition:all .35s ease;
+overflow:hidden;
+}
+
+/* TOP GLOW LINE */
+.blog-preview-card::before{
+content:"";
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:2px;
+background:#E3FC02;
+box-shadow:0 0 15px #E3FC02;
+}
+
+/* HOVER EFFECT */
+.blog-preview-card:hover{
+transform:translateY(-8px);
+border:1px solid rgba(227,252,2,0.35);
+box-shadow:
+0 10px 30px rgba(0,0,0,0.6),
+0 0 20px rgba(227,252,2,0.15);
+}
+
+/* CATEGORY */
+.blog-category{
+color:#E3FC02;
+font-size:.7rem;
+letter-spacing:1.5px;
+text-transform:uppercase;
+font-weight:700;
+margin-bottom:1rem;
+}
+
+/* TITLE */
+.blog-title{
+color:#fff;
+font-size:1.375rem;
+font-weight:700;
+line-height:1.3;
+margin:1rem 0 .75rem 0;
+}
+
+/* DESCRIPTION */
+.blog-desc{
+color:rgba(255,255,255,0.6);
+font-size:.95rem;
+line-height:1.6;
+margin-bottom:1.5rem;
+}
+
+/* LINK */
+.blog-link{
+color:#E3FC02;
+text-decoration:none;
+font-size:.875rem;
+font-weight:700;
+padding-bottom:4px;
+display:inline-block;
+position:relative;
+}
+
+/* animated underline */
+.blog-link::after{
+content:"";
+position:absolute;
+left:0;
+bottom:0;
+width:0;
+height:2px;
+background:#E3FC02;
+transition:width .3s ease;
+}
+
+.blog-preview-card:hover .blog-link::after{
+width:100%;
+}
+
+/* CTA BUTTON */
+.btn-secondary{
+padding:1.25rem 3rem;
+border:2px solid #E3FC02;
+color:#E3FC02;
+text-decoration:none;
+border-radius:980px;
+font-weight:700;
+font-size:.875rem;
+letter-spacing:1px;
+text-transform:uppercase;
+display:inline-block;
+transition:all .35s ease;
+}
+
+.btn-secondary:hover{
+background:#E3FC02;
+color:#000;
+box-shadow:0 0 20px rgba(227,252,2,0.4);
+}
+</style>
+
+
+<!-- Header -->
+<div style="margin-bottom:50px;text-align:left;">
+<span style="color:#E3FC02;font-size:.75rem;letter-spacing:3px;font-weight:800;text-transform:uppercase;display:inline-block;margin-bottom:12px;">TENDA INSIGHTS HUB</span>
+
+<h2 style="color:#fff;font-size:clamp(2rem,4vw,3rem);margin:0;font-weight:800;line-height:1.2;">
+The Journal: Operational Intelligence
+</h2>
+
+<p style="color:rgba(255,255,255,0.6);font-size:1.125rem;margin-top:1rem;max-width:600px;">
+Real-world case studies, data strategies, and insights from operators building across Africa.
+</p>
+</div>
+
+
+<!-- GRID -->
+<div class="insights-grid">
+
+<div class="blog-preview-card">
+  <p class="blog-category">MARCH 2026 / DATA PRIVACY</p>
+
+  <h4 class="blog-title">
+    Outsmarting the M-Pesa Privacy Curve: The Tenda POV
+  </h4>
+
+  <p class="blog-desc">
+    Safaricom is rolling out data-minimization features that mask phone numbers on M-Pesa transactions. 
+    Retailers must move away from data-scraping and adopt permission-based systems to keep 
+    understanding their customers in this new privacy-first era.
+  </p>
+
+  <a class="blog-link"
+     href="https://www.linkedin.com/pulse/outsmarting-mpesa-privacy-curve-tenda-pov-tenda-analytics-16aff/?published=t"
+     target="_blank">
+    View Full Insight →
+  </a>
+</div>
+
+<!-- CARD -->
+<div class="blog-preview-card">
+<p class="blog-category">APRIL 2026 / MARKETING AI</p>
+
+<h4 class="blog-title">
+How AI Assistants Are Quietly Rewriting the Marketing Funnel
+</h4>
+
+<p class="blog-desc">
+AI assistants are quietly changing how people search, compare, and choose products. 
+Instead of scrolling through pages of results, customers now rely on AI to summarize 
+information and recommend options instantly.
+</p>
+
+<a class="blog-link"
+href="https://www.linkedin.com/pulse/how-ai-assistants-quietly-rewriting-marketing-funnel-jocelyn-muoki-6j2wf/"
+target="_blank">
+View Full Insight →
+</a>
+</div>
+
+
+<!-- CARD -->
+<div class="blog-preview-card">
+<p class="blog-category">MARCH 2026 / RETAIL NUMBERS</p>
+
+<h4 class="blog-title">
+Busy but Underpriced: The Quiet Margin Killers
+</h4>
+
+<p class="blog-desc">
+Small costs like Glovo bags and delivery commissions are invisible leaks.
+Here is how to spot where your hard work is losing its value.
+</p>
+
+<a class="blog-link"
+href="https://www.linkedin.com/pulse/busy-underpriced-how-small-costs-like-glovos-bag-quietly-hjtuf/"
+target="_blank">
+View Full Insight →
+</a>
+</div>
+
+
+<!-- CARD -->
+<div class="blog-preview-card">
+<p class="blog-category">MAY 2025 / RETAIL OPS</p>
+
+<h4 class="blog-title">
+How Denri Africa is Disrupting Fashion Retail
+</h4>
+
+<p class="blog-desc">
+Modern African branding isn't just about the logo — it is about the data behind
+the supply chain and customer experience.
+</p>
+
+<a class="blog-link"
+href="https://www.linkedin.com/pulse/how-denri-africa-disrupting-fashion-retail-modern-african-muoki-3nxbf/"
+target="_blank">
+Read Full Case Study →
+</a>
+</div>
+
+
+<!-- CARD -->
+<div class="blog-preview-card">
+<p class="blog-category">APRIL 2025 / MARKETING AI</p>
+
+<h4 class="blog-title">
+AI & The Human Advantage in Marketing
+</h4>
+
+<p class="blog-desc">
+AI won't replace marketers, but marketers using AI will replace those who don't.
+Here is how to stay ahead of the curve.
+</p>
+
+<a class="blog-link"
+href="https://www.linkedin.com/pulse/future-now-marketing-ai-human-advantage-jocelyn-muoki-zrevf/"
+target="_blank">
+Read Deep Dive →
+</a>
+</div>
+
+</div>
+
+
+<!-- CTA -->
+<div style="margin-top:4rem;text-align:center;">
+<a href="/blogs/news" class="btn-secondary">
+Explore The Full Archive
+</a>
+</div>
+
+  </section>
+
+</div>
+
+<style>
+  /* Blog Preview Card Hover Effects */
+  .blog-preview-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: #E3FC02;
+    box-shadow: 0 12px 40px rgba(227, 252, 2, 0.15);
+    transform: translateY(-8px);
+  }
+
+  .blog-preview-card:hover a {
+    color: #ffffff;
+    border-bottom-color: #ffffff;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    #homepage-blog-overview {
+      padding: 60px 0 !important;
+    }
+
+    #homepage-blog-overview .container {
+      padding: 0 1rem !important;
+    }
+
+    .blog-preview-card {
+      padding: 1.5rem !important;
+    }
+  }
+</style>
+
+<script>
+  // Intersection Observer for scroll animations
+  document.addEventListener('DOMContentLoaded', function() {
+    const observerOptions = {
+      threshold: 0.15,
+      rootMargin: '0px 0px -80px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+        }
+      });
+    }, observerOptions);
+
+    // Observe all animated elements
+    const animatedElements = document.querySelectorAll('[class*="animate-"]');
+    animatedElements.forEach(el => {
+      el.style.animationPlayState = 'paused';
+      observer.observe(el);
+    });
+
+    // Mac-Style Insights Drawer Logic
+    const bubble = document.getElementById('bubbleTrigger');
+    const drawer = document.getElementById('insightsDrawer');
+    const backdrop = document.getElementById('drawerBackdrop');
+    const closeBtn = document.getElementById('drawerClose');
+
+    // Open drawer on pill click
+    bubble.addEventListener('click', function(e) {
+      e.stopPropagation();
+      drawer.classList.add('open');
+      backdrop.classList.add('active');
+      bubble.classList.add('hidden');
+    });
+
+    // Close drawer on close button click
+    closeBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      drawer.classList.remove('open');
+      backdrop.classList.remove('active');
+      setTimeout(() => {
+        bubble.classList.remove('hidden');
+      }, 200);  // Delay pill reappearance
+    });
+
+    // Close drawer on backdrop click (Mac-style dismiss)
+    backdrop.addEventListener('click', function(e) {
+      if (e.target === backdrop) {
+        drawer.classList.remove('open');
+        backdrop.classList.remove('active');
+        setTimeout(() => {
+          bubble.classList.remove('hidden');
+        }, 200);
+      }
+    });
+
+    // Prevent drawer clicks from closing
+    drawer.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
+    // Shrink pill on scroll (Mac minimize effect)
+    let lastScrollTop = 0;
+    window.addEventListener('scroll', function() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      
+      if (scrollTop > 400) {
+        bubble.classList.add('scrolled');
+      } else {
+        bubble.classList.remove('scrolled');
+      }
+      
+      lastScrollTop = scrollTop;
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && drawer.classList.contains('open')) {
+        drawer.classList.remove('open');
+        backdrop.classList.remove('active');
+        setTimeout(() => {
+          bubble.classList.remove('hidden');
+        }, 200);
+      }
+    });
+  });
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+
+  // ===================================
+  // ENGAGEMENT-BASED ENTRY MODAL LOGIC
+  // ===================================
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const entryModal = document.getElementById('entryModal');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalForm = document.getElementById('modalNewsletterForm');
+    const modalDefaultState = document.getElementById('modalDefaultState');
+    const modalSuccessState = document.getElementById('modalSuccessState');
+
+    let modalTriggered = false;
+    let scrollDepthReached = false;
+    let timeOnPageReached = false;
+
+    // Cookie Helper Functions
+    function setCookie(name, value, days) {
+      const expires = new Date();
+      expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+      document.cookie = name + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
+    }
+
+    function getCookie(name) {
+      const nameEQ = name + '=';
+      const ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    // Show Modal Function
+    function showModal() {
+      if (modalTriggered) return;
+      
+      modalTriggered = true;
+      entryModal.classList.add('active');
+      setCookie('tenda_modal_seen', 'true', 30); // Remember for 30 days
+    }
+
+    // Close Modal Function
+    function closeModal() {
+      entryModal.classList.remove('active');
+    }
+
+    // Check if modal should be enabled
+    const hasSeenModal = getCookie('tenda_modal_seen');
+    
+    if (!hasSeenModal) {
+      
+      // ===================================
+      // TRIGGER 1: SCROLL DEPTH (50%)
+      // ===================================
+      
+      window.addEventListener('scroll', function() {
+        if (scrollDepthReached || modalTriggered) return;
+        
+        const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+        
+        if (scrollPercent >= 50) {
+          scrollDepthReached = true;
+          console.log('50% scroll depth reached - showing modal');
+          showModal();
+        }
+      });
+
+      // ===================================
+      // TRIGGER 2: TIME ON PAGE (45 seconds)
+      // ===================================
+      
+      setTimeout(function() {
+        if (!scrollDepthReached && !modalTriggered) {
+          timeOnPageReached = true;
+          console.log('45 seconds elapsed - showing modal');
+          showModal();
+        }
+      }, 45000); // 45 seconds
+
+      // ===================================
+      // TRIGGER 3: EXIT INTENT
+      // ===================================
+      
+      document.addEventListener('mouseleave', function(e) {
+        if (modalTriggered) return;
+        
+        // Detect if cursor is leaving from the top (towards browser controls)
+        if (e.clientY <= 10) {
+          console.log('Exit intent detected - showing modal');
+          showModal();
+        }
+      });
+    }
+
+    // ===================================
+    // MODAL INTERACTIONS
+    // ===================================
+
+    // Close button click
+    if (modalCloseBtn) {
+      modalCloseBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeModal();
+      });
+    }
+
+    // Close on backdrop click
+    if (entryModal) {
+      entryModal.addEventListener('click', function(e) {
+        if (e.target === entryModal) {
+          closeModal();
+        }
+      });
+    }
+
+    // Prevent modal content clicks from closing
+    const modalContent = document.querySelector('.tenda-modal-content');
+    if (modalContent) {
+      modalContent.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && entryModal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    // ===================================
+    // FORM SUBMISSION
+    // ===================================
+
+    if (modalForm) {
+      modalForm.addEventListener('submit', function(e) {
+        // After form submits, check for success
+        setTimeout(function() {
+          // Check if URL has newsletter hash (Shopify success redirect)
+          if (window.location.hash === '#newsletter' || window.location.search.includes('customer_posted=true')) {
+            modalDefaultState.style.display = 'none';
+            modalSuccessState.classList.add('active');
+            
+            // Auto-close after 4 seconds
+            setTimeout(function() {
+              closeModal();
+              
+              // Reset for next time (if they clear cookies)
+              setTimeout(function() {
+                modalDefaultState.style.display = 'block';
+                modalSuccessState.classList.remove('active');
+              }, 500);
+            }, 4000);
+          }
+        }, 500);
+      });
+    }
+
+    console.log('Engagement-based modal initialized');
+  });
+   // ===================================
+  // ENGAGEMENT-BASED ENTRY MODAL LOGIC
+  // ===================================
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const entryModal = document.getElementById('entryModal');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalForm = document.getElementById('modalNewsletterForm');
+    const modalDefaultState = document.getElementById('modalDefaultState');
+    const modalSuccessState = document.getElementById('modalSuccessState');
+    const modalContentPanel = document.querySelector('.modal-content-panel');
+    const modalImagePanel = document.querySelector('.modal-image-panel');
+
+    let modalTriggered = false;
+    let scrollDepthReached = false;
+    let timeOnPageReached = false;
+
+    // Cookie Helper Functions
+    function setCookie(name, value, days) {
+      const expires = new Date();
+      expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+      document.cookie = name + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
+    }
+
+    function getCookie(name) {
+      const nameEQ = name + '=';
+      const ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    // Show Modal Function
+    function showModal() {
+      if (modalTriggered) return;
+      
+      modalTriggered = true;
+      entryModal.classList.add('active');
+      setCookie('tenda_modal_seen', 'true', 30); // Remember for 30 days
+    }
+
+    // Close Modal Function
+    function closeModal() {
+      entryModal.classList.remove('active');
+    }
+
+    // Check if modal should be enabled
+    const hasSeenModal = getCookie('tenda_modal_seen');
+    
+    if (!hasSeenModal) {
+      
+      // ===================================
+      // TRIGGER 1: SCROLL DEPTH (50%)
+      // ===================================
+      
+      window.addEventListener('scroll', function() {
+        if (scrollDepthReached || modalTriggered) return;
+        
+        const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+        
+        if (scrollPercent >= 50) {
+          scrollDepthReached = true;
+          console.log('50% scroll depth reached - showing modal');
+          showModal();
+        }
+      });
+
+      // ===================================
+      // TRIGGER 2: TIME ON PAGE (45 seconds)
+      // ===================================
+      
+      setTimeout(function() {
+        if (!scrollDepthReached && !modalTriggered) {
+          timeOnPageReached = true;
+          console.log('45 seconds elapsed - showing modal');
+          showModal();
+        }
+      }, 45000); // 45 seconds
+
+      // ===================================
+      // TRIGGER 3: EXIT INTENT
+      // ===================================
+      
+      document.addEventListener('mouseleave', function(e) {
+        if (modalTriggered) return;
+        
+        // Detect if cursor is leaving from the top (towards browser controls)
+        if (e.clientY <= 10) {
+          console.log('Exit intent detected - showing modal');
+          showModal();
+        }
+      });
+    }
+
+    // ===================================
+    // MODAL INTERACTIONS
+    // ===================================
+
+    // Close button click
+    if (modalCloseBtn) {
+      modalCloseBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeModal();
+      });
+    }
+
+    // Close on backdrop click
+    if (entryModal) {
+      entryModal.addEventListener('click', function(e) {
+        if (e.target === entryModal) {
+          closeModal();
+        }
+      });
+    }
+
+    // Prevent modal content clicks from closing
+    const modalContent = document.querySelector('.tenda-modal-content');
+    if (modalContent) {
+      modalContent.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && entryModal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    // ===================================
+    // FORM SUBMISSION
+    // ===================================
+
+    if (modalForm) {
+      modalForm.addEventListener('submit', function(e) {
+        // After form submits, check for success
+        setTimeout(function() {
+          // Check if URL has newsletter hash (Shopify success redirect)
+          if (window.location.hash === '#newsletter' || window.location.search.includes('customer_posted=true')) {
+            // Hide content panels
+            if (modalContentPanel) modalContentPanel.style.display = 'none';
+            if (modalImagePanel) modalImagePanel.style.display = 'none';
+            
+            // Show success state
+            modalSuccessState.classList.add('active');
+            
+            // Auto-close after 4 seconds
+            setTimeout(function() {
+              closeModal();
+              
+              // Reset for next time (if they clear cookies)
+              setTimeout(function() {
+                if (modalContentPanel) modalContentPanel.style.display = 'flex';
+                if (modalImagePanel) modalImagePanel.style.display = 'block';
+                modalSuccessState.classList.remove('active');
+              }, 500);
+            }, 4000);
+          }
+        }, 500);
+      });
+    }
+
+    console.log('Dual-panel modal initialized');
+  });
+
+
+  # CUSTOM STATIC PAGES (HIGH PRIORITY)
+
+if request.path == '/'
+  assign og_title = "Tenda Analytics | Data Driven Growth"
+  assign og_description = "Strategy led growth powered by analytics, insights, and execution frameworks."
+  assign og_image = settings.share_image | image_url: width: 1200, height: 630, crop: 'center'
+endif
+
+if request.path contains '/pages/about'
+  assign og_title = "About Tenda Analytics"
+  assign og_description = "We help brands grow using data, analytics, and proven execution strategies."
+endif
+
+if request.path contains '/pages/services'
+  assign og_title = "Our Services | Tenda Analytics"
+  assign og_description = "From analytics dashboards to growth strategy, we build systems that scale businesses."
+endif
+
+if request.path contains '/blogs'
+  assign og_title = "Tenda Insights"
+  assign og_description = "Data driven insights, analytics strategies, and growth playbooks."
+endif
+
+if request.path contains '/pages/tenda-academy'
+  assign og_title = "Tenda Academy"
+  assign og_description = "Learn analytics, data systems, and growth frameworks through practical training."
+endif
+
+if request.path contains '/pages/faq'
+  assign og_title = "Frequently Asked Questions"
+  assign og_description = "Answers to common questions about Tenda Analytics services and solutions."
+endif
+
+if request.path contains '/collections' or request.path contains '/products'
+  assign og_title = "Tenda Shop"
+  assign og_description = "Explore data driven playbooks, templates, and tools for growth."
+endif
+
+</script>

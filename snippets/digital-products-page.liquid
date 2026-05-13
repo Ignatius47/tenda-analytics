@@ -1,0 +1,1032 @@
+{% comment %}
+  Digital Products — App Store Experience
+  Tenda — Business tools for real growth
+{% endcomment %}
+
+<style>
+/* ================================================
+   DIGITAL PRODUCTS — APP STORE EXPERIENCE
+   ================================================ */
+
+:root {
+  --dp-bg:        #121212;  /* Solid deep charcoal */
+  --dp-surface:   rgba(28, 28, 30, 0.92);
+  --dp-accent:    #E3FC02;  /* Neon yellow primary */
+  --dp-cyan:      #00F2FF;  /* Cyan for technical details only */
+  --dp-text:      #ffffff;
+  --dp-muted:     rgba(255,255,255,0.55);
+  --dp-border:    rgba(227,252,2,0.1);
+  --dp-spring:    cubic-bezier(0.34,1.56,0.64,1);
+  --dp-smooth:    cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--dp-bg);
+  color: var(--dp-text);
+  font-family: system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── SUBTLE STATIC NOISE TEXTURE ──────────────── */
+.dp-background-texture {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dp-page { position: relative; z-index: 1; }
+
+/* ================================================
+   HERO SECTION — TENDA BI PLATFORM
+   ================================================ */
+
+.dp-hero {
+  padding: 160px 5% 120px;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.dp-hero__content {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.dp-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--dp-accent);
+  margin-bottom: 2rem;
+}
+
+.dp-hero__eyebrow::before {
+  content: '';
+  width: 9px; height: 9px;
+  background: var(--dp-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(227,252,2,0.8);
+  animation: dpDotPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes dpDotPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(227,252,2,0.8); }
+  50%      { box-shadow: 0 0 0 10px rgba(227,252,2,0); }
+}
+
+.dp-hero__title {
+  font-size: clamp(3rem, 8vw, 5.75rem);
+  font-weight: 900;
+  letter-spacing: -0.055em;
+  line-height: 1.3;  /* Fixed to prevent letter clipping */
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.2em;  /* Extra padding for descenders */
+  overflow: visible;
+}
+
+.dp-hero__title span {
+  color: var(--dp-text);
+  /* Remove gradient animation - keep it clean */
+}
+
+.dp-hero__subtitle {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  color: var(--dp-muted);
+  line-height: 1.75;
+  margin-bottom: 2.5rem;
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Coming Soon Badge with Linear Shimmer */
+.coming-soon-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--dp-accent);
+  color: #000;
+  font-weight: 800;
+  font-size: 0.875rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 100px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(227,252,2,0.25);
+}
+
+/* Subtle linear shimmer */
+.coming-soon-badge::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 40%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  animation: badgeShimmer 3s ease-in-out infinite;
+}
+
+@keyframes badgeShimmer {
+  0%, 40%, 100% { left: -100%; }
+  60%, 80%       { left: 200%; }
+}
+
+.coming-soon-badge__dot {
+  width: 7px; height: 7px;
+  background: #000;
+  border-radius: 50%;
+}
+
+.dp-hero__buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.dp-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: var(--dp-accent);  /* Solid neon yellow */
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 2.25rem;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.01em;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 8px 28px rgba(227,252,2,0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+  min-width: 180px;  /* Ensure consistent width */
+}
+
+/* Remove shine sweep - keep it simple */
+.dp-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(227,252,2,0.45), inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+.dp-btn-primary svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
+.dp-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--dp-text);
+  border-radius: 12px;
+  padding: 1rem 2.25rem;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  min-width: 180px;  /* Match primary button width */
+}
+
+.dp-btn-secondary:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(227,252,2,0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.dp-btn-secondary svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
+/* ================================================
+   PRODUCT GALLERY GRID
+   ================================================ */
+
+.dp-products-section {
+  padding: 120px 5% 100px;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.dp-products-section__header {
+  text-align: center;
+  margin-bottom: 5rem;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: dpSlideUp 0.6s ease 0.3s forwards;
+}
+
+@keyframes dpSlideUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dp-products-section__label {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--dp-accent);  /* Changed from cyan to yellow */
+  margin-bottom: 1.25rem;
+}
+
+.dp-products-section__title {
+  font-size: clamp(2.5rem, 5vw, 3.75rem);
+  font-weight: 900;
+  letter-spacing: -0.045em;
+  line-height: 1.3;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.15em;
+}
+
+.dp-products-section__subtitle {
+  font-size: 1.3rem;
+  color: var(--dp-muted);
+  max-width: 680px;
+  margin: 0 auto;
+  line-height: 1.75;
+}
+
+/* Product Cards Grid */
+.dp-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+  gap: 2.5rem;
+}
+
+/* ── UNIFIED PROFESSIONAL PRODUCT CARD ──────────── */
+.product-card {
+  background: rgba(255, 255, 255, 0.03);  /* Clean frosted look */
+  backdrop-filter: blur(25px) saturate(140%);
+  -webkit-backdrop-filter: blur(25px) saturate(140%);
+  border: 1px solid rgba(227,252,2,0.1);  /* Subtle neon edge */
+  border-radius: 20px;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  
+  /* Staggered entrance - simpler animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.product-card:nth-child(1) { animation: cardFadeIn 0.6s ease 0.1s forwards; }
+.product-card:nth-child(2) { animation: cardFadeIn 0.6s ease 0.2s forwards; }
+.product-card:nth-child(3) { animation: cardFadeIn 0.6s ease 0.3s forwards; }
+.product-card:nth-child(4) { animation: cardFadeIn 0.6s ease 0.4s forwards; }
+
+@keyframes cardFadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Simple hover state - no color changes */
+.product-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(227,252,2,0.25);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+
+/* Top-edge seam */
+.product-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 15%; right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(227,252,2,0.25) 50%, 
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+.product-card > * { position: relative; z-index: 1; }
+
+/* Card Header - Strict Grid Alignment */
+.product-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  gap: 1.5rem;
+}
+
+.product-card__icon {
+  width: 68px; height: 68px;
+  background: rgba(227,252,2,0.08);
+  border: 1px solid rgba(227,252,2,0.2);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.product-card:hover .product-card__icon {
+  background: rgba(227,252,2,0.12);
+  border-color: rgba(227,252,2,0.35);
+  transform: scale(1.05);
+}
+
+.product-card__icon svg {
+  width: 34px; height: 34px;
+  stroke: var(--dp-accent);
+  fill: none;
+  stroke-width: 2;
+}
+
+.product-card__badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.625rem;
+}
+
+.product-card__version {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--dp-muted);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 0.325rem 0.8rem;
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;  /* Align numbers in grid */
+}
+
+.product-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 0.325rem 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.product-card__status--live {
+  color: var(--dp-cyan);
+  background: rgba(0,242,255,0.08);
+  border: 1px solid rgba(0,242,255,0.2);
+}
+
+.product-card__status--live::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--dp-cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0,242,255,0.7);
+  animation: dpDotPulse 2.5s ease-in-out infinite;
+}
+
+.product-card__status--dev {
+  color: var(--dp-accent);
+  background: rgba(227,252,2,0.08);
+  border: 1px solid rgba(227,252,2,0.2);
+}
+
+.product-card__status--dev::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--dp-accent);
+  border-radius: 50%;
+}
+
+/* Card Content - Fixed Typography */
+.product-card__title {
+  font-size: 1.875rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.3;  /* Fixed to prevent letter clipping */
+  margin-bottom: 1rem;
+  padding-bottom: 0.2em;  /* Extra padding for descenders like g, y, p */
+  overflow: visible;  /* Prevents cutting off letters */
+}
+
+.product-card__description {
+  font-size: 1.0625rem;
+  color: var(--dp-muted);
+  line-height: 1.75;
+  margin-bottom: 2.25rem;
+}
+
+/* Technical Spec Pills - Dark Translucent */
+.product-card__features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-bottom: 2.5rem;
+}
+
+.product-feature {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 0.5rem 0.875rem;
+  transition: all 0.3s ease;
+  position: relative;
+  cursor: default;
+}
+
+.product-feature::before {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--dp-cyan);
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(0,242,255,0.6);
+}
+
+.product-feature:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(227,252,2,0.25);
+}
+
+/* Development Progress Bar */
+.product-card__progress {
+  margin-bottom: 2rem;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  color: var(--dp-muted);
+  margin-bottom: 0.625rem;
+}
+
+.progress-percent {
+  color: var(--dp-accent);
+  font-weight: 700;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--dp-accent) 0%, rgba(227,252,2,0.6) 100%);
+  border-radius: 100px;
+  position: relative;
+  transition: width 1s ease;
+}
+
+/* Shimmer animation */
+.progress-bar__fill::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 40%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 40%, 100% { left: -100%; }
+  60%, 80%       { left: 200%; }
+}
+
+/* Card Actions - Perfect Alignment */
+.product-card__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.875rem;
+  margin-top: auto;  /* Push to bottom */
+}
+
+.product-card__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.product-card__btn--primary {
+  background: var(--dp-accent);  /* Solid neon yellow */
+  color: #000;
+  border: none;
+  box-shadow: 0 4px 16px rgba(227,252,2,0.25);
+}
+
+.product-card__btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(227,252,2,0.4);
+}
+
+.product-card__btn--secondary {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--dp-text);
+}
+
+.product-card__btn--secondary:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(227,252,2,0.3);
+  transform: translateY(-2px);
+}
+
+.product-card__btn svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  flex-shrink: 0;
+}
+
+/* ================================================
+   CHANGELOG MODAL (MacBook-style)
+   ================================================ */
+
+.changelog-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  z-index: 10000;
+  backdrop-filter: blur(8px);
+  background: rgba(0,0,0,0.6);
+}
+
+.changelog-modal.active {
+  display: flex;
+}
+
+.changelog-modal__content {
+  background: rgba(28,28,30,0.96);
+  backdrop-filter: blur(40px) saturate(170%);
+  -webkit-backdrop-filter: blur(40px) saturate(170%);
+  border: 1px solid rgba(227,252,2,0.2);  /* Neon yellow border */
+  border-radius: 24px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 
+    0 40px 100px rgba(0,0,0,0.7),
+    0 0 0 1px rgba(255,255,255,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  
+  /* Simple fade and slide */
+  opacity: 0;
+  transform: translateY(20px);
+  animation: modalFadeIn 0.4s ease forwards;
+}
+
+@keyframes modalFadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.changelog-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 2.5rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.changelog-modal__title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--dp-text);
+}
+
+.changelog-modal__close {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.changelog-modal__close:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(227,252,2,0.4);
+}
+
+.changelog-modal__close svg {
+  width: 18px; height: 18px;
+  stroke: var(--dp-text);
+}
+
+.changelog-modal__body {
+  padding: 2rem 2.5rem 2.5rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.changelog-version {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.changelog-version:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.changelog-version__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.changelog-version__number {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--dp-accent);  /* Neon yellow */
+}
+
+.changelog-version__date {
+  font-size: 0.875rem;
+  color: var(--dp-muted);
+}
+
+.changelog-version__changes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.changelog-change {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.65;
+}
+
+.changelog-change::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--dp-accent);  /* Neon yellow dot */
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.55em;
+  box-shadow: 0 0 8px rgba(227,252,2,0.6);
+}
+
+/* ================================================
+   RESPONSIVE
+   ================================================ */
+
+@media screen and (max-width: 1024px) {
+  .dp-products-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .product-card {
+    padding: 2.5rem 2rem;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .dp-hero {
+    padding: 120px 4% 80px;
+  }
+
+  .dp-hero__title {
+    font-size: clamp(2.5rem, 10vw, 3.5rem);
+  }
+
+  .dp-hero__subtitle {
+    font-size: 1.125rem;
+  }
+
+  .dp-hero__buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.875rem;
+  }
+
+  .dp-btn-primary,
+  .dp-btn-secondary {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .product-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .product-card__title {
+    font-size: 1.5rem;
+  }
+
+  .product-card__actions {
+    grid-template-columns: 1fr;  /* Stack buttons on mobile */
+  }
+
+  .product-card__btn {
+    width: 100%;
+  }
+
+  .changelog-modal {
+    padding: 1rem;
+  }
+
+  .changelog-modal__header,
+  .changelog-modal__body {
+    padding: 1.5rem;
+  }
+}
+
+.heavy-headline {
+  line-height: 1.3;
+  padding-bottom: 10px;
+  display: block;
+}
+
+</style>
+
+<!-- Subtle static noise texture -->
+<div class="dp-background-texture"></div>
+
+<div class="dp-page">
+
+  <!-- ========================================
+       HERO SECTION — TENDA BI PLATFORM
+       ======================================== -->
+  <section class="dp-hero">
+    <div class="dp-hero__content">
+      <p class="dp-hero__eyebrow">Featured Product</p>
+      
+      <h1 class="dp-hero__title heavy-headline">
+        <span>Tenda BI Platform</span>
+      </h1>
+      
+      <p class="dp-hero__subtitle">
+        Transform scattered data into strategic insights. Built for African businesses that need real-time analytics without the complexity.
+      </p>
+
+      <div class="coming-soon-badge">
+        <span class="coming-soon-badge__dot"></span>
+        Coming Soon
+      </div>
+
+      <div class="dp-hero__buttons">
+        <a href="#waitlist" class="dp-btn-primary">
+          Join Waitlist
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+        <a href="#products" class="dp-btn-secondary">
+          Browse All Products
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+<!-- Changelog Modal -->
+<div class="changelog-modal" id="changelogModal">
+  <div class="changelog-modal__content">
+    <div class="changelog-modal__header">
+      <h3 class="changelog-modal__title">Version History</h3>
+      <button class="changelog-modal__close" id="closeModal">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="changelog-modal__body" id="changelogBody">
+      <!-- Content injected dynamically -->
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // =========================================
+  // CHANGELOG MODAL
+  // =========================================
+  const changelogModal = document.getElementById('changelogModal');
+  const changelogBody = document.getElementById('changelogBody');
+  const closeModalBtn = document.getElementById('closeModal');
+
+  // Changelog data for each product
+  const changelogData = {
+    analytics: [
+      {
+        version: 'v2.4.1',
+        date: 'Feb 15, 2026',
+        changes: [
+          'Added real-time currency conversion for multi-country operations',
+          'Improved dashboard load times by 40% with lazy loading',
+          'New cohort retention visualization with customizable time windows',
+          'Fixed Safari rendering issue with chart animations'
+        ]
+      },
+      {
+        version: 'v2.4.0',
+        date: 'Feb 1, 2026',
+        changes: [
+          'Launched mobile app for iOS and Android',
+          'Added voice notes feature for dashboard annotations',
+          'New profit margin breakdown by product category',
+          'Enhanced export functionality (CSV, Excel, PDF)'
+        ]
+      },
+      {
+        version: 'v2.3.8',
+        date: 'Jan 20, 2026',
+        changes: [
+          'Improved M-PESA transaction reconciliation accuracy',
+          'Added custom date range presets (fiscal year, quarter)',
+          'Performance optimizations for large datasets (1M+ transactions)',
+          'New onboarding tutorial for first-time users'
+        ]
+      }
+    ],
+    inventory: [
+      {
+        version: 'v1.8.3',
+        date: 'Feb 12, 2026',
+        changes: [
+          'Added bulk barcode printing with custom label templates',
+          'New low stock alerts via SMS and email',
+          'Improved stock transfer workflow with photo verification',
+          'Fixed issue with decimal quantities in batch tracking'
+        ]
+      },
+      {
+        version: 'v1.8.0',
+        date: 'Jan 28, 2026',
+        changes: [
+          'Launched FIFO/LIFO cost accounting methods',
+          'Added expiry date tracking with automated alerts',
+          'New supplier management module with performance metrics',
+          'Integrated with 5 new shipping providers'
+        ]
+      }
+    ],
+    marketing: [
+      {
+        version: 'v0.9.2 Beta',
+        date: 'Feb 18, 2026',
+        changes: [
+          'WhatsApp Business API integration (in testing)',
+          'New drag-and-drop journey builder (70% complete)',
+          'Added SMS scheduling for Kenyan carriers',
+          'Improved segment performance for large customer lists'
+        ]
+      },
+      {
+        version: 'v0.8.5 Alpha',
+        date: 'Jan 15, 2026',
+        changes: [
+          'Initial email campaign builder launched',
+          'Basic customer segmentation by purchase history',
+          'Campaign analytics dashboard (beta)',
+          'M-PESA payment confirmations as campaign triggers'
+        ]
+      }
+    ],
+    pos: [
+      {
+        version: 'v3.1.0',
+        date: 'Feb 10, 2026',
+        changes: [
+          'Added support for 8 new local Kenyan POS systems',
+          'Improved offline sync reliability (99.9% success rate)',
+          'New M-PESA C2B integration for direct till payments',
+          'Enhanced conflict resolution for simultaneous updates'
+        ]
+      },
+      {
+        version: 'v3.0.5',
+        date: 'Jan 25, 2026',
+        changes: [
+          'Shopify POS integration now supports multiple locations',
+          'Added real-time inventory sync for Square',
+          'Improved error logging and diagnostics',
+          'New webhook retry logic for failed syncs'
+        ]
+      }
+    ]
+  };
+
+  // Open changelog modal
+  document.querySelectorAll('[data-changelog]').forEach(button => {
+    button.addEventListener('click', function() {
+      const product = this.getAttribute('data-changelog');
+      const versions = changelogData[product] || [];
+      
+      // Build HTML
+      let html = '';
+      versions.forEach(version => {
+        html += `
+          <div class="changelog-version">
+            <div class="changelog-version__header">
+              <span class="changelog-version__number">${version.version}</span>
+              <span class="changelog-version__date">${version.date}</span>
+            </div>
+            <div class="changelog-version__changes">
+              ${version.changes.map(change => `<div class="changelog-change">${change}</div>`).join('')}
+            </div>
+          </div>
+        `;
+      });
+      
+      changelogBody.innerHTML = html;
+      changelogModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  // Close modal
+  function closeModal() {
+    changelogModal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  closeModalBtn.addEventListener('click', closeModal);
+  
+  changelogModal.addEventListener('click', function(e) {
+    if (e.target === changelogModal) {
+      closeModal();
+    }
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && changelogModal.classList.contains('active')) {
+      closeModal();
+    }
+  });
+
+});
+</script>

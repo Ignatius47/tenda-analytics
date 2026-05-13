@@ -1,0 +1,974 @@
+{% comment %}
+  Tenda Live-Insight Blog Hub
+  Immersive, interactive grid with direct content integration
+{% endcomment %}
+
+<style>
+:root {
+  --neon: #E3FC02;
+  --neon-glow: rgba(227, 252, 2, 0.4);
+  --neon-subtle: rgba(227, 252, 2, 0.15);
+  --neon-border: rgba(227, 252, 2, 0.1);
+  --bg: #1F1F21;
+  --glass: rgba(255, 255, 255, 0.03);
+  --text: #f5f5f7;
+  --muted: rgba(245, 245, 247, 0.6);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ===================================
+   READING PROGRESS INDICATOR
+   =================================== */
+
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: var(--neon);
+  box-shadow: 0 0 15px var(--neon-glow);
+  z-index: 10001;
+  transition: width 0.1s ease;
+}
+
+/* ===================================
+   BLOG HUB CONTAINER
+   =================================== */
+
+.blog-hub {
+  background: linear-gradient(180deg, 
+    #1F1F21 0%,
+    #171719 15%,
+    #1F1F21 50%,
+    #171719 100%
+  );
+  min-height: 100vh;
+  padding-bottom: 10vh;
+}
+
+/* ===================================
+   HERO SECTION
+   =================================== */
+
+.blog-hero {
+  text-align: center;
+  padding: 15vh 5% 8vh;
+  position: relative;
+  border-bottom: 1px solid var(--neon-border);
+}
+
+.blog-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--neon) 50%,
+    transparent 100%
+  );
+}
+
+.hero-eyebrow {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--neon);
+  margin-bottom: 1.5rem;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  color: var(--muted);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ===================================
+   STICKY CATEGORY FILTERS
+   =================================== */
+
+.category-filters {
+  position: sticky;
+  top: 80px;
+  z-index: 100;
+  background: rgba(31, 31, 33, 0.95);
+  backdrop-filter: blur(30px);
+  border-bottom: 1px solid var(--neon-border);
+  padding: 1.5rem 5%;
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.filter-pill {
+  padding: 0.75rem 1.5rem;
+  border-radius: 980px;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  background: var(--glass);
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.filter-pill:hover {
+  border-color: rgba(227, 252, 2, 0.3);
+  background: rgba(227, 252, 2, 0.05);
+  color: var(--text);
+}
+
+.filter-pill.active {
+  background: var(--neon);
+  color: #000;
+  border-color: var(--neon);
+  box-shadow: 0 4px 20px var(--neon-glow);
+}
+
+/* ===================================
+   MASONRY GRID - 3 COLUMNS
+   =================================== */
+
+.blog-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 5vh 5%;
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+/* Hero Card - Spans 2 Columns */
+.blog-card.hero-card {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+/* ===================================
+   BLOG CARD DESIGN
+   =================================== */
+
+.blog-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 0.5px solid var(--neon-border);
+  border-top: 2px solid var(--neon);
+  border-radius: 24px;
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.blog-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Neon Top Border with Glow */
+.blog-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--neon);
+  box-shadow: 0 0 10px var(--neon-glow);
+  transition: all 0.4s ease;
+}
+
+/* Data-Pulse Hover Effect */
+.blog-card:hover {
+  transform: translateY(-10px);
+  border-color: var(--neon);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px var(--neon-subtle);
+  backdrop-filter: blur(40px);
+}
+
+.blog-card:hover::before {
+  height: 4px;
+  box-shadow: 0 0 25px var(--neon-glow), 0 0 50px rgba(227, 252, 2, 0.2);
+}
+
+/* Card Image */
+.card-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  display: block;
+}
+
+.blog-card.hero-card .card-image {
+  height: 400px;
+}
+
+/* Card Content */
+.card-content {
+  padding: 2rem;
+}
+
+.blog-card.hero-card .card-content {
+  padding: 2.5rem;
+}
+
+/* Category Badge */
+.card-category {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  background: rgba(227, 252, 2, 0.1);
+  border: 1px solid rgba(227, 252, 2, 0.2);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--neon);
+  margin-bottom: 1rem;
+}
+
+/* Card Title */
+.card-title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 0.75rem;
+  color: var(--text);
+}
+
+.blog-card.hero-card .card-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Card Excerpt */
+.card-excerpt {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.blog-card.hero-card .card-excerpt {
+  font-size: 1.0625rem;
+  -webkit-line-clamp: 4;
+}
+
+/* Card Meta */
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.card-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-read-time {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--neon);
+  font-weight: 600;
+}
+
+/* ===================================
+   ARTICLE MODAL (READER MODE)
+   =================================== */
+
+.article-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(30px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s ease;
+  padding: 2rem;
+}
+
+.article-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.article-content-wrapper {
+  background: rgba(31, 31, 33, 0.98);
+  backdrop-filter: blur(40px);
+  border: 1px solid var(--neon-border);
+  border-radius: 24px;
+  max-width: 900px;
+  max-height: 90vh;
+  width: 100%;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.8), 0 0 40px var(--neon-subtle);
+  transform: scale(0.95);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.article-modal.active .article-content-wrapper {
+  transform: scale(1);
+}
+
+/* Custom Scrollbar for Modal */
+.article-content-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.article-content-wrapper::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+.article-content-wrapper::-webkit-scrollbar-thumb {
+  background: var(--neon);
+  border-radius: 10px;
+  box-shadow: 0 0 10px var(--neon-glow);
+}
+
+/* Close Button */
+.modal-close {
+  position: sticky;
+  top: 2rem;
+  right: 2rem;
+  margin-left: auto;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  margin-bottom: -44px;
+}
+
+.modal-close:hover {
+  background: rgba(227, 252, 2, 0.2);
+  border-color: var(--neon);
+  transform: scale(1.1);
+  box-shadow: 0 0 20px var(--neon-glow);
+}
+
+.modal-close svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--text);
+  transition: stroke 0.3s ease;
+}
+
+.modal-close:hover svg {
+  stroke: var(--neon);
+}
+
+/* Article Content */
+.article-content {
+  padding: 3rem;
+}
+
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--neon-border);
+}
+
+.article-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+}
+
+.article-meta {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+.article-body {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: var(--text);
+}
+
+.article-body p {
+  margin-bottom: 1.5rem;
+}
+
+.article-body h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 2.5rem 0 1rem;
+  color: var(--text);
+}
+
+.article-body h3 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem;
+  color: var(--text);
+}
+
+.article-body img {
+  width: 100%;
+  border-radius: 16px;
+  margin: 2rem 0;
+}
+
+.article-body blockquote {
+  padding: 1.5rem;
+  background: var(--glass);
+  border-left: 4px solid var(--neon);
+  border-radius: 12px;
+  margin: 2rem 0;
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* ===================================
+   FLOATING NEWSLETTER TRIGGER
+   =================================== */
+
+.newsletter-float {
+  position: fixed;
+  bottom: 88px;
+  right: 28px;
+  width: auto;
+  padding: 1rem 1.5rem;
+  background: var(--neon);
+  color: #000;
+  border: none;
+  border-radius: 980px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 20px var(--neon-glow);
+  z-index: 9999;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.newsletter-float:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 8px 30px var(--neon-glow);
+}
+
+/* ===================================
+   RESPONSIVE
+   =================================== */
+
+@media (max-width: 1024px) {
+  .blog-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .blog-card.hero-card {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+
+  .blog-card.hero-card .card-image {
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .blog-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .blog-card.hero-card {
+    grid-column: span 1;
+  }
+
+  .category-filters {
+    top: 60px;
+    padding: 1rem 5%;
+  }
+
+  .filter-pill {
+    font-size: 0.875rem;
+    padding: 0.625rem 1.25rem;
+  }
+
+  .article-content {
+    padding: 2rem;
+  }
+
+  .article-title {
+    font-size: 2rem;
+  }
+
+  .newsletter-float {
+    bottom: 74px;
+    right: 20px;
+    padding: 0.875rem 1.25rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .card-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .article-modal {
+    padding: 1rem;
+  }
+
+  .article-content {
+    padding: 1.5rem;
+  }
+}
+
+/* ===================================
+   CUSTOM SCROLLBAR (MAIN PAGE)
+   =================================== */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neon);
+  border-radius: 10px;
+  box-shadow: 0 0 10px var(--neon-glow);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f6ff4d;
+}
+</style>
+
+<div class="blog-hub">
+
+  <!-- Reading Progress Indicator -->
+  <div class="reading-progress" id="readingProgress"></div>
+
+  <!-- Hero -->
+  <section class="blog-hero">
+    <div class="hero-eyebrow">Tenda Live-Insights</div>
+    <h1 class="hero-title">Data That Drives Decisions</h1>
+    <p class="hero-subtitle">
+      Real stories from African operators turning messy data into clear daily decisions.
+    </p>
+  </section>
+
+  <!-- Sticky Category Filters -->
+  <div class="category-filters">
+    <button class="filter-pill active" data-category="all">All Insights</button>
+    <button class="filter-pill" data-category="retail">Retail Disruptions</button>
+    <button class="filter-pill" data-category="marketing">Marketing AI</button>
+    <button class="filter-pill" data-category="data">Data Strategy</button>
+    <button class="filter-pill" data-category="case-study">Case Studies</button>
+  </div>
+
+  <!-- Blog Grid -->
+  <div class="blog-container">
+    <div class="blog-grid" id="blogGrid">
+
+      <!-- Hero Card -->
+      <article class="blog-card hero-card" data-category="case-study" data-article-id="denri-africa">
+        <img src="/assets/denri-case-study.jpg" alt="Denri Africa Case Study" class="card-image">
+        <div class="card-content">
+          <span class="card-category">Case Study</span>
+          <h2 class="card-title">How Denri Africa Increased Revenue by 32% with Data-Led Decisions</h2>
+          <p class="card-excerpt">
+            Discover how this leading East African retailer transformed their operations by turning fragmented data into actionable insights. From stockouts to smart inventory management.
+          </p>
+          <div class="card-meta">
+            <span class="card-date">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Feb 15, 2026
+            </span>
+            <span class="card-read-time">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+              12-min read
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Regular Cards -->
+      <article class="blog-card" data-category="retail" data-article-id="inventory-optimization">
+        <img src="/assets/inventory-blog.jpg" alt="Inventory Optimization" class="card-image">
+        <div class="card-content">
+          <span class="card-category">Retail Disruptions</span>
+          <h3 class="card-title">The End of Stockouts: Real-Time Inventory Intelligence</h3>
+          <p class="card-excerpt">
+            Why African retailers are moving from monthly reports to real-time dashboards.
+          </p>
+          <div class="card-meta">
+            <span class="card-date">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Feb 12, 2026
+            </span>
+            <span class="card-read-time">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+              8-min read
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <article class="blog-card" data-category="marketing" data-article-id="marketing-ai">
+        <img src="/assets/marketing-ai.jpg" alt="Marketing AI" class="card-image">
+        <div class="card-content">
+          <span class="card-category">Marketing AI</span>
+          <h3 class="card-title">Attribution Done Right: Which Campaigns Actually Drive Revenue?</h3>
+          <p class="card-excerpt">
+            Stop wasting budget on vanity metrics. Track what actually converts.
+          </p>
+          <div class="card-meta">
+            <span class="card-date">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Feb 10, 2026
+            </span>
+            <span class="card-read-time">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+              10-min read
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <article class="blog-card" data-category="data" data-article-id="data-quality">
+        <img src="/assets/data-quality.jpg" alt="Data Quality" class="card-image">
+        <div class="card-content">
+          <span class="card-category">Data Strategy</span>
+          <h3 class="card-title">Why Your Data is Messy (And How to Fix It)</h3>
+          <p class="card-excerpt">
+            The hidden cost of fragmented systems and how to centralize your data.
+          </p>
+          <div class="card-meta">
+            <span class="card-date">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Feb 8, 2026
+            </span>
+            <span class="card-read-time">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+              6-min read
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <article class="blog-card" data-category="retail" data-article-id="pricing-strategy">
+        <img src="/assets/pricing.jpg" alt="Pricing Strategy" class="card-image">
+        <div class="card-content">
+          <span class="card-category">Retail Disruptions</span>
+          <h3 class="card-title">Dynamic Pricing for African Markets</h3>
+          <p class="card-excerpt">
+            How leading retailers are using data to optimize pricing in real-time.
+          </p>
+          <div class="card-meta">
+            <span class="card-date">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Feb 5, 2026
+            </span>
+            <span class="card-read-time">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+              9-min read
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <article class="blog-card" data-category="marketing" data-article-id="customer-retention">
+        <img src="/assets/retention.jpg" alt="Customer Retention" class="card-image">
+        <div class="card-content">
+          <span class="card-category">Marketing AI</span>
+          <h3 class="card-title">Retention > Acquisition: The Math Behind Growth</h3>
+          <p class="card-excerpt">
+            Why keeping customers is 5x cheaper than acquiring new ones.
+          </p>
+          <div class="card-meta">
+            <span class="card-date">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Feb 3, 2026
+            </span>
+            <span class="card-read-time">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+              7-min read
+            </span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+
+  <!-- Floating Newsletter Trigger -->
+  <button class="newsletter-float" onclick="openNewsletter()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+      <polyline points="22,6 12,13 2,6"/>
+    </svg>
+    Get Insights
+  </button>
+
+</div>
+
+<!-- Article Modal (Reader Mode) -->
+<div class="article-modal" id="articleModal">
+  <div class="article-content-wrapper">
+    <button class="modal-close" onclick="closeArticle()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+    <div class="article-content" id="articleContent">
+      <!-- Content loaded dynamically -->
+    </div>
+  </div>
+</div>
+
+<script>
+// Reading Progress Indicator
+window.addEventListener('scroll', function() {
+  const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrolled = (winScroll / height) * 100;
+  document.getElementById('readingProgress').style.width = scrolled + '%';
+});
+
+// Scroll-Triggered Reveals (GSAP-style with Intersection Observer)
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, index) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, index * 100);
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('.blog-card').forEach(card => observer.observe(card));
+
+// Category Filtering
+document.querySelectorAll('.filter-pill').forEach(pill => {
+  pill.addEventListener('click', function() {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    
+    const category = this.dataset.category;
+    
+    document.querySelectorAll('.blog-card').forEach(card => {
+      if (category === 'all' || card.dataset.category === category) {
+        card.style.display = 'block';
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, 10);
+      } else {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          card.style.display = 'none';
+        }, 300);
+      }
+    });
+  });
+});
+
+// Article Modal
+const articleContent = {
+  'denri-africa': {
+    title: 'How Denri Africa Increased Revenue by 32% with Data-Led Decisions',
+    date: 'Feb 15, 2026',
+    readTime: '12-min read',
+    content: `
+      <p>When Denri Africa approached Tenda in early 2025, they were facing a familiar challenge: great products, loyal customers, but zero visibility on what was actually driving their numbers.</p>
+      
+      <h2>The Problem</h2>
+      <p>Like many African retailers, Denri was running on gut feel and monthly spreadsheets. Their inventory system couldn't talk to their POS, their marketing data lived in multiple platforms, and decisions were made weeks after the moment had passed.</p>
+      
+      <blockquote>"We knew we had a problem when we'd run out of our best-selling items while sitting on dead stock we couldn't move." - Sarah Kimani, Operations Director</blockquote>
+      
+      <h2>The Solution</h2>
+      <p>Tenda implemented a three-phase transformation:</p>
+      <p>Phase 1: Data Centralization - We connected their POS, inventory, and marketing platforms into a single source of truth.</p>
+      <p>Phase 2: Real-Time Dashboards - Instead of waiting for monthly reports, the team now sees live data on revenue, stock levels, and customer behavior.</p>
+      <p>Phase 3: Automated Alerts - The system now flags stockouts, slow-moving inventory, and campaign performance automatically.</p>
+      
+      <h2>The Results</h2>
+      <p>Within 6 months:</p>
+      <p>• Revenue increased by 32%</p>
+      <p>• Stockouts decreased by 78%</p>
+      <p>• Dead inventory reduced by 45%</p>
+      <p>• Marketing ROI improved by 2.4x</p>
+      
+      <h2>Key Takeaway</h2>
+      <p>The difference wasn't complex AI or expensive tools. It was simply giving operators the right data at the right time to make better decisions.</p>
+    `
+  },
+  'inventory-optimization': {
+    title: 'The End of Stockouts: Real-Time Inventory Intelligence',
+    date: 'Feb 12, 2026',
+    readTime: '8-min read',
+    content: `
+      <p>Stockouts cost African retailers billions every year. But the solution isn't more inventory—it's better data.</p>
+      
+      <h2>The Cost of Stockouts</h2>
+      <p>When a customer can't find what they're looking for, they don't just leave empty-handed. They leave with the impression that your store isn't reliable. And in competitive markets, that's a reputation you can't afford.</p>
+      
+      <p>The math is simple: Every stockout is both a lost sale today and potentially a lost customer tomorrow.</p>
+      
+      <h2>Real-Time Intelligence</h2>
+      <p>Leading retailers are moving from monthly inventory reports to real-time dashboards that show exactly what's moving, what's not, and what needs to be reordered—right now.</p>
+      
+      <p>This isn't about sophisticated algorithms. It's about having the right information at the moment decisions are being made.</p>
+    `
+  }
+};
+
+// Open Article Modal
+document.querySelectorAll('.blog-card').forEach(card => {
+  card.addEventListener('click', function() {
+    const articleId = this.dataset.articleId;
+    const article = articleContent[articleId];
+    
+    if (article) {
+      document.getElementById('articleContent').innerHTML = `
+        <div class="article-header">
+          <h1 class="article-title">${article.title}</h1>
+          <div class="article-meta">
+            <span>${article.date}</span>
+            <span>•</span>
+            <span>${article.readTime}</span>
+          </div>
+        </div>
+        <div class="article-body">
+          ${article.content}
+        </div>
+      `;
+      document.getElementById('articleModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  });
+});
+
+// Close Article Modal
+function closeArticle() {
+  document.getElementById('articleModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// Close on outside click
+document.getElementById('articleModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeArticle();
+  }
+});
+
+// Newsletter Function
+function openNewsletter() {
+  alert('Newsletter signup would open here!');
+}
+</script>

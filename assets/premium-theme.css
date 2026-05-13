@@ -1,0 +1,976 @@
+/* =============================================================
+   TENDA ANALYTICS — PREMIUM THEME DESIGN SYSTEM
+   Apple-inspired · SaaS-premium · Dark & Light mode
+   ============================================================= */
+
+/* ─── 1. DESIGN TOKENS ──────────────────────────────────────── */
+
+:root,
+html[data-theme="dark"] {
+  /* Backgrounds */
+  --ta-bg:            #08080A;
+  --ta-bg-surface:    #111115;
+  --ta-bg-elevated:   #1C1C20;
+  --ta-bg-overlay:    rgba(8, 8, 10, 0.85);
+
+  /* Borders */
+  --ta-border:        rgba(255, 255, 255, 0.07);
+  --ta-border-strong: rgba(255, 255, 255, 0.14);
+
+  /* Text */
+  --ta-text-primary:   #FFFFFF;
+  --ta-text-secondary: rgba(255, 255, 255, 0.58);
+  --ta-text-tertiary:  rgba(255, 255, 255, 0.32);
+
+  /* Brand accent */
+  --ta-accent:          #E3FC02;
+  --ta-accent-dim:      rgba(227, 252, 2, 0.15);
+  --ta-accent-glow:     rgba(227, 252, 2, 0.35);
+  --ta-accent-glow-lg:  rgba(227, 252, 2, 0.15);
+
+  /* Semantic */
+  --ta-success:  #30D158;
+  --ta-warning:  #FFD60A;
+  --ta-error:    #FF453A;
+
+  /* Glass */
+  --ta-glass-bg:      rgba(255, 255, 255, 0.04);
+  --ta-glass-border:  rgba(255, 255, 255, 0.08);
+  --ta-glass-blur:    saturate(180%) blur(20px);
+
+  /* Navbar */
+  --ta-nav-bg:        rgba(8, 8, 10, 0.72);
+  --ta-nav-border:    rgba(255, 255, 255, 0.06);
+
+  /* Shadows */
+  --ta-shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --ta-shadow-md:  0 4px 16px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --ta-shadow-lg:  0 16px 48px rgba(0, 0, 0, 0.6), 0 6px 20px rgba(0, 0, 0, 0.4);
+  --ta-shadow-xl:  0 32px 80px rgba(0, 0, 0, 0.7);
+
+  /* Gradients */
+  --ta-gradient-hero:    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(227,252,2,0.12) 0%, transparent 70%);
+  --ta-gradient-card:    linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+  --ta-gradient-accent:  linear-gradient(135deg, #E3FC02 0%, #B8CC00 100%);
+  --ta-gradient-surface: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+
+  /* Misc */
+  --ta-radius-sm:  6px;
+  --ta-radius-md:  12px;
+  --ta-radius-lg:  20px;
+  --ta-radius-xl:  28px;
+  --ta-radius-full: 9999px;
+
+  --ta-transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  --ta-transition-spring: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  /* Backgrounds */
+  --ta-bg:            #FAFAFA;
+  --ta-bg-surface:    #FFFFFF;
+  --ta-bg-elevated:   #F2F2F7;
+  --ta-bg-overlay:    rgba(250, 250, 250, 0.85);
+
+  /* Borders */
+  --ta-border:        rgba(0, 0, 0, 0.07);
+  --ta-border-strong: rgba(0, 0, 0, 0.13);
+
+  /* Text */
+  --ta-text-primary:   #1D1D1F;
+  --ta-text-secondary: #6E6E73;
+  --ta-text-tertiary:  #98989D;
+
+  /* Brand accent — richer on light */
+  --ta-accent:          #7B6C00;
+  --ta-accent-dim:      rgba(227, 252, 2, 0.20);
+  --ta-accent-glow:     rgba(227, 252, 2, 0.40);
+  --ta-accent-glow-lg:  rgba(227, 252, 2, 0.12);
+
+  /* Glass */
+  --ta-glass-bg:      rgba(255, 255, 255, 0.72);
+  --ta-glass-border:  rgba(0, 0, 0, 0.06);
+  --ta-glass-blur:    saturate(180%) blur(20px);
+
+  /* Navbar */
+  --ta-nav-bg:        rgba(250, 250, 250, 0.78);
+  --ta-nav-border:    rgba(0, 0, 0, 0.06);
+
+  /* Shadows */
+  --ta-shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --ta-shadow-md:  0 4px 16px rgba(0, 0, 0, 0.10), 0 2px 6px rgba(0, 0, 0, 0.06);
+  --ta-shadow-lg:  0 16px 48px rgba(0, 0, 0, 0.12), 0 6px 20px rgba(0, 0, 0, 0.07);
+  --ta-shadow-xl:  0 32px 80px rgba(0, 0, 0, 0.14);
+
+  /* Gradients */
+  --ta-gradient-hero:    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(227,252,2,0.18) 0%, transparent 70%);
+  --ta-gradient-card:    linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 100%);
+  --ta-gradient-accent:  linear-gradient(135deg, #E3FC02 0%, #C8DC00 100%);
+  --ta-gradient-surface: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 100%);
+
+  color-scheme: light;
+}
+
+/* ─── 2. BASE RESET & GLOBAL ─────────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--ta-bg);
+  color: var(--ta-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ─── 3. TYPOGRAPHY ENHANCEMENTS ─────────────────────────────── */
+
+.ta-display {
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.06;
+  color: var(--ta-text-primary);
+}
+
+.ta-h1 {
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  color: var(--ta-text-primary);
+}
+
+.ta-h2 {
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--ta-text-primary);
+}
+
+.ta-h3 {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  color: var(--ta-text-primary);
+}
+
+.ta-body-lg {
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  line-height: 1.7;
+  color: var(--ta-text-secondary);
+}
+
+.ta-body {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--ta-text-secondary);
+}
+
+.ta-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ta-accent);
+}
+
+html[data-theme="light"] .ta-eyebrow {
+  color: #6B5D00;
+}
+
+.ta-text-gradient {
+  background: var(--ta-gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── 4. GLASSMORPHISM UTILITIES ─────────────────────────────── */
+
+.ta-glass {
+  background: var(--ta-glass-bg);
+  backdrop-filter: var(--ta-glass-blur);
+  -webkit-backdrop-filter: var(--ta-glass-blur);
+  border: 1px solid var(--ta-glass-border);
+}
+
+.ta-glass-card {
+  background: var(--ta-glass-bg);
+  backdrop-filter: var(--ta-glass-blur);
+  -webkit-backdrop-filter: var(--ta-glass-blur);
+  border: 1px solid var(--ta-glass-border);
+  border-radius: var(--ta-radius-lg);
+  box-shadow: var(--ta-shadow-md);
+  transition: transform var(--ta-transition), box-shadow var(--ta-transition), border-color var(--ta-transition);
+}
+
+.ta-glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ta-shadow-lg);
+  border-color: var(--ta-border-strong);
+}
+
+/* ─── 5. BUTTONS ─────────────────────────────────────────────── */
+
+.ta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--ta-radius-full);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  transition: all var(--ta-transition);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.ta-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background var(--ta-transition);
+}
+
+.ta-btn:hover::before {
+  background: rgba(255,255,255,0.08);
+}
+
+/* Primary */
+.ta-btn-primary {
+  background: #E3FC02;
+  color: #0A0A0A;
+  box-shadow: 0 0 20px rgba(227,252,2,0.25);
+}
+
+.ta-btn-primary:hover {
+  background: #EEff33;
+  box-shadow: 0 0 32px rgba(227,252,2,0.45), 0 4px 16px rgba(227,252,2,0.2);
+  transform: translateY(-1px);
+}
+
+.ta-btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Secondary / Outline */
+.ta-btn-secondary {
+  background: transparent;
+  color: var(--ta-text-primary);
+  border: 1px solid var(--ta-border-strong);
+}
+
+.ta-btn-secondary:hover {
+  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.05);
+}
+
+html[data-theme="light"] .ta-btn-secondary:hover {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.2);
+}
+
+/* Ghost */
+.ta-btn-ghost {
+  background: transparent;
+  color: var(--ta-text-secondary);
+}
+
+.ta-btn-ghost:hover {
+  color: var(--ta-text-primary);
+  background: var(--ta-glass-bg);
+}
+
+/* Sizes */
+.ta-btn-sm {
+  padding: 0.55rem 1.2rem;
+  font-size: 0.8rem;
+}
+
+.ta-btn-lg {
+  padding: 1rem 2.5rem;
+  font-size: 1rem;
+}
+
+/* ─── 6. CARD COMPONENTS ─────────────────────────────────────── */
+
+.ta-card {
+  background: var(--ta-bg-elevated);
+  border: 1px solid var(--ta-border);
+  border-radius: var(--ta-radius-lg);
+  padding: 1.75rem;
+  transition: all var(--ta-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.ta-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ta-gradient-surface);
+  opacity: 0;
+  transition: opacity var(--ta-transition);
+  pointer-events: none;
+}
+
+.ta-card:hover {
+  border-color: var(--ta-border-strong);
+  box-shadow: var(--ta-shadow-md);
+  transform: translateY(-2px);
+}
+
+.ta-card:hover::before {
+  opacity: 1;
+}
+
+/* Feature card with accent top border */
+.ta-card-feature {
+  background: var(--ta-bg-elevated);
+  border: 1px solid var(--ta-border);
+  border-top: 2px solid var(--ta-accent);
+  border-radius: var(--ta-radius-md);
+  padding: 2rem;
+  transition: all var(--ta-transition);
+}
+
+.ta-card-feature:hover {
+  box-shadow: var(--ta-shadow-lg), 0 0 40px var(--ta-accent-glow-lg);
+  transform: translateY(-3px);
+}
+
+/* Stats card */
+.ta-stat-card {
+  background: var(--ta-glass-bg);
+  backdrop-filter: var(--ta-glass-blur);
+  -webkit-backdrop-filter: var(--ta-glass-blur);
+  border: 1px solid var(--ta-glass-border);
+  border-radius: var(--ta-radius-lg);
+  padding: 2rem;
+  text-align: center;
+}
+
+.ta-stat-number {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--ta-accent);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+html[data-theme="light"] .ta-stat-number {
+  color: #5A5000;
+}
+
+.ta-stat-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ta-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ─── 7. BADGE / PILL COMPONENTS ─────────────────────────────── */
+
+.ta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--ta-radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 1px solid transparent;
+}
+
+.ta-badge-accent {
+  background: var(--ta-accent-dim);
+  color: var(--ta-accent);
+  border-color: rgba(227, 252, 2, 0.2);
+}
+
+html[data-theme="light"] .ta-badge-accent {
+  color: #5A5000;
+  border-color: rgba(180, 160, 0, 0.25);
+}
+
+.ta-badge-surface {
+  background: var(--ta-bg-elevated);
+  color: var(--ta-text-secondary);
+  border-color: var(--ta-border);
+}
+
+/* ─── 8. SECTION LAYOUT ──────────────────────────────────────── */
+
+.ta-section {
+  padding: clamp(5rem, 10vw, 9rem) 1.5rem;
+  position: relative;
+}
+
+.ta-section-sm {
+  padding: clamp(3rem, 6vw, 5rem) 1.5rem;
+}
+
+.ta-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.ta-container-wide {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.ta-container-narrow {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.ta-section-header {
+  text-align: center;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.ta-section-header .ta-eyebrow {
+  margin-bottom: 1rem;
+}
+
+.ta-section-header .ta-h2 {
+  margin-bottom: 1rem;
+}
+
+/* ─── 9. DIVIDERS ────────────────────────────────────────────── */
+
+.ta-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ta-border-strong), transparent);
+  border: none;
+  margin: 0;
+}
+
+/* ─── 10. NAVBAR ENHANCEMENTS ────────────────────────────────── */
+
+.ta-navbar-scroll .header-wrapper,
+.ta-navbar-scroll .shopify-section-group-header-group > .header-wrapper {
+  background: var(--ta-nav-bg) !important;
+  backdrop-filter: var(--ta-glass-blur) !important;
+  -webkit-backdrop-filter: var(--ta-glass-blur) !important;
+  border-bottom: 1px solid var(--ta-nav-border) !important;
+  box-shadow: 0 1px 32px rgba(0,0,0,0.12) !important;
+}
+
+/* Default navbar (at top of page) */
+.header-wrapper {
+  transition: background var(--ta-transition), backdrop-filter var(--ta-transition), border-color var(--ta-transition), box-shadow var(--ta-transition) !important;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* ─── 11. DARK MODE TOGGLE ───────────────────────────────────── */
+
+.ta-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--ta-radius-full);
+  border: 1px solid var(--ta-border);
+  background: var(--ta-glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  color: var(--ta-text-secondary);
+  transition: all var(--ta-transition);
+  flex-shrink: 0;
+}
+
+.ta-theme-toggle:hover {
+  color: var(--ta-text-primary);
+  border-color: var(--ta-border-strong);
+  background: var(--ta-bg-elevated);
+}
+
+.ta-theme-toggle svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ta-theme-toggle:hover svg {
+  transform: rotate(20deg);
+}
+
+.ta-icon-sun,
+.ta-icon-moon {
+  display: none;
+}
+
+html[data-theme="dark"] .ta-icon-moon,
+html:not([data-theme]) .ta-icon-moon {
+  display: block;
+}
+
+html[data-theme="light"] .ta-icon-sun {
+  display: block;
+}
+
+/* ─── 12. FLOATING GRADIENT ORBS ─────────────────────────────── */
+
+.ta-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  will-change: transform;
+}
+
+.ta-orb-accent {
+  background: var(--ta-accent-glow);
+  width: 400px;
+  height: 400px;
+  opacity: 0.35;
+}
+
+.ta-orb-white {
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+  width: 600px;
+  height: 600px;
+}
+
+@keyframes ta-orb-float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-30px) scale(1.05); }
+}
+
+.ta-orb-animate {
+  animation: ta-orb-float 8s ease-in-out infinite;
+}
+
+.ta-orb-animate-slow {
+  animation: ta-orb-float 14s ease-in-out infinite reverse;
+}
+
+/* ─── 13. SCROLL ANIMATIONS ──────────────────────────────────── */
+
+/* Fade up */
+@keyframes ta-fade-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Fade in */
+@keyframes ta-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Scale in */
+@keyframes ta-scale-in {
+  from { opacity: 0; transform: scale(0.93); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Slide left */
+@keyframes ta-slide-left {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Slide right */
+@keyframes ta-slide-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.ta-animate {
+  opacity: 0;
+}
+
+.ta-animate.ta-is-visible {
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: 0.7s;
+}
+
+.ta-animate-fade-up.ta-is-visible   { animation-name: ta-fade-up; }
+.ta-animate-fade-in.ta-is-visible   { animation-name: ta-fade-in; }
+.ta-animate-scale.ta-is-visible     { animation-name: ta-scale-in; }
+.ta-animate-left.ta-is-visible      { animation-name: ta-slide-left; }
+.ta-animate-right.ta-is-visible     { animation-name: ta-slide-right; }
+
+/* Cascade delays */
+.ta-animate[data-delay="1"] { animation-delay: 0.1s; }
+.ta-animate[data-delay="2"] { animation-delay: 0.2s; }
+.ta-animate[data-delay="3"] { animation-delay: 0.3s; }
+.ta-animate[data-delay="4"] { animation-delay: 0.4s; }
+.ta-animate[data-delay="5"] { animation-delay: 0.5s; }
+.ta-animate[data-delay="6"] { animation-delay: 0.6s; }
+.ta-animate[data-delay="7"] { animation-delay: 0.7s; }
+.ta-animate[data-delay="8"] { animation-delay: 0.8s; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ta-animate,
+  .ta-animate.ta-is-visible {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .ta-orb-animate,
+  .ta-orb-animate-slow {
+    animation: none;
+  }
+}
+
+/* ─── 14. MARQUEE / LOGO STRIP ───────────────────────────────── */
+
+.ta-marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+.ta-marquee-inner {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  flex-shrink: 0;
+  animation: ta-marquee 28s linear infinite;
+}
+
+.ta-marquee-inner-reverse {
+  animation: ta-marquee-reverse 28s linear infinite;
+}
+
+@keyframes ta-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes ta-marquee-reverse {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+.ta-marquee-track:hover .ta-marquee-inner,
+.ta-marquee-track:hover .ta-marquee-inner-reverse {
+  animation-play-state: paused;
+}
+
+.ta-marquee-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0.45;
+  transition: opacity var(--ta-transition), filter var(--ta-transition);
+  filter: grayscale(1);
+}
+
+.ta-marquee-item:hover {
+  opacity: 0.9;
+  filter: grayscale(0);
+}
+
+html[data-theme="light"] .ta-marquee-item {
+  opacity: 0.55;
+}
+
+/* ─── 15. COUNTER / STATS ANIMATION ─────────────────────────── */
+
+.ta-counter {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── 16. GRADIENTS & BACKGROUND EFFECTS ────────────────────── */
+
+.ta-hero-bg {
+  position: relative;
+  background: var(--ta-bg);
+  overflow: hidden;
+}
+
+.ta-hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ta-gradient-hero);
+  pointer-events: none;
+}
+
+/* Noise texture overlay (subtle) */
+.ta-noise::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.04;
+}
+
+/* Grid pattern */
+.ta-grid-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--ta-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--ta-border) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* ─── 17. HORIZONTAL RULE / SEPARATOR LINE ───────────────────── */
+
+.ta-separator {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--ta-text-tertiary);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ta-separator::before,
+.ta-separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ta-border);
+}
+
+/* ─── 18. INPUT / FORM STYLES ────────────────────────────────── */
+
+.ta-input {
+  width: 100%;
+  background: var(--ta-bg-elevated);
+  border: 1px solid var(--ta-border);
+  border-radius: var(--ta-radius-md);
+  padding: 0.8rem 1.2rem;
+  font-size: 0.9rem;
+  color: var(--ta-text-primary);
+  transition: border-color var(--ta-transition), box-shadow var(--ta-transition);
+  outline: none;
+}
+
+.ta-input::placeholder {
+  color: var(--ta-text-tertiary);
+}
+
+.ta-input:focus {
+  border-color: var(--ta-accent);
+  box-shadow: 0 0 0 3px var(--ta-accent-dim);
+}
+
+/* ─── 19. MEGA MENU ──────────────────────────────────────────── */
+
+.ta-mega-menu {
+  background: var(--ta-nav-bg);
+  backdrop-filter: var(--ta-glass-blur);
+  -webkit-backdrop-filter: var(--ta-glass-blur);
+  border: 1px solid var(--ta-glass-border);
+  border-top: none;
+  box-shadow: var(--ta-shadow-xl);
+}
+
+/* ─── 20. MOBILE DRAWER ──────────────────────────────────────── */
+
+.ta-mobile-drawer {
+  background: var(--ta-bg-surface);
+  border-right: 1px solid var(--ta-border);
+}
+
+/* ─── 21. PRODUCT CARD OVERRIDES ─────────────────────────────── */
+
+.card-wrapper .card {
+  background: var(--ta-bg-elevated) !important;
+  border-color: var(--ta-border) !important;
+  transition: all var(--ta-transition) !important;
+}
+
+.card-wrapper .card:hover {
+  border-color: var(--ta-border-strong) !important;
+  box-shadow: var(--ta-shadow-md) !important;
+  transform: translateY(-3px);
+}
+
+/* ─── 22. TOOLTIP ────────────────────────────────────────────── */
+
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  background: var(--ta-bg-elevated);
+  border: 1px solid var(--ta-border);
+  color: var(--ta-text-primary);
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--ta-radius-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.18s ease;
+  box-shadow: var(--ta-shadow-md);
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+/* ─── 23. FOCUS RING ─────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--ta-accent);
+  outline-offset: 3px;
+}
+
+/* ─── 24. SCROLLBAR ──────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ta-border-strong);
+  border-radius: var(--ta-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.25);
+}
+
+/* ─── 25. SELECTION ──────────────────────────────────────────── */
+
+::selection {
+  background: var(--ta-accent-dim);
+  color: var(--ta-accent);
+}
+
+html[data-theme="light"] ::selection {
+  background: rgba(227,252,2,0.25);
+  color: #5A5000;
+}
+
+/* ─── 26. PAGE TRANSITION OVERLAY ────────────────────────────── */
+
+.ta-page-transition {
+  position: fixed;
+  inset: 0;
+  background: var(--ta-bg);
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* ─── 27. LOADING SKELETON ───────────────────────────────────── */
+
+@keyframes ta-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+.ta-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--ta-bg-elevated) 25%,
+    var(--ta-border-strong) 50%,
+    var(--ta-bg-elevated) 75%
+  );
+  background-size: 200% 100%;
+  animation: ta-shimmer 1.6s ease-in-out infinite;
+  border-radius: var(--ta-radius-sm);
+}
+
+/* ─── 28. UTILITY CLASSES ────────────────────────────────────── */
+
+.ta-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.ta-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ta-no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ─── 29. RESPONSIVE HELPERS ─────────────────────────────────── */
+
+@media (max-width: 749px) {
+  .ta-hide-mobile { display: none !important; }
+}
+
+@media (min-width: 750px) {
+  .ta-hide-desktop { display: none !important; }
+}
+
+/* ─── 30. DARK MODE TRANSITION ───────────────────────────────── */
+
+html.ta-theme-transitioning,
+html.ta-theme-transitioning *,
+html.ta-theme-transitioning *::before,
+html.ta-theme-transitioning *::after {
+  transition: background-color 0.35s ease, color 0.35s ease,
+              border-color 0.35s ease, box-shadow 0.35s ease !important;
+}

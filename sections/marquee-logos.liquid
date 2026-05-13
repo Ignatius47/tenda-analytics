@@ -1,0 +1,281 @@
+{% comment %}
+  Marquee Logos Section
+  Infinite scroll logo strip — "trusted by" style
+  Uses CSS-only animation + JS duplicate for seamless loop
+{% endcomment %}
+
+<style>
+.ta-marquee-section {
+  padding: var(--ta-marquee-padding-top, 3.5rem) 0 var(--ta-marquee-padding-bottom, 3.5rem);
+  background: var(--ta-marquee-bg, var(--ta-bg-surface, #111115));
+  border-top: 1px solid var(--ta-border, rgba(255,255,255,0.07));
+  border-bottom: 1px solid var(--ta-border, rgba(255,255,255,0.07));
+  overflow: hidden;
+  position: relative;
+}
+
+.ta-marquee-section__label {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ta-text-tertiary, rgba(255,255,255,0.32));
+}
+
+.ta-marquee-track {
+  display: flex;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.ta-marquee-inner {
+  display: flex;
+  align-items: center;
+  gap: 4.5rem;
+  flex-shrink: 0;
+  padding-right: 4.5rem;
+}
+
+.ta-marquee-inner--fwd {
+  animation: ta-marquee-fwd var(--ta-marquee-speed, 30s) linear infinite;
+}
+
+.ta-marquee-inner--rev {
+  animation: ta-marquee-rev var(--ta-marquee-speed, 30s) linear infinite;
+}
+
+@keyframes ta-marquee-fwd {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+
+@keyframes ta-marquee-rev {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+.ta-marquee-track:hover .ta-marquee-inner {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ta-marquee-inner--fwd,
+  .ta-marquee-inner--rev {
+    animation: none !important;
+  }
+
+  .ta-marquee-track {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+}
+
+.ta-marquee-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0.4;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+  filter: grayscale(1);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.ta-marquee-logo img {
+  height: var(--ta-logo-height, 28px);
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.ta-marquee-logo:hover {
+  opacity: 0.9;
+  filter: grayscale(0);
+}
+
+/* Text fallback logos */
+.ta-marquee-logo--text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ta-text-secondary, rgba(255,255,255,0.58));
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+</style>
+
+<div
+  class="ta-marquee-section"
+  style="
+    --ta-marquee-padding-top: {{ section.settings.padding_top }}px;
+    --ta-marquee-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --ta-marquee-speed: {{ section.settings.speed }}s;
+    --ta-logo-height: {{ section.settings.logo_height }}px;
+  "
+>
+  {%- if section.settings.label != blank -%}
+    <p class="ta-marquee-section__label">{{ section.settings.label }}</p>
+  {%- endif -%}
+
+  <div class="ta-marquee-track">
+    <div class="ta-marquee-inner {% if section.settings.direction == 'reverse' %}ta-marquee-inner--rev{% else %}ta-marquee-inner--fwd{% endif %}">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'logo' -%}
+            <div class="ta-marquee-logo" {{ block.shopify_attributes }}>
+              {%- if block.settings.logo_image != blank -%}
+                {{
+                  block.settings.logo_image
+                  | image_url: width: 280
+                  | image_tag:
+                    loading: 'lazy',
+                    alt: block.settings.alt_text | default: block.settings.logo_image.alt | default: 'Partner logo',
+                    draggable: 'false'
+                }}
+              {%- elsif block.settings.logo_text != blank -%}
+                <span class="ta-marquee-logo--text">{{ block.settings.logo_text }}</span>
+              {%- endif -%}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    <!-- JS will clone this for seamless loop, but we also add a duplicate here as fallback -->
+    <div
+      class="ta-marquee-inner {% if section.settings.direction == 'reverse' %}ta-marquee-inner--rev{% else %}ta-marquee-inner--fwd{% endif %}"
+      aria-hidden="true"
+    >
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'logo' -%}
+            <div class="ta-marquee-logo">
+              {%- if block.settings.logo_image != blank -%}
+                {{
+                  block.settings.logo_image
+                  | image_url: width: 280
+                  | image_tag:
+                    loading: 'lazy',
+                    alt: '',
+                    draggable: 'false'
+                }}
+              {%- elsif block.settings.logo_text != blank -%}
+                <span class="ta-marquee-logo--text">{{ block.settings.logo_text }}</span>
+              {%- endif -%}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Marquee Logos",
+  "tag": "section",
+  "class": "section-marquee-logos",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label text",
+      "default": "Trusted by leading organisations"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "s",
+      "label": "Scroll speed",
+      "default": 30
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "label": "Direction",
+      "options": [
+        { "value": "forward", "label": "Left (forward)" },
+        { "value": "reverse", "label": "Right (reverse)" }
+      ],
+      "default": "forward"
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "min": 18,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo height",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo_image",
+          "label": "Logo image"
+        },
+        {
+          "type": "text",
+          "id": "logo_text",
+          "label": "Text fallback",
+          "info": "Shown if no image is set"
+        },
+        {
+          "type": "text",
+          "id": "alt_text",
+          "label": "Alt text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Marquee Logos",
+      "blocks": [
+        { "type": "logo", "settings": { "logo_text": "Company A" } },
+        { "type": "logo", "settings": { "logo_text": "Company B" } },
+        { "type": "logo", "settings": { "logo_text": "Company C" } },
+        { "type": "logo", "settings": { "logo_text": "Company D" } },
+        { "type": "logo", "settings": { "logo_text": "Company E" } },
+        { "type": "logo", "settings": { "logo_text": "Company F" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,1466 @@
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+{{ 'component-cart-items.css' | asset_url | stylesheet_tag }}
+{{ 'component-totals.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+{{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- unless settings.cart_type == 'drawer' -%}
+  <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
+{%- endunless -%}
+<script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
+
+<style>
+
+/* ================================================
+   TENDA CART — APPLE LIQUID GLASS
+   macOS-native motion & Kenyan payment primacy
+   ================================================ */
+
+:root {
+  --ac-bg:       #0a0a0c;
+  --ac-surface:  rgba(28, 28, 30, 0.68);
+  --ac-accent:   #E3FC02;
+  --ac-text:     #ffffff;
+  --ac-muted:    rgba(255,255,255,0.45);
+  --ac-border:   rgba(227,252,2,0.14);
+  --ac-border-w: rgba(255,255,255,0.07);
+  --ac-mpesa:    #4CAF50;
+  --ac-r:        28px;
+  --ac-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ac-smooth:   cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ── PAGE SHELL ───────────────────────────────── */
+cart-items.gradient {
+  background: var(--ac-bg) !important;
+  min-height: 100vh;
+  display: block;
+  padding: 0 0 6rem !important;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Frosted ambient grain */
+cart-items.gradient::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.018;
+  pointer-events: none;
+  z-index: 0;
+}
+
+cart-items .page-width {
+  max-width: 1240px !important;
+  padding: 1.5rem 1.5rem !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── DYNAMIC ISLAND DELIVERY BANNER ───────────── */
+.ac-delivery-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  width: fit-content;
+  margin: 0 auto 2.5rem;
+  background: rgba(20, 20, 22, 0.88);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid rgba(227,252,2,0.28);
+  border-radius: 100px;
+  padding: 0.625rem 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ac-accent);
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 0 0 1px rgba(0,0,0,0.5);
+  animation: acIslandPulse 3.2s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: padding 0.5s cubic-bezier(0.34,1.56,0.64,1),
+              background 0.35s ease,
+              border-color 0.35s ease;
+}
+
+/* Dynamic Island expand on hover */
+.ac-delivery-banner:hover {
+  padding: 0.6875rem 2.125rem;
+  background: rgba(20, 20, 22, 0.95);
+  border-color: rgba(227,252,2,0.45);
+  animation-play-state: paused;
+  box-shadow:
+    0 16px 42px rgba(227,252,2,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.14),
+    0 0 0 1px rgba(227,252,2,0.25);
+}
+
+/* Shimmer shine sweep */
+.ac-delivery-banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 40%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(227,252,2,0.15), transparent);
+  animation: acIslandShine 4s ease-in-out infinite;
+}
+
+@keyframes acIslandPulse {
+  0%,100% { box-shadow: 0 12px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(0,0,0,0.5); }
+  50%      { box-shadow: 0 12px 36px rgba(227,252,2,0.15), inset 0 1px 0 rgba(255,255,255,0.12), 0 0 0 1px rgba(227,252,2,0.2); }
+}
+
+@keyframes acIslandShine {
+  0%, 40%, 100% { left: -100%; }
+  60%, 80%       { left: 200%; }
+}
+
+.ac-delivery-banner__dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--ac-accent);
+  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(227,252,2,0.7);
+  animation: acDotPing 3.2s ease-in-out infinite;
+}
+
+@keyframes acDotPing {
+  0%,100% { box-shadow: 0 0 0 0 rgba(227,252,2,0.7); }
+  50%      { box-shadow: 0 0 0 6px rgba(227,252,2,0); }
+}
+
+/* ── TITLE ROW ────────────────────────────────── */
+.title-wrapper-with-link {
+  display: flex !important;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.875rem;
+  margin-bottom: 2.25rem !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.title-wrapper-with-link .title--primary {
+  font-size: clamp(2rem, 4.5vw, 3.25rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.05em !important;
+  color: var(--ac-text) !important;
+  margin: 0 !important;
+  line-height: 1.3;
+  background: linear-gradient(135deg, #fff 0%, rgba(227,252,2,0.8) 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.title-wrapper-with-link .underlined-link {
+  font-size: 0.8125rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  color: var(--ac-accent) !important;
+  text-decoration: none !important;
+  border: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  transition: gap 0.35s var(--ac-spring), color 0.2s ease;
+  opacity: 0.75;
+}
+.title-wrapper-with-link .underlined-link::before { content: '←'; font-size: 1.1rem; }
+.title-wrapper-with-link .underlined-link:hover   { gap: 0.7rem; opacity: 1; }
+
+/* ── LIQUID GLASS SURFACE ─────────────────────── */
+.ac-glass {
+  background: var(--ac-surface);
+  backdrop-filter: blur(28px) saturate(165%);
+  -webkit-backdrop-filter: blur(28px) saturate(165%);
+  border-radius: var(--ac-r);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 0 0 1px var(--ac-border),
+    0 28px 70px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 0 30px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Top-edge micro seam */
+.ac-glass::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(227,252,2,0.35) 25%, rgba(255,255,255,0.12) 50%, rgba(227,252,2,0.35) 75%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* macOS dock "app open" reveal */
+@keyframes acDockReveal {
+  0%   { opacity: 0; transform: translateY(60px) scale(0.88); filter: blur(10px); }
+  55%  { opacity: 1; filter: blur(0); }
+  75%  { transform: translateY(-6px) scale(1.02); }
+  90%  { transform: translateY(2px) scale(0.99); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.ac-glass-revealed {
+  animation: acDockReveal 0.65s var(--ac-smooth) forwards;
+  transform-origin: center bottom;
+}
+
+/* ── EMPTY STATE: PREMIUM LIQUID GLASS ────────── */
+.cart__warnings {
+  background: rgba(28,28,30,0.72) !important;
+  backdrop-filter: blur(32px) saturate(175%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(175%) !important;
+  border-radius: 28px !important;
+  border: 1px solid rgba(227,252,2,0.16) !important;
+  box-shadow: 
+    0 36px 75px rgba(0,0,0,0.45),
+    0 0 0 1px rgba(255,255,255,0.03),
+    inset 0 1px 0 rgba(255,255,255,0.07) !important;
+  padding: 4.5rem 2.5rem 3.5rem !important;
+  text-align: center !important;
+  color: var(--ac-text) !important;
+  position: relative; overflow: hidden;
+
+  /* MacBook app-open genie animation */
+  opacity: 0;
+  transform: scale(0.86) translateY(35px);
+  animation: acEmptyGenie 0.68s cubic-bezier(0.34,1.56,0.64,1) 0.18s forwards;
+}
+
+@keyframes acEmptyGenie {
+  0%   { opacity: 0; transform: scale(0.86) translateY(35px); filter: blur(10px); }
+  58%  { opacity: 1; transform: scale(1.03) translateY(-7px); filter: blur(0); }
+  78%  { transform: scale(0.98) translateY(3px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+
+/* Refined top-edge light seam */
+.cart__warnings::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 12%; right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(227,252,2,0.45) 28%, 
+    rgba(255,255,255,0.16) 62%, 
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Subtle radial center glow */
+.cart__warnings::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(227,252,2,0.045) 0%, transparent 68%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cart__warnings > * { position: relative; z-index: 1; }
+
+/* Empty cart icon */
+.ac-empty-icon {
+  font-size: 3.875rem;
+  margin-bottom: 1.875rem;
+  display: block;
+  opacity: 0.36;
+  filter: grayscale(0.65);
+}
+
+/* Apple-style headline */
+.cart__empty-text {
+  font-size: 2.125rem !important;
+  font-weight: 900 !important;
+  color: var(--ac-text) !important;
+  margin-bottom: 0.625rem !important;
+  letter-spacing: -0.045em;
+  line-height: 1.12;
+}
+
+.ac-empty-subtitle {
+  font-size: 1.0625rem;
+  color: var(--ac-muted);
+  font-weight: 400;
+  line-height: 1.65;
+  margin-bottom: 2.375rem;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* High-gloss "Continue Shopping" button */
+.cart__warnings .button {
+  background: linear-gradient(135deg, rgba(227,252,2,0.98) 0%, rgba(200,232,0,0.98) 100%) !important;
+  background-size: 200% 200%;
+  color: #000 !important;
+  border: none !important;
+  border-radius: 14px !important;
+  padding: 1.0625rem 2.5rem !important;
+  font-weight: 800 !important;
+  font-size: 1rem !important;
+  text-decoration: none !important;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 8px 26px rgba(227,252,2,0.3), 
+    inset 0 1px 0 rgba(255,255,255,0.38) !important;
+  transition: transform 0.25s var(--ac-spring), box-shadow 0.25s ease !important;
+  letter-spacing: 0.01em;
+}
+
+/* Glass shine sweep */
+.cart__warnings .button::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 58%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.36), transparent);
+  transition: left 0.52s ease;
+}
+
+.cart__warnings .button:hover::before { left: 180%; }
+
+.cart__warnings .button:hover {
+  transform: translateY(-4px) scale(1.03) !important;
+  box-shadow: 
+    0 14px 38px rgba(227,252,2,0.46), 
+    inset 0 1px 0 rgba(255,255,255,0.42) !important;
+}
+
+/* Squash & stretch on click */
+.cart__warnings .button:active {
+  transform: scale(0.95) !important;
+  transition: transform 0.08s ease !important;
+}
+
+/* ── RECOMMENDED PRODUCTS CAROUSEL ────────────── */
+.ac-recommended {
+  margin-top: 2.75rem;
+  padding-top: 2.75rem;
+  border-top: 1px solid rgba(255,255,255,0.055);
+}
+
+.ac-recommended__label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.085em;
+  color: var(--ac-muted);
+  margin-bottom: 1.625rem;
+  text-align: center;
+}
+
+.ac-recommended__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+  gap: 1.125rem;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: acRecSlideUp 0.62s cubic-bezier(0.34,1.56,0.64,1) 0.52s forwards;
+}
+
+@keyframes acRecSlideUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ac-rec-card {
+  background: rgba(255,255,255,0.028);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 15px;
+  padding: 0.9375rem;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6875rem;
+  transition: background 0.32s ease, 
+              border-color 0.32s ease,
+              transform 0.42s var(--ac-spring),
+              box-shadow 0.32s ease;
+}
+
+.ac-rec-card:hover {
+  background: rgba(255,255,255,0.052);
+  border-color: rgba(227,252,2,0.22);
+  transform: translateY(-5px) scale(1.025);
+  box-shadow: 0 10px 32px rgba(0,0,0,0.32), 0 0 0 1px rgba(227,252,2,0.09);
+}
+
+.ac-rec-card__img {
+  width: 100%; aspect-ratio: 1;
+  border-radius: 11px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.22);
+}
+
+.ac-rec-card__img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.42s ease;
+}
+
+.ac-rec-card:hover .ac-rec-card__img img { transform: scale(1.09); }
+
+.ac-rec-card__title {
+  font-size: 0.8125rem;
+  font-weight: 620;
+  color: var(--ac-text);
+  line-height: 1.32;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ac-rec-card__price {
+  font-size: 0.9rem;
+  font-weight: 820;
+  color: var(--ac-accent);
+  margin-top: auto;
+  letter-spacing: -0.02em;
+}
+
+.cart__login-title     { color: var(--ac-text) !important; font-weight: 700 !important; margin-top: 2.5rem !important; }
+.cart__login-paragraph { color: var(--ac-muted) !important; font-size: 0.9rem !important; }
+
+/* Login link with center-outward underline expand */
+.cart__login-paragraph a { 
+  color: var(--ac-accent) !important; 
+  text-decoration: none !important;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 2px;
+}
+
+.cart__login-paragraph a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--ac-accent);
+  transform: translateX(-50%);
+  transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.cart__login-paragraph a:hover::after {
+  width: 100%;
+}
+
+/* ── TWO-COLUMN GRID ──────────────────────────── */
+.cart__contents {
+  display: grid !important;
+  grid-template-columns: 1fr 380px !important;
+  gap: 2.25rem !important;
+  align-items: start !important;
+}
+
+/* ── ITEMS PANEL ──────────────────────────────── */
+.cart__items {
+  background: var(--ac-surface) !important;
+  backdrop-filter: blur(28px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(165%) !important;
+  border-radius: var(--ac-r) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow: 0 0 0 1px var(--ac-border), 0 28px 70px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+  border: none !important;
+  overflow: hidden !important;
+  position: relative;
+}
+
+.cart__items::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(227,252,2,0.35), rgba(255,255,255,0.1), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Items header */
+.ac-items-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem 1.125rem;
+  border-bottom: 1px solid var(--ac-border-w);
+}
+
+.ac-items-header__label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ac-muted);
+}
+
+.ac-items-header__count {
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: rgba(227,252,2,0.08);
+  border: 1px solid var(--ac-border);
+  color: var(--ac-accent);
+  border-radius: 100px;
+  padding: 0.22rem 0.75rem;
+  letter-spacing: 0.03em;
+}
+
+/* ── PRODUCT ROWS ─────────────────────────────── */
+.cart-items {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  background: transparent !important;
+}
+.cart-items thead { display: none !important; }
+
+.cart-item {
+  background: transparent !important;
+  border: none !important;
+  transition: background 0.3s ease,
+              transform 0.45s var(--ac-spring),
+              box-shadow 0.3s ease !important;
+  position: relative;
+
+  /* Staggered slide-in from right */
+  opacity: 0;
+  transform: translateX(30px);
+  animation: acItemSlideIn 0.6s var(--ac-smooth) forwards;
+}
+
+@keyframes acItemSlideIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.cart-item:nth-child(1) { animation-delay: 0.06s; }
+.cart-item:nth-child(2) { animation-delay: 0.16s; }
+.cart-item:nth-child(3) { animation-delay: 0.26s; }
+.cart-item:nth-child(4) { animation-delay: 0.36s; }
+.cart-item:nth-child(5) { animation-delay: 0.46s; }
+.cart-item:nth-child(6) { animation-delay: 0.56s; }
+.cart-item:nth-child(7) { animation-delay: 0.66s; }
+
+.cart-item:hover {
+  background: rgba(255,255,255,0.025) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 38px rgba(0,0,0,0.32), 0 0 0 1px rgba(227,252,2,0.1) !important;
+  z-index: 2;
+}
+
+/* Swoosh delete with spiral */
+.cart-item.ac-removing {
+  animation: acSwoosh 0.55s cubic-bezier(0.5,0,1,1) forwards !important;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+@keyframes acSwoosh {
+  0%  { opacity:1; transform:translateY(0) scale(1) rotate(0deg); max-height: 200px; }
+  30% { transform:translateY(-8px) scale(1.02) rotate(1deg); }
+  100%{ opacity:0; transform:translateY(65px) scale(0.08) rotate(-22deg);
+        max-height:0; padding-block:0; border-width:0; }
+}
+
+.cart-item td {
+  border-bottom: 1px solid var(--ac-border-w) !important;
+  padding: 1.375rem 0 !important;
+  vertical-align: middle !important;
+  background: transparent !important;
+  color: var(--ac-text) !important;
+}
+.cart-item td:first-child { padding-left: 2rem !important; }
+.cart-item td:last-child  { padding-right: 2rem !important; }
+.cart-item:last-child td  { border-bottom: none !important; }
+
+/* ── PRODUCT IMAGE ────────────────────────────── */
+.cart-item__media { width: 92px !important; }
+
+.cart-item__image-container {
+  width: 84px !important; height: 84px !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid var(--ac-border-w) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.cart-item__image {
+  width: 100% !important; height: 100% !important;
+  object-fit: cover !important;
+  transition: transform 0.45s ease !important;
+}
+.cart-item:hover .cart-item__image { transform: scale(1.08) !important; }
+
+/* ── DETAILS ──────────────────────────────────── */
+.cart-item__details { padding: 0 1.25rem !important; }
+
+.cart-item__details .caption-with-letter-spacing {
+  font-size: 0.6875rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--ac-accent) !important;
+  margin-bottom: 0.3rem !important;
+}
+
+.cart-item__name {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: var(--ac-text) !important;
+  text-decoration: none !important;
+  display: block !important;
+  margin-bottom: 0.35rem !important;
+  transition: color 0.2s ease !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+.cart-item__name:hover { color: var(--ac-accent) !important; }
+
+.product-option { font-size: 0.8125rem !important; color: var(--ac-muted) !important; margin-bottom: 0.15rem !important; }
+
+.cart-item__old-price   { color: var(--ac-muted) !important; text-decoration: line-through !important; }
+.cart-item__final-price { color: var(--ac-accent) !important; font-weight: 700 !important; }
+
+.discounts__discount {
+  font-size: 0.7rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.3rem !important;
+  background: rgba(227,252,2,0.08) !important;
+  border: 1px solid rgba(227,252,2,0.2) !important;
+  border-radius: 7px !important;
+  padding: 0.18rem 0.55rem !important;
+  color: var(--ac-accent) !important;
+  font-weight: 700 !important;
+  margin-top: 0.35rem !important;
+  list-style: none !important;
+}
+
+/* ── QUANTITY STEPPER ─────────────────────────── */
+.cart-quantity,
+quantity-input.cart-quantity {
+  display: flex !important;
+  align-items: center !important;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid var(--ac-border-w) !important;
+  border-radius: 11px !important;
+  overflow: hidden !important;
+  width: fit-content !important;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.quantity__button {
+  width: 34px !important; height: 38px !important;
+  background: transparent !important;
+  border: none !important;
+  color: var(--ac-muted) !important;
+  cursor: pointer !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s var(--ac-spring) !important;
+  padding: 0 !important;
+}
+.quantity__button:hover  { background: rgba(227,252,2,0.1) !important; color: var(--ac-accent) !important; }
+
+/* Squash on click */
+.quantity__button:active { transform: scale(0.85) !important; }
+
+.quantity__button svg { width: 12px !important; height: 12px !important; stroke: currentColor !important; }
+
+.quantity__input {
+  width: 42px !important; height: 38px !important;
+  background: transparent !important;
+  border: none !important;
+  border-left: 1px solid var(--ac-border-w) !important;
+  border-right: 1px solid var(--ac-border-w) !important;
+  color: var(--ac-text) !important;
+  font-size: 0.9rem !important; font-weight: 700 !important;
+  text-align: center !important;
+  outline: none !important;
+  -moz-appearance: textfield !important;
+  padding: 0 !important;
+}
+.quantity__input::-webkit-outer-spin-button,
+.quantity__input::-webkit-inner-spin-button { -webkit-appearance: none !important; }
+
+/* ── REMOVE BUTTON ────────────────────────────── */
+cart-remove-button a.button,
+cart-remove-button .button--tertiary {
+  width: 32px !important; height: 32px !important;
+  background: rgba(255,90,90,0.06) !important;
+  border: 1px solid rgba(255,90,90,0.15) !important;
+  border-radius: 9px !important;
+  color: rgba(255,120,120,0.55) !important;
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.25s var(--ac-spring) !important;
+  text-decoration: none !important;
+  padding: 0 !important; min-width: unset !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+cart-remove-button a:hover {
+  background: rgba(255,80,80,0.15) !important;
+  border-color: rgba(255,80,80,0.4) !important;
+  color: #ff6b6b !important;
+  transform: scale(1.14) rotate(10deg) !important;
+  box-shadow: 0 6px 16px rgba(255,80,80,0.25) !important;
+}
+
+cart-remove-button svg { width: 13px !important; height: 13px !important; stroke: currentColor !important; fill: none !important; }
+
+/* ── LINE TOTALS ──────────────────────────────── */
+.cart-item__totals .price { font-size: 1.0625rem !important; font-weight: 800 !important; color: var(--ac-accent) !important; }
+.cart-item__totals .cart-item__old-price.price { color: var(--ac-muted) !important; font-size: 0.8rem !important; font-weight: 400 !important; }
+
+.loading-spinner { stroke: var(--ac-accent) !important; }
+
+.cart-item__error      { color: #ff6b6b !important; font-size: 0.75rem !important; }
+.cart-item__error-text { color: #ff6b6b !important; }
+
+/* ── QUANTITY POPOVER ─────────────────────────── */
+.quantity-popover__info {
+  background: rgba(20,20,22,0.96) !important;
+  border: 1px solid var(--ac-border) !important;
+  border-radius: 13px !important;
+  color: var(--ac-text) !important;
+  backdrop-filter: blur(22px) !important;
+}
+.quantity-popover__info-button {
+  background: rgba(227,252,2,0.07) !important;
+  border: 1px solid rgba(227,252,2,0.2) !important;
+  border-radius: 9px !important;
+  color: var(--ac-accent) !important;
+}
+.quantity__rules { color: var(--ac-muted) !important; font-size: 0.8rem !important; }
+
+/* ── SUMMARY / FOOTER PANEL ───────────────────── */
+.cart__footer {
+  background: var(--ac-surface) !important;
+  backdrop-filter: blur(28px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(165%) !important;
+  border-radius: var(--ac-r) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow: 0 0 0 1px var(--ac-border), 0 28px 70px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+  border: none !important;
+  padding: 0 !important;
+  position: sticky;
+  top: 90px;
+  overflow: hidden;
+}
+
+.cart__footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(227,252,2,0.35), rgba(255,255,255,0.1), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ac-footer-inner { padding: 2rem; position: relative; z-index: 1; }
+
+.ac-footer-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ac-muted);
+  margin-bottom: 1.75rem;
+}
+
+/* ── PROMO CODE ───────────────────────────────── */
+.ac-promo { display: flex; gap: 0.625rem; margin-bottom: 1.5rem; }
+
+.ac-promo__input {
+  flex: 1;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 11px;
+  padding: 0.7rem 1rem;
+  color: var(--ac-text);
+  font-size: 0.9rem;
+  outline: none;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.ac-promo__input::placeholder { color: var(--ac-muted); }
+.ac-promo__input:focus {
+  border-color: rgba(227,252,2,0.45);
+  box-shadow: 0 0 0 3px rgba(227,252,2,0.1), inset 0 2px 6px rgba(0,0,0,0.12);
+}
+
+.ac-promo__btn {
+  background: rgba(227,252,2,0.08);
+  border: 1px solid rgba(227,252,2,0.2);
+  border-radius: 11px;
+  padding: 0.7rem 1.125rem;
+  color: var(--ac-accent);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  transition: background 0.25s ease, transform 0.2s var(--ac-spring);
+}
+.ac-promo__btn:hover { background: rgba(227,252,2,0.16); transform: scale(1.04); }
+.ac-promo__btn:active { transform: scale(0.95); transition: transform 0.08s ease; }
+
+/* ── SUMMARY ROWS ─────────────────────────────── */
+.ac-divider { height: 1px; background: var(--ac-border-w); margin: 1.125rem 0; }
+
+.ac-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.625rem 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--ac-border-w);
+}
+.ac-row:last-of-type { border-bottom: none; }
+.ac-row__label { color: var(--ac-muted); }
+.ac-row__val   { color: var(--ac-text); font-weight: 600; }
+.ac-row__accent { color: var(--ac-accent) !important; }
+
+/* ── TOTAL ────────────────────────────────────── */
+.ac-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.375rem 0 1.125rem;
+  margin-top: 0.25rem;
+  border-top: 1px solid var(--ac-border-w);
+}
+
+.ac-total__label { font-size: 1.125rem; font-weight: 800; color: var(--ac-text); }
+
+.ac-total__right { text-align: right; }
+
+.ac-total__price {
+  font-size: 1.875rem;
+  font-weight: 900;
+  color: var(--ac-accent);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  display: block;
+}
+
+.ac-total__sub { font-size: 0.7rem; color: var(--ac-muted); margin-top: 0.25rem; display: block; }
+
+
+/* ── STANDARD CHECKOUT ────────────────────────── */
+.ac-btn-checkout {
+  width: 100%;
+  padding: 1rem 1.75rem;
+  border-radius: 15px;
+  border: none;
+  background: linear-gradient(125deg, #E3FC02 0%, #c8e800 40%, #f0ff50 75%, #E3FC02 100%);
+  background-size: 250% 250%;
+  color: #000;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.625rem;
+  position: relative; overflow: hidden;
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.01em;
+  box-shadow: 0 8px 24px rgba(227,252,2,0.25), inset 0 1px 0 rgba(255,255,255,0.35);
+  transition: transform 0.25s var(--ac-spring), box-shadow 0.25s ease;
+  animation: acCheckoutPulse 3.25s ease-in-out infinite;
+}
+
+@keyframes acCheckoutPulse {
+  0%,100% { box-shadow: 0 8px 24px rgba(227,252,2,0.25), inset 0 1px 0 rgba(255,255,255,0.35); }
+  50%      { box-shadow: 0 8px 36px rgba(227,252,2,0.62), 0 0 48px rgba(227,252,2,0.14), inset 0 1px 0 rgba(255,255,255,0.4); }
+}
+
+.ac-btn-checkout::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  transition: left 0.55s ease;
+}
+.ac-btn-checkout:hover::before { left: 200%; }
+
+.ac-btn-checkout:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 14px 38px rgba(227,252,2,0.58);
+  animation-play-state: paused;
+}
+
+.ac-btn-checkout:active {
+  transform: scale(0.95);
+  transition: transform 0.08s ease;
+}
+
+.ac-btn-checkout svg { width: 15px; height: 15px; stroke: #000; fill: none; flex-shrink: 0; }
+
+/* ── PAYMENT CHIP GRID — KENYA-LOCALIZED ─────── */
+.ac-payments {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.5rem; flex-wrap: wrap; padding-top: 0.875rem;
+}
+
+.ac-payments__label {
+  width: 100%; text-align: center;
+  font-size: 0.7rem; color: var(--ac-muted);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+
+.ac-pay-chip {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(255,255,255,0.035);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 9px;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.7rem; font-weight: 700;
+  color: rgba(255,255,255,0.48);
+  white-space: nowrap;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.12);
+  transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  cursor: default;
+}
+
+/* Monochromatic → Full color on hover */
+.ac-pay-chip:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.22);
+  color: var(--ac-text);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* Dot starts desaturated, becomes vibrant on hover */
+.ac-pay-chip__dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  filter: grayscale(0.85) brightness(0.7);
+  transition: filter 0.35s ease, box-shadow 0.35s ease;
+}
+
+.ac-pay-chip:hover .ac-pay-chip__dot {
+  filter: grayscale(0) brightness(1);
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* ── TRUST BADGES ─────────────────────────────── */
+.ac-trust {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.125rem; margin-top: 1.125rem; flex-wrap: wrap;
+}
+
+.ac-trust__item {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.7rem; color: var(--ac-muted);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+.ac-trust__item svg { width: 12px; height: 12px; stroke: var(--ac-accent); fill: none; stroke-width: 2; }
+
+/* ── VISUALLY HIDDEN (a11y) ───────────────────── */
+.visually-hidden {
+  position: absolute !important; width: 1px !important; height: 1px !important;
+  overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important;
+}
+
+/* ── RESPONSIVE ───────────────────────────────── */
+@media (max-width: 980px) {
+  .cart__contents { grid-template-columns: 1fr !important; }
+  .cart__footer   { position: static !important; }
+}
+
+@media (max-width: 640px) {
+  cart-items .page-width { padding: 1rem !important; }
+  .cart-item__name { max-width: 180px; }
+  .ac-footer-inner { padding: 1.5rem; }
+}
+</style>
+
+<cart-items class="gradient color-{{ section.settings.color_scheme }} isolate{% if cart == empty %} is-empty{% else %} section-{{ section.id }}-padding{% endif %}">
+  <div class="page-width">
+
+    <!-- Dynamic Island Delivery Banner -->
+    <div class="ac-delivery-banner">
+      <span class="ac-delivery-banner__dot"></span>
+      🚚 FREE DELIVERY WITHIN NAIROBI — orders over KES 5,000
+    </div>
+
+    <!-- Title row -->
+    <div class="title-wrapper-with-link">
+      <h1 class="title title--primary">Shopping Cart</h1>
+      <a href="{{ routes.all_products_collection_url }}" class="underlined-link">
+        {{- 'general.continue_shopping' | t -}}
+      </a>
+    </div>
+
+    <!-- Empty state: Premium liquid glass -->
+    <div class="cart__warnings ac-glass-revealed">
+      <span class="ac-empty-icon">🛒</span>
+      <h1 class="cart__empty-text">Your cart is empty</h1>
+      <p class="ac-empty-subtitle">Looks like you haven't added anything yet. Start exploring our collection.</p>
+      <a href="{{ routes.all_products_collection_url }}" class="button">Start Shopping</a>
+
+      {%- if shop.customer_accounts_enabled and customer == null -%}
+        <h2 class="cart__login-title">{{ 'sections.cart.login.title' | t }}</h2>
+        <p class="cart__login-paragraph">{{ 'sections.cart.login.paragraph_html' | t: link: routes.account_login_url }}</p>
+      {%- endif -%}
+
+      <!-- Recommended products carousel -->
+      {% comment %}
+        Replace the collection handle below with your actual "recommended" or "featured" collection.
+        This fetches 4-6 products to show in the empty cart state.
+      {% endcomment %}
+      {%- assign recommended_collection = collections['featured'] | default: collections.all -%}
+      {%- if recommended_collection.products.size > 0 -%}
+        <div class="ac-recommended">
+          <p class="ac-recommended__label">Recommended For You</p>
+          <div class="ac-recommended__grid">
+            {%- for product in recommended_collection.products limit: 6 -%}
+              <a href="{{ product.url }}" class="ac-rec-card">
+                <div class="ac-rec-card__img">
+                  {% if product.featured_image %}
+                    <img 
+                      src="{{ product.featured_image | img_url: '300x' }}"
+                      alt="{{ product.featured_image.alt | escape }}"
+                      loading="lazy"
+                      width="150"
+                      height="150"
+                    >
+                  {% else %}
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  {% endif %}
+                </div>
+                <div class="ac-rec-card__title">{{ product.title | truncate: 42 }}</div>
+                <div class="ac-rec-card__price">{{ product.price | money }}</div>
+              </a>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <!-- Cart form — all IDs preserved for cart.js -->
+    <form action="{{ routes.cart_url }}" class="cart__contents critical-hidden" method="post" id="cart">
+
+      <!-- LEFT: Items panel -->
+      <div class="cart__items ac-glass ac-glass-revealed" id="main-cart-items" data-id="{{ section.id }}">
+
+        <div class="ac-items-header">
+          <span class="ac-items-header__label">Order Items</span>
+          <span class="ac-items-header__count">{{ cart.item_count }} {{ cart.item_count | pluralize: 'item', 'items' }}</span>
+        </div>
+
+        <div class="js-contents">
+          {%- if cart != empty -%}
+            <table class="cart-items">
+              <caption class="visually-hidden">{{ 'sections.cart.title' | t }}</caption>
+              <thead>
+                <tr>
+                  <th class="caption-with-letter-spacing" colspan="2" scope="col">{{ 'sections.cart.headings.product' | t }}</th>
+                  <th class="medium-hide large-up-hide right caption-with-letter-spacing" colspan="1" scope="col">{{ 'sections.cart.headings.total' | t }}</th>
+                  <th class="cart-items__heading--wide cart-items__heading--quantity small-hide caption-with-letter-spacing" colspan="1" scope="col">{{ 'sections.cart.headings.quantity' | t }}</th>
+                  <th class="small-hide right caption-with-letter-spacing" colspan="1" scope="col">{{ 'sections.cart.headings.total' | t }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%- for item in cart.items -%}
+                  <tr
+                    class="cart-item{% if item.parent_relationship.parent != null %} cart-item__nested-line{% endif %}"
+                    id="CartItem-{{ item.index | plus: 1 }}"
+                    {% if item.parent_relationship.parent != null %}aria-label="{{ 'products.product.nested_label' | t: title: item.product.title, parent_title: item.parent_relationship.parent.title | escape }}"{% endif %}
+                  >
+
+                    <!-- Image -->
+                    <td class="cart-item__media">
+                      {% if item.image %}
+                        <a href="{{ item.url }}" class="cart-item__link" aria-hidden="true" tabindex="-1"> </a>
+                        <div class="cart-item__image-container gradient {% if item.parent_relationship.parent == null %}global-media-settings{% endif %}">
+                          <img src="{{ item.image | image_url: width: 300 }}" class="cart-item__image {% if item.parent_relationship.parent != null %}global-media-settings{% endif %}" alt="{{ item.image.alt | escape }}" loading="lazy" width="150" height="{{ 150 | divided_by: item.image.aspect_ratio | ceil }}">
+                        </div>
+                      {% endif %}
+                    </td>
+
+                    <!-- Details -->
+                    <td class="cart-item__details">
+                      {%- if settings.show_vendor -%}
+                        <p class="caption-with-letter-spacing">{{ item.product.vendor }}</p>
+                      {%- endif -%}
+                      <a href="{{ item.url }}" class="cart-item__name h4 break">{{ item.product.title | escape }}</a>
+                      {%- if item.original_price != item.final_price -%}
+                        <div class="cart-item__discounted-prices">
+                          <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+                          <s class="cart-item__old-price product-option">{{- item.original_price | money -}}</s>
+                          <span class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
+                          <strong class="cart-item__final-price product-option">{{ item.final_price | money }}</strong>
+                        </div>
+                      {%- else -%}
+                        <div class="product-option">{{ item.original_price | money }}</div>
+                      {%- endif -%}
+
+                      {%- if item.product.has_only_default_variant == false or item.properties.size != 0 or item.selling_plan_allocation != null -%}
+                        <dl>
+                          {%- if item.product.has_only_default_variant == false -%}
+                            {%- for option in item.options_with_values -%}
+                              <div class="product-option"><dt>{{ option.name }}:</dt><dd>{{ option.value }}</dd></div>
+                            {%- endfor -%}
+                          {%- endif -%}
+                          {%- for property in item.properties -%}
+                            {%- assign property_first_char = property.first | slice: 0 -%}
+                            {%- if property.last != blank and property_first_char != '_' -%}
+                              <div class="product-option">
+                                <dt>{{ property.first }}:</dt>
+                                <dd>{%- if property.last contains '/uploads/' -%}<a href="{{ property.last }}" class="link" target="_blank">{{ property.last | split: '/' | last }}</a>{%- else -%}{{ property.last }}{%- endif -%}</dd>
+                              </div>
+                            {%- endif -%}
+                          {%- endfor -%}
+                        </dl>
+                        <p class="product-option">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+                      {%- endif -%}
+
+                      <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
+                        {%- for discount in item.line_level_discount_allocations -%}
+                          <li class="discounts__discount">
+                            {{- 'icon-discount.svg' | inline_asset_content -}}
+                            {{ discount.discount_application.title | escape }}
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    </td>
+
+                    <!-- Mobile total -->
+                    <td class="cart-item__totals right medium-hide large-up-hide">
+                      {%- render 'loading-spinner' -%}
+                      <div class="cart-item__price-wrapper">
+                        {%- if item.original_line_price != item.final_line_price -%}
+                          <dl class="cart-item__discounted-prices">
+                            <dt class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</dt>
+                            <dd><s class="cart-item__old-price price price--end">{{ item.original_line_price | money }}</s></dd>
+                            <dt class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</dt>
+                            <dd class="price price--end">{{ item.final_line_price | money }}</dd>
+                          </dl>
+                        {%- else -%}
+                          <span class="price price--end">{{ item.original_line_price | money }}</span>
+                        {%- endif -%}
+                        {%- if item.variant.available and item.unit_price_measurement -%}{% render 'unit-price', price: item.unit_price, measurement: item.unit_price_measurement %}{%- endif -%}
+                      </div>
+                    </td>
+
+                    <!-- Quantity + Remove -->
+                    {%- liquid
+                      assign has_qty_rules = false
+                      if item.variant.quantity_rule.increment > 1 or item.variant.quantity_rule.min > 1 or item.variant.quantity_rule.max != null
+                        assign has_qty_rules = true
+                      endif
+                      assign has_vol_pricing = false
+                      if item.variant.quantity_price_breaks.size > 0
+                        assign has_vol_pricing = true
+                      endif
+                    -%}
+                    <td class="cart-item__quantity{% if has_qty_rules or has_vol_pricing %} cart-item__quantity--info{% endif %}">
+                      <quantity-popover>
+                        <div class="cart-item__quantity-wrapper quantity-popover-wrapper">
+                          <label class="visually-hidden" for="Quantity-{{ item.index | plus: 1 }}">{{ 'products.product.quantity.label' | t }}</label>
+                          <div class="quantity-popover-container{% if has_qty_rules or has_vol_pricing %} quantity-popover-container--hover{% endif %}">
+                            {%- if has_qty_rules or has_vol_pricing -%}
+                              <button type="button" aria-expanded="false" class="quantity-popover__info-button quantity-popover__info-button--icon-only button button--tertiary small-hide medium-hide">
+                                {{- 'icon-info.svg' | inline_asset_content -}}
+                              </button>
+                            {%- endif -%}
+                            <quantity-input class="quantity cart-quantity">
+                              {%- assign can_update_quantity = item.instructions.can_update_quantity | default: true -%}
+                              <button class="quantity__button" name="minus" type="button" {% if can_update_quantity == false %}disabled{% endif %}>
+                                <span class="visually-hidden">{{ 'products.product.quantity.decrease' | t: product: item.product.title | escape }}</span>
+                                <span class="svg-wrapper">{{- 'icon-minus.svg' | inline_asset_content -}}</span>
+                              </button>
+                              <input class="quantity__input" data-quantity-variant-id="{{ item.variant.id }}" type="number" name="updates[]" value="{{ item.quantity }}" {% # theme-check-disable %} data-cart-quantity="{{ cart | item_count_for_variant: item.variant.id }}" min="0" data-min="{{ item.variant.quantity_rule.min }}" {% if item.variant.quantity_rule.max != null %}max="{{ item.variant.quantity_rule.max }}"{% endif %} step="{{ item.variant.quantity_rule.increment }}" {% # theme-check-enable %} aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title | escape }}" id="Quantity-{{ item.index | plus: 1 }}" data-index="{{ item.index | plus: 1 }}" {% if can_update_quantity == false %}disabled{% endif %}>
+                              <button class="quantity__button" name="plus" type="button" {% if can_update_quantity == false %}disabled{% endif %}>
+                                <span class="visually-hidden">{{ 'products.product.quantity.increase' | t: product: item.product.title | escape }}</span>
+                                <span class="svg-wrapper">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+                              </button>
+                            </quantity-input>
+                          </div>
+
+                          <cart-remove-button id="Remove-{{ item.index | plus: 1 }}" data-index="{{ item.index | plus: 1 }}" {%- assign can_remove = item.instructions.can_remove | default: true -%} {% if can_remove == false %}class="hidden"{% endif %}>
+                            <a href="{{ item.url_to_remove }}" class="button button--tertiary" aria-label="{{ 'sections.cart.remove_title' | t: title: item.title | escape }}">
+                              <span class="svg-wrapper">{{- 'icon-remove.svg' | inline_asset_content -}}</span>
+                            </a>
+                          </cart-remove-button>
+                        </div>
+
+                        {%- if has_qty_rules or has_vol_pricing -%}
+                          <button type="button" class="quantity-popover__info-button quantity-popover__info-button--icon-with-label button button--tertiary large-up-hide" aria-expanded="false">
+                            {{- 'icon-info.svg' | inline_asset_content -}}
+                            <span>{%- if has_vol_pricing -%}{{ 'products.product.volume_pricing.note' | t }}{%- elsif has_qty_rules -%}{{ 'products.product.quantity.note' | t }}{%- endif -%}</span>
+                          </button>
+                        {%- endif -%}
+
+                        {%- if has_vol_pricing or has_qty_rules -%}
+                          <div class="cart-items__info global-settings-popup quantity-popover__info" tabindex="-1" hidden>
+                            {%- if has_qty_rules == false -%}<span class="volume-pricing-label caption">{{- 'products.product.volume_pricing.title' | t -}}</span>{%- endif -%}
+                            <div class="quantity__rules caption">
+                              {%- if item.variant.quantity_rule.increment > 1 -%}<span class="divider">{{ 'products.product.quantity.multiples_of' | t: quantity: item.variant.quantity_rule.increment }}</span>{%- endif -%}
+                              {%- if item.variant.quantity_rule.min > 1 -%}<span class="divider">{{ 'products.product.quantity.min_of' | t: quantity: item.variant.quantity_rule.min }}</span>{%- endif -%}
+                              {%- if item.variant.quantity_rule.max != null -%}<span class="divider">{{ 'products.product.quantity.max_of' | t: quantity: item.variant.quantity_rule.max }}</span>{%- endif -%}
+                            </div>
+                            <button class="button-close button button--tertiary large-up-hide" type="button" aria-label="{{ 'accessibility.close' | t }}">
+                              <span class="svg-wrapper">{{- 'icon-close.svg' | inline_asset_content -}}</span>
+                            </button>
+                            {%- if item.variant.quantity_price_breaks.size > 0 -%}
+                              <volume-pricing class="parent-display">
+                                <ul class="list-unstyled">
+                                  <li><span>{{ item.variant.quantity_rule.min }}+</span>{%- assign price = item.variant.price | money_with_currency -%}<span> {{ 'sections.quick_order_list.each' | t: money: price }}</span></li>
+                                  {%- for price_break in item.variant.quantity_price_breaks -%}
+                                    <li><span>{{ price_break.minimum_quantity }}<span aria-hidden="true">+</span></span>{%- assign price = price_break.price | money_with_currency -%}<span> {{ 'sections.quick_order_list.each' | t: money: price }}</span></li>
+                                  {%- endfor -%}
+                                </ul>
+                              </volume-pricing>
+                            {%- endif -%}
+                          </div>
+                        {%- endif -%}
+
+                        <div class="cart-item__error" id="Line-item-error-{{ item.index | plus: 1 }}" role="alert">
+                          <small class="cart-item__error-text"></small>
+                          <span class="svg-wrapper">{{- 'icon-error.svg' | inline_asset_content -}}</span>
+                        </div>
+                      </quantity-popover>
+                    </td>
+
+                    <!-- Desktop total -->
+                    <td class="cart-item__totals right small-hide">
+                      {%- render 'loading-spinner' -%}
+                      <div class="cart-item__price-wrapper">
+                        {%- if item.original_line_price != item.final_line_price -%}
+                          <dl class="cart-item__discounted-prices">
+                            <dt class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</dt>
+                            <dd><s class="cart-item__old-price price price--end">{{ item.original_line_price | money }}</s></dd>
+                            <dt class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</dt>
+                            <dd class="price price--end">{{ item.final_line_price | money }}</dd>
+                          </dl>
+                        {%- else -%}
+                          <span class="price price--end">{{ item.original_line_price | money }}</span>
+                        {%- endif -%}
+                        {%- if item.variant.available and item.unit_price_measurement -%}{% render 'unit-price', price: item.unit_price, measurement: item.unit_price_measurement %}{%- endif -%}
+                      </div>
+                    </td>
+
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+          {%- endif -%}
+        </div>
+      </div><!-- /cart__items -->
+
+      <!-- RIGHT: Summary panel -->
+      <div class="cart__footer ac-glass ac-glass-revealed" id="main-cart-footer" data-id="{{ section.id }}">
+        <div class="ac-footer-inner">
+          <p class="ac-footer-label">Order Summary</p>
+
+          <!-- Promo code -->
+          <div class="ac-promo">
+            <input type="text" class="ac-promo__input" id="acPromoInput" placeholder="Discount code" autocomplete="off">
+            <button class="ac-promo__btn" type="button" id="acPromoBtn">Apply</button>
+          </div>
+
+          <div class="ac-divider"></div>
+
+          <!-- Subtotal -->
+          <div class="ac-row">
+            <span class="ac-row__label">Subtotal</span>
+            <span class="ac-row__val">{{ cart.original_total_price | money }}</span>
+          </div>
+
+          {%- if cart.cart_level_discount_applications.size > 0 -%}
+            {%- for discount in cart.cart_level_discount_applications -%}
+              <div class="ac-row">
+                <span class="ac-row__label">{{ discount.title | escape }}</span>
+                <span class="ac-row__val ac-row__accent">− {{ discount.total_allocated_amount | money }}</span>
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+
+          <!-- Delivery -->
+          <div class="ac-row">
+            <span class="ac-row__label">Delivery</span>
+            <span class="ac-row__val ac-row__accent">At checkout</span>
+          </div>
+
+          <div class="ac-divider"></div>
+
+          <!-- Total -->
+          <div class="ac-total">
+            <span class="ac-total__label">Total</span>
+            <div class="ac-total__right">
+              <span class="ac-total__price">{{ cart.total_price | money }}</span>
+              <span class="ac-total__sub">Taxes included · KES</span>
+            </div>
+          </div>
+
+      <!-- Required by cart.js -->
+      <p class="visually-hidden" id="cart-live-region-text" aria-live="polite" role="status"></p>
+      <p class="visually-hidden" id="shopping-cart-line-item-status" aria-live="polite" aria-hidden="true" role="status">{{ 'accessibility.loading' | t }}</p>
+
+    </form>
+  </div>
+  
+</cart-items>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  // ── Swoosh spiral delete ─────────────────────────────────────────
+  document.addEventListener('click', function (e) {
+    const removeLink = e.target.closest('cart-remove-button a');
+    if (!removeLink) return;
+    const row = removeLink.closest('.cart-item');
+    if (row) row.classList.add('ac-removing');
+  }, true);
+
+  // ── Promo code ───────────────────────────────────────────────────
+  const promoBtn   = document.getElementById('acPromoBtn');
+  const promoInput = document.getElementById('acPromoInput');
+
+  promoBtn?.addEventListener('click', function () {
+    const code = promoInput?.value?.trim();
+    if (!code) { promoInput?.focus(); return; }
+    promoBtn.textContent = '...';
+    promoBtn.disabled = true;
+    fetch('/discount/' + encodeURIComponent(code))
+      .then(() => location.reload())
+      .catch(() => {
+        promoBtn.textContent = 'Invalid';
+        promoBtn.style.color = '#ff6b6b';
+        promoBtn.style.borderColor = 'rgba(255,80,80,0.4)';
+        setTimeout(() => {
+          promoBtn.textContent = 'Apply';
+          promoBtn.style.color = '';
+          promoBtn.style.borderColor = '';
+          promoBtn.disabled = false;
+        }, 2200);
+      });
+  });
+
+  promoInput?.addEventListener('keypress', e => {
+    if (e.key === 'Enter') promoBtn?.click();
+  });
+
+  // ── Magnetic Pull: "Start Shopping" button ──────────────────────
+  const startShoppingBtn = document.querySelector('.cart__warnings .button');
+  
+  if (startShoppingBtn) {
+    startShoppingBtn.addEventListener('mousemove', function (e) {
+      const rect = this.getBoundingClientRect();
+      const btnCenterX = rect.left + rect.width / 2;
+      const btnCenterY = rect.top + rect.height / 2;
+      
+      const deltaX = e.clientX - btnCenterX;
+      const deltaY = e.clientY - btnCenterY;
+      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      
+      const maxDistance = 30; // 30px magnetic pull radius
+      
+      if (distance < maxDistance) {
+        const pullStrength = (maxDistance - distance) / maxDistance; // 0 to 1
+        const offsetX = deltaX * pullStrength * 0.3; // 30% pull intensity
+        const offsetY = deltaY * pullStrength * 0.3;
+        
+        this.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(1.03)`;
+      }
+    });
+    
+    startShoppingBtn.addEventListener('mouseleave', function () {
+      this.style.transform = '';
+    });
+  }
+
+});
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-items.name",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

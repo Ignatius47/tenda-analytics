@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "creative_didgital_services": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "{% render 'creative-didgital-services' %}"
+      }
+    }
+  },
+  "order": [
+    "creative_didgital_services"
+  ]
+}

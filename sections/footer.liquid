@@ -1,0 +1,1058 @@
+<footer class="tenda-footer">
+
+  <!-- ================================
+       SUBSCRIBE SECTION - TOP OF FOOTER
+       ================================ -->
+  <div class="footer-subscribe" id="footerSubscribe">
+
+    <!-- Animated background grain -->
+    <div class="sub-grain"></div>
+    <!-- Cursor glow follower -->
+    <div class="sub-cursor-glow" id="subCursorGlow"></div>
+
+    <div class="sub-inner">
+
+      <!-- Headline - each word animates in -->
+      <h2 class="sub-heading">
+        <span class="sub-word">Subscribe</span>
+        <span class="sub-word sub-word--accent">to our</span>
+        <span class="sub-word">emails</span>
+      </h2>
+
+      <!-- Subtext -->
+      <p class="sub-text">
+        {{ section.settings.subscribe_subtext | default: 'Be the first to know about new insights, tools and exclusive offers.' }}
+      </p>
+
+      <!-- Email form -->
+      {% form 'customer', id: 'FooterNewsletterForm', class: 'sub-form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+
+        <div class="sub-field-wrap" id="subFieldWrap">
+          <div class="sub-field">
+            <input
+              type="email"
+              name="contact[email]"
+              id="FooterEmail"
+              class="sub-input"
+              placeholder="Your email address"
+              autocomplete="email"
+              aria-label="Email address"
+              required
+              {% if form.errors %}aria-invalid="true"{% endif %}
+            >
+            <button type="submit" class="sub-btn" id="FooterSubBtn" aria-label="Subscribe">
+              <span class="sub-btn-text">Subscribe</span>
+              <span class="sub-btn-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </span>
+              <span class="sub-btn-spinner"></span>
+            </button>
+          </div>
+
+          {% if form.errors %}
+            <p class="sub-error">Please enter a valid email address.</p>
+          {% endif %}
+        </div>
+
+        {% if form.posted_successfully? %}
+          <div class="sub-success" id="subSuccess">
+            <span>✓</span>
+            <span>You're in! Welcome to the Tenda community.</span>
+          </div>
+        {% endif %}
+
+      {% endform %}
+
+      <!-- Privacy note -->
+      <p class="sub-privacy">No spam, ever. Unsubscribe anytime.</p>
+
+    </div>
+  </div>
+
+  <!-- ================================
+       FOOTER LINKS + BRAND
+       ================================ -->
+  <div class="footer-main">
+    <div class="footer-inner">
+
+      <div class="footer-grid">
+
+        <!-- BRAND -->
+        <div class="footer-brand">
+          <h3 class="brand-title">{{ section.settings.brand_name | default: 'Tenda' }}</h3>
+          <p class="brand-description">{{ section.settings.brand_description | default: 'Data-driven growth for African retail and service brands.' }}</p>
+
+          <div class="social-links" id="socialLinks">
+            <!-- Instagram - Always visible -->
+            <a href="{{ section.settings.instagram_url | default: 'https://www.instagram.com/tenda.analytics?igsh=bzRza3RxdGUyOHI3' }}" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               aria-label="Instagram" 
+               class="social-link" 
+               data-magnetic>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </a>
+
+            <!-- LinkedIn - Always visible -->
+            <a href="{{ section.settings.linkedin_url | default: 'https://www.linkedin.com/company/tenda-analytics/' }}" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               aria-label="LinkedIn" 
+               class="social-link" 
+               data-magnetic>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                <rect x="2" y="9" width="4" height="12"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
+              </svg>
+            </a>
+
+            <!-- Twitter/X - Optional -->
+            {% if section.settings.twitter_url != blank %}
+              <a href="{{ section.settings.twitter_url }}" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="social-link" data-magnetic>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </a>
+            {% endif %}
+
+            <!-- Discord - Optional -->
+            {% if section.settings.discord_url != blank %}
+              <a href="{{ section.settings.discord_url }}" target="_blank" rel="noopener noreferrer" aria-label="Discord" class="social-link" data-magnetic>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0 a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                </svg>
+              </a>
+            {% endif %}
+
+            <!-- Email - Optional -->
+            {% if section.settings.email != blank %}
+              <a href="mailto:{{ section.settings.email }}" aria-label="Email" class="social-link" data-magnetic>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 13.5L0 6V18h24V6L12 13.5zm12-9H0l12 7.5L24 4.5z"/>
+                </svg>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- SERVICES -->
+        <div class="footer-col">
+          <h4 class="footer-col-title">Services</h4>
+          <ul class="footer-links">
+            <li><a href="{{ section.settings.advisory_link }}">Tenda Advisory</a></li>
+            <li><a href="{{ section.settings.platform_link }}">Tenda Platform</a></li>
+            <li><a href="{{ section.settings.digital_link }}">Digital Products</a></li>
+          </ul>
+        </div>
+
+        <!-- COMPANY -->
+        <div class="footer-col">
+          <h4 class="footer-col-title">Company</h4>
+          <ul class="footer-links">
+            <li><a href="{{ section.settings.about_link }}">About Us</a></li>
+            <li><a href="{{ section.settings.events_link }}">Events</a></li>
+            <li><a href="{{ section.settings.marketplace_link }}">Marketplace</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- COPYRIGHT -->
+      <div class="footer-bottom">
+        <p>&copy; {{ 'now' | date: '%Y' }} Tenda Analytics. All rights reserved.</p>
+      </div>
+
+    </div>
+  </div>
+
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/+254703846011" 
+   class="whatsapp-float visible" 
+   target="_blank"
+   rel="noopener noreferrer"
+   aria-label="Chat on WhatsApp">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.433h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="backToTop" aria-label="Back to top">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 19V5M5 12l7-7 7 7"/>
+  </svg>
+</button>
+
+<style>
+
+  /* ===========================================
+     SUBSCRIBE SECTION
+     =========================================== */
+
+  .footer-subscribe {
+    background: #161618;
+    padding: 110px 24px 100px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* Animated grain texture */
+  .sub-grain {
+    position: absolute;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.035;
+    pointer-events: none;
+    animation: grainDrift 8s steps(2) infinite;
+    will-change: transform;
+  }
+
+  @keyframes grainDrift {
+    0%   { transform: translate(0, 0); }
+    25%  { transform: translate(-2%, -1%); }
+    50%  { transform: translate(1%, 2%); }
+    75%  { transform: translate(-1%, 1%); }
+    100% { transform: translate(0, 0); }
+  }
+
+  /* Cursor glow */
+  .sub-cursor-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(227,252,2,0.05) 0%, transparent 65%);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 0;
+  }
+
+  .footer-subscribe:hover .sub-cursor-glow { opacity: 1; }
+
+  /* Content container */
+  .sub-inner {
+    max-width: 680px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Live badge */
+  .sub-live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(227,252,2,0.07);
+    border: 1px solid rgba(227,252,2,0.18);
+    border-radius: 100px;
+    padding: 6px 18px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 2rem;
+    letter-spacing: 0.02em;
+
+    /* Entrance */
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .footer-subscribe.in-view .sub-live-badge {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Pulsing dot */
+  .sub-live-dot {
+    width: 8px;
+    height: 8px;
+    background: #E3FC02;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: dotPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes dotPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(227,252,2,0.7); }
+    70%  { box-shadow: 0 0 0 8px rgba(227,252,2,0); }
+    100% { box-shadow: 0 0 0 0 rgba(227,252,2,0); }
+  }
+
+  /* Heading with word-by-word reveal */
+  .sub-heading {
+    font-size: clamp(2.4rem, 5.5vw, 4rem);
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 0.3em;
+  }
+
+  .sub-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.55s cubic-bezier(0.34,1.56,0.64,1),
+                transform 0.55s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .sub-word:nth-child(2) { transition-delay: 0.12s; }
+  .sub-word:nth-child(3) { transition-delay: 0.24s; }
+
+  /* Accent word in neon yellow */
+  .sub-word--accent { color: #E3FC02; }
+
+  .footer-subscribe.in-view .sub-word {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Subtext */
+  .sub-text {
+    font-size: 1.0625rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.75;
+    margin-bottom: 2.75rem;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.55s ease 0.36s, transform 0.55s ease 0.36s;
+  }
+
+  .footer-subscribe.in-view .sub-text {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Form */
+  .sub-form {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.55s ease 0.48s, transform 0.55s ease 0.48s;
+  }
+
+  .footer-subscribe.in-view .sub-form {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .sub-field-wrap { margin-bottom: 1rem; }
+
+  .sub-field {
+    display: flex;
+    align-items: stretch;
+    max-width: 560px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0.875rem;
+    overflow: hidden;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .sub-field:focus-within {
+    border-color: rgba(227,252,2,0.45);
+    box-shadow: 0 0 0 3px rgba(227,252,2,0.08),
+                0 0 40px rgba(227,252,2,0.1);
+  }
+
+  .sub-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 1.125rem 1.25rem;
+    font-size: 0.9375rem;
+    color: #ffffff;
+    min-width: 0;
+  }
+
+  .sub-input::placeholder { color: rgba(255,255,255,0.28); }
+
+  /* Button */
+  .sub-btn {
+    background: #E3FC02;
+    color: #000000;
+    border: none;
+    padding: 0 1.75rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    letter-spacing: 0.01em;
+  }
+
+  /* Shine sweep on hover */
+  .sub-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    transition: left 0.45s ease;
+  }
+
+  .sub-btn:hover::before { left: 160%; }
+  .sub-btn:hover {
+    background: #f1ff10;
+    transform: scale(1.04);
+  }
+
+  /* Arrow nudge animation */
+  .sub-btn-arrow svg {
+    animation: arrowNudge 1.8s ease-in-out infinite;
+    display: block;
+  }
+
+  @keyframes arrowNudge {
+    0%, 100% { transform: translateX(0); }
+    50%       { transform: translateX(5px); }
+  }
+
+  .sub-btn:hover .sub-btn-arrow svg {
+    animation: none;
+    transform: translateX(6px);
+  }
+
+  /* Loading spinner */
+  .sub-btn-spinner {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(0,0,0,0.25);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spin 0.65s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .sub-btn.loading .sub-btn-text,
+  .sub-btn.loading .sub-btn-arrow { display: none; }
+  .sub-btn.loading .sub-btn-spinner { display: block; }
+
+  /* Error */
+  .sub-error {
+    color: #ff6b6b;
+    font-size: 0.8125rem;
+    margin-top: 0.625rem;
+    text-align: center;
+  }
+
+  /* Success */
+  .sub-success {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 1.25rem;
+    background: rgba(227,252,2,0.07);
+    border: 1px solid rgba(227,252,2,0.25);
+    border-radius: 0.875rem;
+    color: #E3FC02;
+    font-weight: 700;
+    font-size: 1rem;
+    animation: successPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes successPop {
+    from { opacity: 0; transform: scale(0.85); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* Privacy note */
+  .sub-privacy {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.22);
+    margin-top: 1.25rem;
+    opacity: 0;
+    transition: opacity 0.55s ease 0.6s;
+  }
+
+  .footer-subscribe.in-view .sub-privacy { opacity: 1; }
+
+  /* ===========================================
+     FOOTER MAIN
+     =========================================== */
+
+  .footer-main {
+    background: #1F1F21;
+    color: #bbb;
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 24px 32px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 50px;
+  }
+
+  .brand-title {
+    color: #fff;
+    font-size: 1.375rem;
+    font-weight: 800;
+    margin-bottom: 0.875rem;
+  }
+
+  .brand-description {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    margin-bottom: 1.5rem;
+    max-width: 340px;
+  }
+
+  .footer-col-title {
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1.25rem;
+  }
+
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-links li { margin-bottom: 0.75rem; }
+
+  .footer-links a {
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9375rem;
+    transition: color 0.25s ease, padding-left 0.25s ease;
+    display: inline-block;
+  }
+
+  .footer-links a:hover {
+    color: #E3FC02;
+    padding-left: 4px;
+  }
+
+  /* ===========================================
+     WEB3 SOCIAL ICONS - NEON ACTIVATION
+     =========================================== */
+
+  .social-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(227, 252, 2, 0.15);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.02);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: rgba(227, 252, 2, 0.4); /* Low-opacity neon base state */
+    text-decoration: none;
+    position: relative;
+    opacity: 0;
+    animation: springIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    transition: color 0.3s ease, 
+                border-color 0.3s ease,
+                background 0.3s ease, 
+                box-shadow 0.3s ease,
+                filter 0.3s ease;
+  }
+
+  .social-link:nth-child(1) { animation-delay: 0.05s; }
+  .social-link:nth-child(2) { animation-delay: 0.15s; }
+  .social-link:nth-child(3) { animation-delay: 0.25s; }
+  .social-link:nth-child(4) { animation-delay: 0.35s; }
+  .social-link:nth-child(5) { animation-delay: 0.45s; }
+
+  @keyframes springIn {
+    0%   { opacity: 0; transform: scale(0) rotate(-90deg); }
+    60%  { transform: scale(1.15) rotate(5deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0); }
+  }
+
+  /* NEON ACTIVATION - Hover State */
+  .social-link:hover {
+    border-color: #E3FC02;
+    color: #E3FC02; /* Full neon yellow */
+    background: rgba(227,252,2,0.08);
+    box-shadow: 0 0 18px rgba(227,252,2,0.3),
+                inset 0 0 12px rgba(227,252,2,0.1);
+    filter: drop-shadow(0 0 5px #E3FC02); /* Neon glow effect */
+    transform: translateY(-2px) scale(1.05);
+  }
+
+  /* Surgical line-art icons stay crisp */
+  .social-link svg {
+    transition: transform 0.3s ease;
+  }
+
+  .social-link:hover svg {
+    transform: scale(1.1);
+  }
+
+  /* ===========================================
+     FOOTER BOTTOM
+     =========================================== */
+
+  .footer-bottom {
+    border-top: 1px solid #252527;
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    text-align: center;
+    font-size: 0.8125rem;
+    color: #444;
+  }
+
+  /* ===========================================
+     WHATSAPP FLOAT - TENDA NEON AESTHETIC
+     =========================================== */
+
+  .whatsapp-float {
+    position: fixed;
+    bottom: 88px;
+    right: 28px;
+    width: 48px;
+    height: 48px;
+    background: rgba(20, 20, 22, 0.92);
+    border: 1.5px solid rgba(227, 252, 2, 0.35);
+    border-radius: 50%;
+    color: #E3FC02;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 9998;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-decoration: none;
+    animation: dotPulse 2.5s ease-in-out infinite;
+  }
+
+  .whatsapp-float:hover {
+    background: #E3FC02;
+    color: #000;
+    border-color: #E3FC02;
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 0 8px 24px rgba(227, 252, 2, 0.35);
+    animation: none;
+  }
+
+  /* ===========================================
+     BACK TO TOP
+     =========================================== */
+
+  .back-to-top {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 48px;
+    height: 48px;
+    background: rgba(20,20,22,0.92);
+    border: 1.5px solid rgba(227,252,2,0.35);
+    border-radius: 50%;
+    color: #E3FC02;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 9999;
+    animation: dotPulse 2.5s ease-in-out infinite;
+  }
+
+  .back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .back-to-top:hover {
+    background: #E3FC02;
+    color: #000;
+    border-color: #E3FC02;
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 0 8px 24px rgba(227,252,2,0.35);
+    animation: none;
+  }
+
+  /* ===========================================
+     RESPONSIVE
+     =========================================== */
+
+  @media (max-width: 900px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+    }
+    .footer-brand { grid-column: 1 / -1; }
+  }
+
+  @media (max-width: 640px) {
+    .footer-subscribe { padding: 72px 20px 64px; }
+    .sub-heading { font-size: 2.2rem; }
+    .sub-field { flex-direction: column; border-radius: 0.875rem; }
+    .sub-btn { padding: 1rem; justify-content: center; border-radius: 0; }
+    .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+    .footer-brand { grid-column: auto; }
+    
+    .whatsapp-float {
+      bottom: 74px;
+      right: 20px;
+      width: 42px;
+      height: 42px;
+    }
+    
+    .back-to-top {
+      bottom: 20px;
+      right: 20px;
+      width: 42px;
+      height: 42px;
+    }
+  }
+
+  /* =========================================
+     LIGHT MODE OVERRIDES
+     =========================================
+     Applied when html[data-theme="light"]
+     All footer sections adapt to the light palette
+     ========================================= */
+
+  html[data-theme="light"] .footer-subscribe {
+    background: #F5F5F7;
+    border-top: 1px solid rgba(0,0,0,0.07);
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+  }
+
+  html[data-theme="light"] .sub-heading {
+    color: #1D1D1F;
+  }
+
+  html[data-theme="light"] .sub-heading .sub-word--accent {
+    background: linear-gradient(135deg, #7a6c00 0%, #5a5000 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  html[data-theme="light"] .sub-text,
+  html[data-theme="light"] .sub-privacy {
+    color: #6E6E73;
+  }
+
+  html[data-theme="light"] .sub-field {
+    background: rgba(255,255,255,0.9);
+    border-color: rgba(0,0,0,0.1);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  }
+
+  html[data-theme="light"] .sub-input {
+    color: #1D1D1F;
+    background: transparent;
+  }
+
+  html[data-theme="light"] .sub-input::placeholder {
+    color: #98989D;
+  }
+
+  html[data-theme="light"] .footer-main {
+    background: #FFFFFF;
+    color: #6E6E73;
+    border-top: 1px solid rgba(0,0,0,0.07);
+  }
+
+  html[data-theme="light"] .brand-title {
+    color: #1D1D1F;
+  }
+
+  html[data-theme="light"] .brand-description {
+    color: #6E6E73;
+  }
+
+  html[data-theme="light"] .footer-col-title {
+    color: #1D1D1F;
+  }
+
+  html[data-theme="light"] .footer-col-title::after {
+    background: rgba(180,160,0,0.5);
+  }
+
+  html[data-theme="light"] .footer-link {
+    color: #6E6E73;
+  }
+
+  html[data-theme="light"] .footer-link:hover {
+    color: #5A5000;
+  }
+
+  html[data-theme="light"] .footer-bottom {
+    background: #F5F5F7;
+    border-top-color: rgba(0,0,0,0.07);
+  }
+
+  html[data-theme="light"] .footer-bottom-text,
+  html[data-theme="light"] .footer-copy {
+    color: #98989D;
+  }
+
+  html[data-theme="light"] .social-link {
+    background: rgba(0,0,0,0.05);
+    border-color: rgba(0,0,0,0.08);
+    color: #6E6E73;
+  }
+
+  html[data-theme="light"] .social-link:hover {
+    background: rgba(0,0,0,0.08);
+    color: #1D1D1F;
+  }
+
+  html[data-theme="light"] .back-to-top {
+    background: rgba(0,0,0,0.08);
+    color: #1D1D1F;
+    border-color: rgba(0,0,0,0.1);
+  }
+
+  html[data-theme="light"] .back-to-top:hover {
+    background: rgba(0,0,0,0.13);
+  }
+
+  html[data-theme="light"] .whatsapp-float {
+    box-shadow: 0 4px 20px rgba(37,211,102,0.25), 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+
+    /* ---- Subscribe section scroll reveal ---- */
+    const subscribeSection = document.getElementById('footerSubscribe');
+    const cursorGlow = document.getElementById('subCursorGlow');
+    const parallaxGrain = subscribeSection ? subscribeSection.querySelector('.sub-grain') : null;
+
+    if (subscribeSection) {
+      const io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+      io.observe(subscribeSection);
+    }
+
+    /* ---- Cursor glow follow ---- */
+    if (subscribeSection && cursorGlow) {
+      subscribeSection.addEventListener('mousemove', function (e) {
+        var rect = subscribeSection.getBoundingClientRect();
+        cursorGlow.style.left = (e.clientX - rect.left) + 'px';
+        cursorGlow.style.top  = (e.clientY - rect.top)  + 'px';
+      });
+    }
+
+    /* ---- Parallax grain on scroll ---- */
+    if (parallaxGrain && subscribeSection) {
+      window.addEventListener('scroll', function () {
+        var rect = subscribeSection.getBoundingClientRect();
+        var progress = (window.innerHeight - rect.top) / window.innerHeight;
+        parallaxGrain.style.transform = 'translate(' + (progress * -2) + '%, ' + (progress * 25) + 'px)';
+      }, { passive: true });
+    }
+
+    /* ---- Form loading state ---- */
+    var subForm = document.getElementById('FooterNewsletterForm');
+    var subBtn  = document.getElementById('FooterSubBtn');
+
+    if (subForm && subBtn) {
+      subForm.addEventListener('submit', function () {
+        subBtn.classList.add('loading');
+        subBtn.disabled = true;
+      });
+    }
+
+    /* ---- Magnetic social icons ---- */
+    document.querySelectorAll('[data-magnetic]').forEach(function (link) {
+      link.addEventListener('mousemove', function (e) {
+        var rect = this.getBoundingClientRect();
+        var x = e.clientX - rect.left - rect.width  / 2;
+        var y = e.clientY - rect.top  - rect.height / 2;
+        var dist = Math.sqrt(x * x + y * y);
+        var maxDist = 70;
+        if (dist < maxDist) {
+          var pull = (maxDist - dist) / maxDist;
+          this.style.transform = 'translate(' + (x * pull * 0.28) + 'px,' + (y * pull * 0.28) + 'px) scale(1.06)';
+        }
+      });
+      link.addEventListener('mouseleave', function () {
+        this.style.transform = '';
+      });
+    });
+
+    /* ---- Back to top ---- */
+    var backToTop = document.getElementById('backToTop');
+    if (backToTop) {
+      window.addEventListener('scroll', function () {
+        backToTop.classList.toggle('visible', window.pageYOffset > 400);
+      }, { passive: true });
+      backToTop.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Tenda Footer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Subscribe Section"
+    },
+    {
+      "type": "text",
+      "id": "live_counter_text",
+      "label": "Live Badge Text",
+      "default": "Join 500+ African operators"
+    },
+    {
+      "type": "textarea",
+      "id": "subscribe_subtext",
+      "label": "Subscribe Subtext",
+      "default": "Be the first to know about new insights, tools and exclusive offers for African operators."
+    },
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand Name",
+      "default": "Tenda"
+    },
+    {
+      "type": "textarea",
+      "id": "brand_description",
+      "label": "Brand Description",
+      "default": "Data-driven growth for African retail and service brands. We turn messy data into clear daily decisions."
+    },
+    {
+      "type": "header",
+      "content": "Social Links"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "linkedin_url",
+      "label": "LinkedIn URL"
+    },
+    {
+      "type": "url",
+      "id": "twitter_url",
+      "label": "X (Twitter) URL"
+    },
+    {
+      "type": "url",
+      "id": "discord_url",
+      "label": "Discord URL"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Contact Email"
+    },
+    {
+      "type": "header",
+      "content": "Footer Links"
+    },
+    {
+      "type": "url",
+      "id": "advisory_link",
+      "label": "Advisory Page Link"
+    },
+    {
+      "type": "url",
+      "id": "platform_link",
+      "label": "Platform Page Link"
+    },
+    {
+      "type": "url",
+      "id": "digital_link",
+      "label": "Digital Products Link"
+    },
+    {
+      "type": "url",
+      "id": "about_link",
+      "label": "About Page Link"
+    },
+    {
+      "type": "url",
+      "id": "events_link",
+      "label": "Events Link"
+    },
+    {
+      "type": "url",
+      "id": "marketplace_link",
+      "label": "Marketplace Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tenda Footer"
+    }
+  ]
+}
+{% endschema %}

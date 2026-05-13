@@ -1,0 +1,610 @@
+{% comment %}
+  Premium Hero Section
+  Apple / Vercel / Prisma inspired hero
+  - Floating gradient orbs
+  - Grid dot background
+  - Animated eyebrow pill
+  - Scroll fade-in text cascade
+  - Dual CTA buttons
+{% endcomment %}
+
+<style>
+/* ── SECTION ──────────────────────────────────────────────────── */
+.ta-hero {
+  position: relative;
+  padding: var(--hero-pt, 140px) 1.5rem var(--hero-pb, 100px);
+  overflow: hidden;
+  background: var(--ta-bg, #08080A);
+  min-height: var(--hero-min-height, auto);
+  display: flex;
+  align-items: center;
+}
+
+/* ── GRID BACKGROUND ────────────────────────────────────────────── */
+.ta-hero__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 75% 70% at 50% 40%, black 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 40%, black 0%, transparent 100%);
+  pointer-events: none;
+}
+
+html[data-theme="light"] .ta-hero__grid {
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+}
+
+/* ── GRADIENT ORBS ──────────────────────────────────────────────── */
+.ta-hero__orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(100px);
+}
+
+.ta-hero__orb--1 {
+  top: -10%;
+  left: 40%;
+  width: 600px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(227,252,2,0.12) 0%, transparent 70%);
+  animation: ta-hero-orb1 12s ease-in-out infinite;
+}
+
+.ta-hero__orb--2 {
+  top: 20%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(100,150,255,0.06) 0%, transparent 70%);
+  animation: ta-hero-orb2 16s ease-in-out infinite;
+}
+
+.ta-hero__orb--3 {
+  bottom: -20%;
+  left: -10%;
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(227,252,2,0.05) 0%, transparent 70%);
+  animation: ta-hero-orb3 20s ease-in-out infinite;
+}
+
+@keyframes ta-hero-orb1 {
+  0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+  33%       { transform: translateY(-30px) translateX(20px) scale(1.05); }
+  66%       { transform: translateY(15px) translateX(-15px) scale(0.96); }
+}
+
+@keyframes ta-hero-orb2 {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-40px) scale(1.06); }
+}
+
+@keyframes ta-hero-orb3 {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50%       { transform: translateY(30px) translateX(25px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ta-hero__orb { animation: none !important; }
+}
+
+/* ── CONTENT ─────────────────────────────────────────────────────── */
+.ta-hero__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+/* ── EYEBROW PILL ────────────────────────────────────────────────── */
+.ta-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(227,252,2,0.08);
+  border: 1px solid rgba(227,252,2,0.2);
+  border-radius: 100px;
+  padding: 0.4rem 1.1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #E3FC02;
+  margin-bottom: 1.75rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  text-shadow: 0 0 12px rgba(227,252,2,0.4);
+}
+
+html[data-theme="light"] .ta-hero__eyebrow {
+  background: rgba(180,160,0,0.08);
+  border-color: rgba(180,160,0,0.2);
+  color: #6B5D00;
+  text-shadow: none;
+}
+
+.ta-hero__eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  background: #E3FC02;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(227,252,2,0.9);
+  animation: ta-hero-dot 2.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+html[data-theme="light"] .ta-hero__eyebrow-dot {
+  background: #8a7a00;
+  box-shadow: 0 0 6px rgba(138,122,0,0.5);
+}
+
+@keyframes ta-hero-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(227,252,2,0.8); }
+  50%       { box-shadow: 0 0 0 8px rgba(227,252,2,0); }
+}
+
+/* ── HEADLINE ──────────────────────────────────────────────────── */
+.ta-hero__title {
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  color: #FFFFFF;
+  margin: 0 0 1.5rem;
+}
+
+html[data-theme="light"] .ta-hero__title { color: #1D1D1F; }
+
+.ta-hero__title-accent {
+  background: linear-gradient(135deg, #E3FC02 0%, #c8e800 40%, #f0ff50 70%, #E3FC02 100%);
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: ta-gradient-flow 5s ease-in-out infinite;
+}
+
+html[data-theme="light"] .ta-hero__title-accent {
+  background: linear-gradient(135deg, #7a6c00 0%, #5a5000 60%);
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: ta-gradient-flow 5s ease-in-out infinite;
+}
+
+@keyframes ta-gradient-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+/* ── SUBHEADING ─────────────────────────────────────────────────── */
+.ta-hero__subtitle {
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  line-height: 1.65;
+  color: rgba(255,255,255,0.58);
+  max-width: 680px;
+  margin: 0 auto 3rem;
+}
+
+html[data-theme="light"] .ta-hero__subtitle { color: #6E6E73; }
+
+/* ── CTA BUTTONS ─────────────────────────────────────────────────── */
+.ta-hero__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ta-hero__btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2.25rem;
+  background: #E3FC02;
+  color: #0A0A0A;
+  border-radius: 100px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 0 24px rgba(227,252,2,0.3), 0 4px 16px rgba(0,0,0,0.2);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  position: relative;
+  overflow: hidden;
+}
+
+.ta-hero__btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 0.2s ease;
+}
+
+.ta-hero__btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 36px rgba(227,252,2,0.5), 0 8px 24px rgba(0,0,0,0.25);
+}
+
+.ta-hero__btn-primary:hover::before {
+  background: rgba(255,255,255,0.1);
+}
+
+.ta-hero__btn-primary:active { transform: translateY(0); }
+
+.ta-hero__btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2.25rem;
+  background: transparent;
+  color: rgba(255,255,255,0.85);
+  border-radius: 100px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  letter-spacing: -0.01em;
+}
+
+html[data-theme="light"] .ta-hero__btn-secondary {
+  color: #1D1D1F;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.ta-hero__btn-secondary:hover {
+  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.06);
+  transform: translateY(-1px);
+}
+
+html[data-theme="light"] .ta-hero__btn-secondary:hover {
+  border-color: rgba(0,0,0,0.25);
+  background: rgba(0,0,0,0.04);
+}
+
+/* Arrow icon in button */
+.ta-hero__arrow {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.2s ease;
+}
+
+.ta-hero__btn-primary:hover .ta-hero__arrow,
+.ta-hero__btn-secondary:hover .ta-hero__arrow {
+  transform: translateX(3px);
+}
+
+/* ── SOCIAL PROOF STRIP ──────────────────────────────────────────── */
+.ta-hero__social-proof {
+  margin-top: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.ta-hero__trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.42);
+}
+
+html[data-theme="light"] .ta-hero__trust-item { color: #98989D; }
+
+.ta-hero__trust-icon {
+  color: #E3FC02;
+  font-size: 1rem;
+}
+
+html[data-theme="light"] .ta-hero__trust-icon { color: #7a6c00; }
+
+/* ── SCROLL ANIMATIONS ───────────────────────────────────────────── */
+.ta-hero__eyebrow,
+.ta-hero__title,
+.ta-hero__subtitle,
+.ta-hero__actions,
+.ta-hero__social-proof {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: ta-hero-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.ta-hero__eyebrow      { animation-delay: 0.05s; }
+.ta-hero__title        { animation-delay: 0.18s; }
+.ta-hero__subtitle     { animation-delay: 0.30s; }
+.ta-hero__actions      { animation-delay: 0.42s; }
+.ta-hero__social-proof { animation-delay: 0.54s; }
+
+@keyframes ta-hero-fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ta-hero__eyebrow,
+  .ta-hero__title,
+  .ta-hero__subtitle,
+  .ta-hero__actions,
+  .ta-hero__social-proof {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+/* ── DIVIDER LINE ──────────────────────────────────────────────── */
+.ta-hero__divider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08) 30%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.08) 70%, transparent);
+}
+
+html[data-theme="light"] .ta-hero__divider {
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.06) 30%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.06) 70%, transparent);
+}
+</style>
+
+<section
+  class="ta-hero"
+  style="
+    --hero-pt: {{ section.settings.padding_top }}px;
+    --hero-pb: {{ section.settings.padding_bottom }}px;
+    {% if section.settings.min_height > 0 %}--hero-min-height: {{ section.settings.min_height }}px;{% endif %}
+  "
+>
+  <!-- Grid background -->
+  {%- if section.settings.show_grid -%}
+    <div class="ta-hero__grid" aria-hidden="true"></div>
+  {%- endif -%}
+
+  <!-- Floating orbs -->
+  {%- if section.settings.show_orbs -%}
+    <div class="ta-hero__orb ta-hero__orb--1" aria-hidden="true"></div>
+    <div class="ta-hero__orb ta-hero__orb--2" aria-hidden="true"></div>
+    <div class="ta-hero__orb ta-hero__orb--3" aria-hidden="true"></div>
+  {%- endif -%}
+
+  <div class="ta-hero__inner">
+
+    <!-- Eyebrow pill -->
+    {%- if section.settings.eyebrow != blank -%}
+      <div class="ta-hero__eyebrow">
+        <span class="ta-hero__eyebrow-dot" aria-hidden="true"></span>
+        {{ section.settings.eyebrow }}
+      </div>
+    {%- endif -%}
+
+    <!-- Headline -->
+    {%- if section.settings.title != blank or section.settings.title_accent != blank -%}
+      <h1 class="ta-hero__title">
+        {%- if section.settings.title != blank -%}
+          {{ section.settings.title }}
+          {%- if section.settings.title_accent != blank -%}<br>{%- endif -%}
+        {%- endif -%}
+        {%- if section.settings.title_accent != blank -%}
+          <span class="ta-hero__title-accent">{{ section.settings.title_accent }}</span>
+        {%- endif -%}
+      </h1>
+    {%- endif -%}
+
+    <!-- Subtitle -->
+    {%- if section.settings.subtitle != blank -%}
+      <p class="ta-hero__subtitle">{{ section.settings.subtitle }}</p>
+    {%- endif -%}
+
+    <!-- CTA Buttons -->
+    {%- if section.settings.btn_primary_label != blank or section.settings.btn_secondary_label != blank -%}
+      <div class="ta-hero__actions">
+        {%- if section.settings.btn_primary_label != blank -%}
+          <a href="{{ section.settings.btn_primary_link | default: '#' }}" class="ta-hero__btn-primary">
+            {{ section.settings.btn_primary_label }}
+            <svg class="ta-hero__arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        {%- endif -%}
+        {%- if section.settings.btn_secondary_label != blank -%}
+          <a href="{{ section.settings.btn_secondary_link | default: '#' }}" class="ta-hero__btn-secondary">
+            {{ section.settings.btn_secondary_label }}
+            <svg class="ta-hero__arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <!-- Social proof / trust indicators -->
+    {%- assign has_trust = false -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'trust_item' -%}{%- assign has_trust = true -%}{%- endif -%}
+    {%- endfor -%}
+
+    {%- if has_trust -%}
+      <div class="ta-hero__social-proof">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'trust_item' -%}
+            <div class="ta-hero__trust-item" {{ block.shopify_attributes }}>
+              {%- if block.settings.icon != blank -%}
+                <span class="ta-hero__trust-icon">{{ block.settings.icon }}</span>
+              {%- endif -%}
+              <span>{{ block.settings.text }}</span>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+
+  <div class="ta-hero__divider" aria-hidden="true"></div>
+</section>
+
+{% schema %}
+{
+  "name": "Premium Hero",
+  "tag": "section",
+  "class": "section-premium-hero",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow pill text",
+      "default": "Data Analytics & Insights"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Main headline",
+      "default": "Turn Your Data Into"
+    },
+    {
+      "type": "text",
+      "id": "title_accent",
+      "label": "Accent headline (gradient)",
+      "default": "Competitive Advantage"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle / description",
+      "default": "Tenda Analytics helps organisations unlock the full power of their data with expert-led consulting, BI platforms, and AI-powered insights."
+    },
+    {
+      "type": "header",
+      "content": "Primary CTA"
+    },
+    {
+      "type": "text",
+      "id": "btn_primary_label",
+      "label": "Button label",
+      "default": "Explore Services"
+    },
+    {
+      "type": "url",
+      "id": "btn_primary_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Secondary CTA"
+    },
+    {
+      "type": "text",
+      "id": "btn_secondary_label",
+      "label": "Button label",
+      "default": "View Case Studies"
+    },
+    {
+      "type": "url",
+      "id": "btn_secondary_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Visual"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_grid",
+      "label": "Show grid background",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_orbs",
+      "label": "Show gradient orbs",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 80,
+      "max": 240,
+      "step": 8,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 60,
+      "max": 200,
+      "step": 8,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "min": 0,
+      "max": 1000,
+      "step": 20,
+      "unit": "px",
+      "label": "Min. height (0 = auto)",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "trust_item",
+      "name": "Trust indicator",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (emoji or single char)",
+          "default": "✓"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "No long-term contracts"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Premium Hero",
+      "blocks": [
+        { "type": "trust_item", "settings": { "icon": "✓", "text": "Free initial consultation" } },
+        { "type": "trust_item", "settings": { "icon": "✓", "text": "500+ clients worldwide" } },
+        { "type": "trust_item", "settings": { "icon": "✓", "text": "Results in 30 days" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

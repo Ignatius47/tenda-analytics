@@ -1,0 +1,491 @@
+{% comment %}
+  Stats & Counters Section
+  Animated number counters with glassmorphism cards
+  Numbers animate when scrolled into view via data-ta-counter
+{% endcomment %}
+
+<style>
+.ta-stats-section {
+  padding: var(--stats-pt, 6rem) 1.5rem var(--stats-pb, 6rem);
+  position: relative;
+  overflow: hidden;
+  background: var(--ta-bg, #08080A);
+}
+
+/* Floating gradient orb behind stats */
+.ta-stats-section::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse at center, rgba(227,252,2,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.ta-stats__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.ta-stats__header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.ta-stats__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #E3FC02;
+  margin-bottom: 1rem;
+}
+
+html[data-theme="light"] .ta-stats__eyebrow { color: #5A5000; }
+
+.ta-stats__eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: #E3FC02;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(227,252,2,0.8);
+  animation: ta-stat-dot 2.5s ease-in-out infinite;
+}
+
+html[data-theme="light"] .ta-stats__eyebrow::before {
+  background: #8a7a00;
+  box-shadow: 0 0 8px rgba(138,122,0,0.5);
+}
+
+@keyframes ta-stat-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(227,252,2,0.7); }
+  50%       { box-shadow: 0 0 0 8px rgba(227,252,2,0); }
+}
+
+.ta-stats__title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  color: var(--ta-text-primary, #fff);
+  margin: 0 0 1rem;
+}
+
+html[data-theme="light"] .ta-stats__title { color: #1D1D1F; }
+
+.ta-stats__desc {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--ta-text-secondary, rgba(255,255,255,0.58));
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+html[data-theme="light"] .ta-stats__desc { color: #6E6E73; }
+
+/* Grid */
+.ta-stats__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--stats-cols, 4), 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .ta-stats__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 500px) {
+  .ta-stats__grid { grid-template-columns: 1fr; }
+}
+
+/* Stat card */
+.ta-stats__card {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 2.25rem 1.75rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+html[data-theme="light"] .ta-stats__card {
+  background: rgba(255,255,255,0.8);
+  border-color: rgba(0,0,0,0.07);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+}
+
+/* Top edge shimmer */
+.ta-stats__card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(227,252,2,0.4) 50%, transparent);
+  pointer-events: none;
+}
+
+html[data-theme="light"] .ta-stats__card::before {
+  background: linear-gradient(90deg, transparent, rgba(180,160,0,0.3) 50%, transparent);
+}
+
+.ta-stats__card:hover {
+  border-color: rgba(227,252,2,0.25);
+  box-shadow: 0 8px 32px rgba(227,252,2,0.06), 0 2px 16px rgba(0,0,0,0.3);
+  transform: translateY(-4px);
+}
+
+html[data-theme="light"] .ta-stats__card:hover {
+  border-color: rgba(180,160,0,0.3);
+  box-shadow: 0 8px 32px rgba(180,160,0,0.08), 0 2px 16px rgba(0,0,0,0.08);
+}
+
+/* Icon */
+.ta-stats__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(227,252,2,0.1);
+  border-radius: 14px;
+  margin: 0 auto 1.25rem;
+  color: #E3FC02;
+  font-size: 1.35rem;
+}
+
+html[data-theme="light"] .ta-stats__icon {
+  background: rgba(180,160,0,0.12);
+  color: #6B5D00;
+}
+
+/* Number */
+.ta-stats__number {
+  display: block;
+  font-size: clamp(2.75rem, 5vw, 3.75rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #E3FC02 0%, #c8e800 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+html[data-theme="light"] .ta-stats__number {
+  background: linear-gradient(135deg, #7a6c00 0%, #5a5000 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Suffix/Prefix are colored same as number */
+.ta-stats__number-wrap {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.ta-stats__prefix,
+.ta-stats__suffix {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #E3FC02 0%, #c8e800 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  padding-top: 0.35em;
+}
+
+html[data-theme="light"] .ta-stats__prefix,
+html[data-theme="light"] .ta-stats__suffix {
+  background: linear-gradient(135deg, #7a6c00 0%, #5a5000 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Label */
+.ta-stats__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ta-text-primary, #fff);
+  margin-bottom: 0.4rem;
+}
+
+html[data-theme="light"] .ta-stats__label { color: #1D1D1F; }
+
+/* Description */
+.ta-stats__card-desc {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--ta-text-secondary, rgba(255,255,255,0.45));
+}
+
+html[data-theme="light"] .ta-stats__card-desc { color: #98989D; }
+
+/* Scroll animation */
+.ta-stats__card {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1),
+              border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ta-stats__card.ta-is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ta-stats__card {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+</style>
+
+<section
+  class="ta-stats-section"
+  style="
+    --stats-pt: {{ section.settings.padding_top }}px;
+    --stats-pb: {{ section.settings.padding_bottom }}px;
+    --stats-cols: {{ section.settings.columns }};
+  "
+>
+  <div class="ta-stats__inner">
+
+    {%- if section.settings.eyebrow != blank or section.settings.title != blank or section.settings.description != blank -%}
+      <div class="ta-stats__header ta-animate ta-animate-fade-up">
+        {%- if section.settings.eyebrow != blank -%}
+          <div class="ta-stats__eyebrow">{{ section.settings.eyebrow }}</div>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="ta-stats__title">{{ section.settings.title }}</h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <p class="ta-stats__desc">{{ section.settings.description }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="ta-stats__grid">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'stat' -%}
+            <div
+              class="ta-stats__card"
+              style="transition-delay: {{ forloop.index0 | times: 0.1 }}s;"
+              {{ block.shopify_attributes }}
+            >
+              {%- if block.settings.icon != blank -%}
+                <div class="ta-stats__icon">{{ block.settings.icon }}</div>
+              {%- endif -%}
+
+              <div class="ta-stats__number-wrap">
+                {%- if block.settings.prefix != blank -%}
+                  <span class="ta-stats__prefix">{{ block.settings.prefix }}</span>
+                {%- endif -%}
+                <span
+                  class="ta-stats__number ta-counter"
+                  data-ta-counter="{{ block.settings.number }}"
+                  data-ta-suffix="{{ block.settings.suffix }}"
+                  data-ta-duration="1800"
+                >{{ block.settings.number }}{{ block.settings.suffix }}</span>
+              </div>
+
+              {%- if block.settings.label != blank -%}
+                <p class="ta-stats__label">{{ block.settings.label }}</p>
+              {%- endif -%}
+              {%- if block.settings.description != blank -%}
+                <p class="ta-stats__card-desc">{{ block.settings.description }}</p>
+              {%- endif -%}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  // Trigger card visibility animation
+  const cards = document.querySelectorAll('.ta-stats__card');
+  if (!cards.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('ta-is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  cards.forEach((card) => observer.observe(card));
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Stats & Counters",
+  "tag": "section",
+  "class": "section-stats-counters",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Our Impact"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Numbers that speak for themselves"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Columns (desktop)",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 96
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (emoji or SVG string)",
+          "default": "📊"
+        },
+        {
+          "type": "text",
+          "id": "prefix",
+          "label": "Prefix (e.g. $)",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Number",
+          "default": "500",
+          "info": "Animates from 0 to this value on scroll"
+        },
+        {
+          "type": "text",
+          "id": "suffix",
+          "label": "Suffix (e.g. +, %, K)",
+          "default": "+"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Clients Served"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Card description"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stats & Counters",
+      "blocks": [
+        {
+          "type": "stat",
+          "settings": {
+            "icon": "📊",
+            "number": "500",
+            "suffix": "+",
+            "label": "Clients Served",
+            "description": "Across industries worldwide"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "icon": "📈",
+            "number": "98",
+            "suffix": "%",
+            "label": "Client Retention",
+            "description": "Long-term partnerships"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "icon": "🗂️",
+            "number": "1200",
+            "suffix": "+",
+            "label": "Dashboards Built",
+            "description": "Across diverse data stacks"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "icon": "⚡",
+            "number": "40",
+            "suffix": "%",
+            "label": "Avg. Decision Speed",
+            "description": "Faster decisions with our insights"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

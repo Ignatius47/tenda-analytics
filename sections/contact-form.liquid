@@ -1,0 +1,700 @@
+{{- 'section-contact-form.css' | asset_url | stylesheet_tag -}}
+<style>
+  /* Strip EVERY default the Shopify theme adds to inputs inside our form */
+  .tenda-contact-wrapper .field,
+  .tenda-contact-wrapper .field::before,
+  .tenda-contact-wrapper .field::after {
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  .tenda-contact-wrapper .field__input,
+  .tenda-contact-wrapper textarea.field__input,
+  .tenda-contact-wrapper .text-area {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    border: 1.5px solid rgba(255,255,255,0.12) !important;
+    border-radius: 0.875rem !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: rgba(255,255,255,0.05) !important;
+  }
+  .tenda-contact-wrapper .field__input:focus,
+  .tenda-contact-wrapper textarea.field__input:focus,
+  .tenda-contact-wrapper .text-area:focus {
+    outline: none !important;
+    border: 1.5px solid #E3FC02 !important;
+    box-shadow: 0 0 0 3px rgba(227,252,2,0.12), 0 0 20px rgba(227,252,2,0.2) !important;
+  }
+</style>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<style>
+  /* ===================================
+     KILL SHOPIFY INPUT DEFAULTS FIRST
+     =================================== */
+
+  /* Remove ALL Shopify/browser borders, outlines and box-shadows on inputs inside our wrapper */
+  .tenda-contact-wrapper input,
+  .tenda-contact-wrapper textarea,
+  .tenda-contact-wrapper select {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    border-radius: 0.875rem !important;
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+  }
+
+  /* Kill any :focus-visible ring added by Shopify theme or browser */
+  .tenda-contact-wrapper input:focus,
+  .tenda-contact-wrapper textarea:focus,
+  .tenda-contact-wrapper input:focus-visible,
+  .tenda-contact-wrapper textarea:focus-visible {
+    outline: none !important;
+    outline-offset: 0 !important;
+  }
+
+  /* ===================================
+     TENDA CONTACT FORM - DARK THEME
+     =================================== */
+  
+  :root {
+    --tenda-bg: #1F1F21;
+    --tenda-accent: #E3FC02;
+    --tenda-text: #ffffff;
+    --tenda-text-muted: rgba(255, 255, 255, 0.7);
+  }
+
+  .tenda-contact-wrapper {
+    background: 
+      linear-gradient(135deg, rgba(31, 31, 33, 0.95) 0%, rgba(31, 31, 33, 0.98) 100%),
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(227, 252, 2, 0.02) 2px,
+        rgba(227, 252, 2, 0.02) 4px
+      );
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Animated grid background */
+  .tenda-contact-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(90deg, transparent 24%, rgba(227, 252, 2, 0.03) 25%, rgba(227, 252, 2, 0.03) 26%, transparent 27%, transparent 74%, rgba(227, 252, 2, 0.03) 75%, rgba(227, 252, 2, 0.03) 76%, transparent 77%),
+      linear-gradient(0deg, transparent 24%, rgba(227, 252, 2, 0.03) 25%, rgba(227, 252, 2, 0.03) 26%, transparent 27%, transparent 74%, rgba(227, 252, 2, 0.03) 75%, rgba(227, 252, 2, 0.03) 76%, transparent 77%);
+    background-size: 50px 50px;
+    pointer-events: none;
+    opacity: 0.3;
+  }
+
+  .contact {
+    max-width: 700px !important;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ===================================
+     HEADER WITH SLIDE-DOWN ANIMATION
+     =================================== */
+  
+  .contact-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    animation: slideDownFade 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    opacity: 0;
+  }
+
+  @keyframes slideDownFade {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .title {
+    font-size: 3rem !important;
+    font-weight: 900 !important;
+    color: var(--tenda-text) !important;
+    margin-bottom: 1rem !important;
+    position: relative;
+    display: inline-block;
+  }
+
+  /* Neon pulse underline */
+  .title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 4px;
+    background: var(--tenda-accent);
+    border-radius: 2px;
+    animation: neonPulse 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes neonPulse {
+    from {
+      box-shadow: 0 0 5px rgba(227, 252, 2, 0.3);
+    }
+    to {
+      box-shadow: 0 0 20px rgba(227, 252, 2, 0.8), 0 0 40px rgba(227, 252, 2, 0.4);
+    }
+  }
+
+  /* ===================================
+     GLASSMORPHIC FORM CONTAINER
+     =================================== */
+  
+  .isolate {
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(227, 252, 2, 0.1);
+    border-radius: 1.5rem;
+    padding: 3rem !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  /* ===================================
+     FORM FIELDS - RESET ALL DEFAULTS FIRST
+     =================================== */
+
+  /* Nuclear reset - kill every possible conflicting style */
+  .tenda-contact-wrapper .field__input,
+  .tenda-contact-wrapper .text-area,
+  .tenda-contact-wrapper textarea,
+  .tenda-contact-wrapper input[type="text"],
+  .tenda-contact-wrapper input[type="email"],
+  .tenda-contact-wrapper input[type="tel"] {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    outline: none !important;
+    outline-offset: 0 !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+  }
+
+  /* Now apply our clean custom styles */
+  .field {
+    margin-bottom: 1.75rem;
+    position: relative;
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+  }
+
+  /* Staggered delays */
+  .contact__fields .field:nth-child(1) { animation-delay: 0.2s; }
+  .contact__fields .field:nth-child(2) { animation-delay: 0.3s; }
+  .field:nth-of-type(3) { animation-delay: 0.4s; }
+  .field:nth-of-type(4) { animation-delay: 0.5s; }
+  .contact__button { animation-delay: 0.6s; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .tenda-contact-wrapper .field__input,
+  .tenda-contact-wrapper .text-area {
+    display: block;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 0.875rem !important;
+    padding: 1.125rem 1.375rem !important;
+    font-size: 0.9375rem !important;
+    color: #ffffff !important;
+    line-height: 1.5;
+    transition: border-color 0.3s ease, background 0.3s ease,
+                box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-sizing: border-box;
+  }
+
+  .tenda-contact-wrapper .field__input::placeholder,
+  .tenda-contact-wrapper .text-area::placeholder {
+    color: rgba(255, 255, 255, 0.3) !important;
+    opacity: 1;
+  }
+
+  /* Neon focus — single clean glow, NO double border */
+  .tenda-contact-wrapper .field__input:focus,
+  .tenda-contact-wrapper .text-area:focus {
+    outline: none !important;
+    border-color: #E3FC02 !important;
+    border-width: 1.5px !important;
+    background: rgba(255, 255, 255, 0.07) !important;
+    box-shadow:
+      0 0 0 3px rgba(227, 252, 2, 0.12),
+      0 0 20px rgba(227, 252, 2, 0.2),
+      inset 0 0 12px rgba(227, 252, 2, 0.06) !important;
+    transform: translateY(-1px);
+  }
+
+  /* Floating label */
+  .tenda-contact-wrapper .field__label,
+  .tenda-contact-wrapper .form__label {
+    position: absolute;
+    left: 1.375rem;
+    top: 1.125rem;
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 0.9375rem;
+    pointer-events: none;
+    transition: all 0.25s ease;
+    background: transparent;
+    padding: 0 0.25rem;
+    line-height: 1;
+    z-index: 1;
+  }
+
+  .tenda-contact-wrapper .field__input:focus ~ .field__label,
+  .tenda-contact-wrapper .field__input:not(:placeholder-shown) ~ .field__label,
+  .tenda-contact-wrapper .text-area:focus ~ .field__label,
+  .tenda-contact-wrapper .text-area:not(:placeholder-shown) ~ .field__label,
+  .tenda-contact-wrapper .field__input:focus ~ .form__label,
+  .tenda-contact-wrapper .field__input:not(:placeholder-shown) ~ .form__label,
+  .tenda-contact-wrapper .text-area:focus ~ .form__label,
+  .tenda-contact-wrapper .text-area:not(:placeholder-shown) ~ .form__label {
+    top: -0.6rem;
+    left: 1.125rem;
+    font-size: 0.7rem;
+    color: #E3FC02 !important;
+    background: #1F1F21;
+    padding: 0 0.4rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .text-area {
+    min-height: 150px !important;
+    resize: vertical;
+  }
+
+  /* Grid layout for name/email */
+  .contact__fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 0 !important;
+  }
+
+  /* ===================================
+     SUCCESS/ERROR STATES
+     =================================== */
+  
+  .form-status,
+  .form__message {
+    background: rgba(227, 252, 2, 0.1);
+    border: 2px solid var(--tenda-accent);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    color: var(--tenda-text) !important;
+    animation: successPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes successPop {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .form-status svg,
+  .form__message svg {
+    fill: var(--tenda-accent) !important;
+    width: 24px;
+    height: 24px;
+    margin-right: 0.75rem;
+  }
+
+  /* ===================================
+     SUBMIT BUTTON - SCALE & GLOW
+     =================================== */
+  
+  .contact__button {
+    text-align: center;
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+  }
+
+  .button {
+    background: var(--tenda-accent) !important;
+    color: #000000 !important;
+    border: none !important;
+    padding: 1.25rem 3rem !important;
+    font-size: 1.125rem !important;
+    font-weight: 700 !important;
+    border-radius: 0.75rem !important;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 20px rgba(227, 252, 2, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .button:hover {
+    background: #ffffff !important;
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 
+      0 6px 30px rgba(227, 252, 2, 0.5),
+      0 0 40px rgba(227, 252, 2, 0.3);
+  }
+
+  .button:active {
+    transform: scale(0.98);
+  }
+
+  /* Loading spinner */
+  .button.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 3px solid #000000;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .button.loading {
+    color: transparent !important;
+  }
+
+  /* Success checkmark */
+  .button.success::before {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    color: #000000;
+    animation: checkPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes checkPop {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  .button.success {
+    background: var(--tenda-accent) !important;
+    color: transparent !important;
+  }
+
+  /* ===================================
+     RESPONSIVE DESIGN
+     =================================== */
+  
+  @media (max-width: 750px) {
+    .title {
+      font-size: 2.25rem !important;
+    }
+
+    .isolate {
+      padding: 2rem !important;
+    }
+
+    .contact__fields {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .field {
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  /* Override Shopify defaults */
+  .color-scheme-1,
+  .gradient {
+    background: transparent !important;
+  }
+
+  .page-width {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+</style>
+
+<div class="tenda-contact-wrapper">
+  <div class="contact page-width page-width--narrow section-{{ section.id }}-padding">
+    
+    <div class="contact-header">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="title title-wrapper--no-top-margin inline-richtext {{ section.settings.heading_size }}">
+          {{ section.settings.heading }}
+        </h2>
+      {%- else -%}
+        <h2 class="title">Contact Our Team!</h2>
+      {%- endif -%}
+    </div>
+
+    {%- liquid
+      assign contact_form_class = 'isolate'
+      if settings.animations_reveal_on_scroll
+        assign contact_form_class = 'isolate scroll-trigger animate--slide-in'
+      endif
+    -%}
+    
+    {%- form 'contact', id: 'ContactForm', class: contact_form_class -%}
+      {%- if form.posted_successfully? -%}
+        <div class="form-status form-status-list form__message" tabindex="-1" autofocus>
+          {{- 'icon-success.svg' | inline_asset_content -}}
+          <span>{{ 'templates.contact.form.post_success' | t }}</span>
+        </div>
+      {%- elsif form.errors -%}
+        <div class="form__message">
+          <h2 class="form-status caption-large text-body" role="alert" tabindex="-1" autofocus>
+            {{- 'icon-error.svg' | inline_asset_content -}}
+            {{ 'templates.contact.form.error_heading' | t }}
+          </h2>
+        </div>
+        <ul class="form-status-list caption-large" role="list">
+          <li>
+            <a href="#ContactForm-email" class="link">
+              {{ form.errors.translated_fields.email | capitalize }}
+              {{ form.errors.messages.email }}
+            </a>
+          </li>
+        </ul>
+      {%- endif -%}
+      
+      <div class="contact__fields">
+        <div class="field">
+          <input
+            class="field__input"
+            autocomplete="name"
+            type="text"
+            id="ContactForm-name"
+            name="contact[{{ 'templates.contact.form.name' | t }}]"
+            value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+            placeholder=" "
+            required
+          >
+          <label class="field__label" for="ContactForm-name">{{ 'templates.contact.form.name' | t }}</label>
+        </div>
+        
+        <div class="field field--with-error">
+          <input
+            autocomplete="email"
+            type="email"
+            id="ContactForm-email"
+            class="field__input"
+            name="contact[email]"
+            spellcheck="false"
+            autocapitalize="off"
+            value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+            aria-required="true"
+            placeholder=" "
+            required
+            {% if form.errors contains 'email' %}
+              aria-invalid="true"
+              aria-describedby="ContactForm-email-error"
+            {% endif %}
+          >
+          <label class="field__label" for="ContactForm-email">
+            {{- 'templates.contact.form.email' | t }}
+            <span aria-hidden="true">*</span>
+          </label>
+          {%- if form.errors contains 'email' -%}
+            <small class="contact__field-error" id="ContactForm-email-error">
+              <span class="visually-hidden">{{ 'accessibility.error' | t }}</span>
+              <span class="form__message">
+                <span class="svg-wrapper">
+                  {{- 'icon-error.svg' | inline_asset_content -}}
+                </span>
+                {{- form.errors.translated_fields.email | capitalize }}
+                {{ form.errors.messages.email -}}
+              </span>
+            </small>
+          {%- endif -%}
+        </div>
+      </div>
+      
+      <div class="field">
+        <input
+          type="tel"
+          id="ContactForm-phone"
+          class="field__input"
+          autocomplete="tel"
+          name="contact[{{ 'templates.contact.form.phone' | t }}]"
+          pattern="[0-9\-]*"
+          value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+          placeholder=" "
+        >
+        <label class="field__label" for="ContactForm-phone">{{ 'templates.contact.form.phone' | t }}</label>
+      </div>
+      
+      <div class="field">
+        <textarea
+          rows="10"
+          id="ContactForm-body"
+          class="text-area field__input"
+          name="contact[{{ 'templates.contact.form.comment' | t }}]"
+          placeholder=" "
+          required
+        >{{- form.body -}}</textarea>
+        <label class="form__label field__label" for="ContactForm-body">
+          {{- 'templates.contact.form.comment' | t -}}
+        </label>
+      </div>
+      
+      <div class="contact__button">
+        <button type="submit" class="button" id="ContactSubmit">
+          {{ 'templates.contact.form.send' | t }}
+        </button>
+      </div>
+    {%- endform -%}
+  </div>
+</div>
+
+<script>
+  // Button loading and success states
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('ContactForm');
+    const button = document.getElementById('ContactSubmit');
+    
+    if (form && button) {
+      form.addEventListener('submit', function() {
+        button.classList.add('loading');
+        button.disabled = true;
+        
+        // Simulate success after form submission
+        setTimeout(function() {
+          if (!document.querySelector('.form__message')) {
+            button.classList.remove('loading');
+            button.classList.add('success');
+            
+            setTimeout(function() {
+              button.classList.remove('success');
+              button.disabled = false;
+            }, 2000);
+          }
+        }, 1000);
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Tenda Contact Form",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Contact Our Team!",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "Small"
+        },
+        {
+          "value": "h1",
+          "label": "Medium"
+        },
+        {
+          "value": "h0",
+          "label": "Large"
+        }
+      ],
+      "default": "h1",
+      "label": "Heading size"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tenda Contact Form"
+    }
+  ]
+}
+{% endschema %}

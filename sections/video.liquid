@@ -1,0 +1,1262 @@
+{{ 'video-section.css' | asset_url | stylesheet_tag }}
+{{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+
+<!-- NEBULA FRAMEWORK LIBRARIES -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+  /* ===================================
+     TENDA NEBULA ENVIRONMENT
+     =================================== */
+
+  body {
+    background: #000000 !important;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Nebula Light Leaks */
+  .nebula-leak-1 {
+    position: fixed;
+    top: -400px;
+    left: -400px;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(227, 252, 2, 0.12) 0%, rgba(227, 252, 2, 0.06) 30%, transparent 70%);
+    filter: blur(200px);
+    pointer-events: none;
+    z-index: 1;
+    animation: nebulaDrift1 20s ease-in-out infinite;
+    transition: opacity 0.6s ease;
+  }
+
+  @keyframes nebulaDrift1 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+    50% { transform: translate(100px, -100px) scale(1.2); opacity: 1; }
+  }
+
+  .nebula-leak-2 {
+    position: fixed;
+    bottom: -400px;
+    right: -400px;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(10, 10, 12, 0.15) 0%, rgba(227, 252, 2, 0.08) 30%, transparent 70%);
+    filter: blur(200px);
+    pointer-events: none;
+    z-index: 1;
+    animation: nebulaDrift2 25s ease-in-out infinite;
+    transition: opacity 0.6s ease;
+  }
+
+  @keyframes nebulaDrift2 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+    50% { transform: translate(-80px, 80px) scale(1.15); opacity: 0.95; }
+  }
+
+  .nebula-leak-3 {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(227, 252, 2, 0.06) 0%, rgba(227, 252, 2, 0.03) 40%, transparent 70%);
+    filter: blur(180px);
+    pointer-events: none;
+    z-index: 1;
+    animation: nebulaPulse 15s ease-in-out infinite;
+    transition: opacity 0.6s ease;
+  }
+
+  @keyframes nebulaPulse {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  /* Dim nebula when video focused */
+  body.video-focused .nebula-leak-1,
+  body.video-focused .nebula-leak-2,
+  body.video-focused .nebula-leak-3 {
+    opacity: 0.3;
+  }
+
+  /* Data Dust Canvas */
+  #dataDustCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+
+  body.video-focused #dataDustCanvas {
+    opacity: 0.1;
+  }
+
+  /* Blur effect for modals */
+  .video-section.hero-video.blurred {
+    filter: blur(10px);
+    transition: filter 0.4s ease;
+  }
+
+  /* ===================================
+     HERO VIDEO SECTION
+     =================================== */
+
+  :root {
+    --video-accent: #E3FC02;
+    --video-dark: #000000;
+  }
+
+  .video-section.hero-video {
+    position: relative;
+    min-height: 85vh;
+    height: auto;
+    overflow: hidden;
+    background: #000000;
+    margin: 0;
+    padding: 0;
+    z-index: 10;
+  }
+
+  /* Video Container */
+  .tenda-video-container {
+    position: relative;
+    height: 85vh;
+    width: 100%;
+    overflow: hidden;
+    background: #000000;
+  }
+
+  /* Video Element */
+  .tenda-video-player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: 1;
+  }
+
+  /* Poster Image Fallback */
+  .tenda-video-poster {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  /* Overlay Gradient */
+  .tenda-video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.5) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* Hero Content Overlay */
+  .video-hero-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    text-align: center;
+    width: 90%;
+    max-width: 1200px;
+    padding: 2rem;
+    transition: opacity 0.5s ease;
+  }
+
+  .video-hero-content.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Hero Title */
+  .video-hero-title {
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    font-weight: 900;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    animation: fadeInUp 1s ease-out 0.3s backwards;
+    position: relative;
+    overflow: visible;
+  }
+
+  .video-hero-title::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(227, 252, 2, 0.9) 50%, transparent 100%);
+    animation: powerUpSweep 5s ease-in-out infinite;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    filter: blur(1px);
+  }
+
+  @keyframes powerUpSweep {
+    0% { left: -100%; opacity: 0; }
+    10% { opacity: 1; }
+    50% { left: 100%; opacity: 1; }
+    51% { opacity: 0; }
+    100% { left: 100%; opacity: 0; }
+  }
+
+  .video-hero-title .accent {
+    color: var(--video-accent);
+    display: inline-block;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    0% { text-shadow: 0 0 20px rgba(227, 252, 2, 0.5); }
+    100% { text-shadow: 0 0 40px rgba(227, 252, 2, 0.8), 0 0 60px rgba(227, 252, 2, 0.4); }
+  }
+
+  /* Hero Subtitle */
+  .video-hero-subtitle {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    animation: fadeInUp 1s ease-out 0.5s backwards;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* CTA Buttons */
+  .video-hero-cta {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeInUp 1s ease-out 0.7s backwards;
+  }
+
+  .video-hero-btn {
+    padding: 1.25rem 3rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border: none;
+    display: inline-block;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .video-hero-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+  }
+
+  .video-hero-btn:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  .video-hero-btn span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .video-hero-btn-primary {
+    background: var(--video-accent);
+    color: var(--video-dark);
+    box-shadow: 0 6px 25px rgba(227, 252, 2, 0.4);
+  }
+
+  .video-hero-btn-primary:hover {
+    background: #ffffff;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 35px rgba(227, 252, 2, 0.6);
+  }
+
+  .video-hero-btn-secondary {
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid var(--video-accent);
+    backdrop-filter: blur(10px);
+    animation: breathingNeon 3s ease-in-out infinite;
+  }
+
+  @keyframes breathingNeon {
+    0%, 100% { box-shadow: 0 0 5px rgba(227, 252, 2, 0.4), 0 0 10px rgba(227, 252, 2, 0.3), 0 0 15px rgba(227, 252, 2, 0.2); }
+    50% { box-shadow: 0 0 10px rgba(227, 252, 2, 0.6), 0 0 20px rgba(227, 252, 2, 0.5), 0 0 30px rgba(227, 252, 2, 0.4); }
+  }
+
+  .video-hero-btn-secondary:hover {
+    background: var(--video-accent);
+    color: var(--video-dark);
+    transform: translateY(-4px);
+  }
+
+  /* ===================================
+     CUSTOM TENDA VIDEO CONTROLS (HUD)
+     =================================== */
+
+  .tenda-video-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    pointer-events: none;
+  }
+
+  /* Progress Bar */
+  .tenda-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(227, 252, 2, 0.2);
+    cursor: pointer;
+    pointer-events: all;
+    transition: height 0.3s ease;
+    z-index: 30;
+  }
+
+  .tenda-progress-bar:hover {
+    height: 3px;
+    box-shadow: 0 0 10px rgba(227, 252, 2, 0.6);
+  }
+
+  .tenda-progress-fill {
+    height: 100%;
+    background: var(--video-accent);
+    width: 0%;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 8px rgba(227, 252, 2, 0.8);
+  }
+
+  /* Floating HUD Controls */
+  .tenda-hud-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    pointer-events: all;
+    z-index: 30;
+  }
+
+  /* Mute/Unmute Button */
+  .tenda-mute-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(227, 252, 2, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(227, 252, 2, 0.4);
+  }
+
+  .tenda-mute-btn:hover {
+    background: rgba(227, 252, 2, 0.15);
+    border-color: var(--video-accent);
+    color: var(--video-accent);
+    filter: drop-shadow(0 0 10px rgba(227, 252, 2, 0.6));
+    transform: scale(1.1);
+  }
+
+  .tenda-mute-btn.active {
+    color: var(--video-accent);
+    border-color: var(--video-accent);
+  }
+
+  .tenda-mute-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+
+  /* Fullscreen Button */
+  .tenda-fullscreen-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(227, 252, 2, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(227, 252, 2, 0.4);
+  }
+
+  .tenda-fullscreen-btn:hover {
+    background: rgba(227, 252, 2, 0.15);
+    border-color: var(--video-accent);
+    color: var(--video-accent);
+    filter: drop-shadow(0 0 10px rgba(227, 252, 2, 0.6));
+    transform: scale(1.1);
+  }
+
+  .tenda-fullscreen-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  /* Center Play/Pause Pulse */
+  .tenda-center-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 15;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(227, 252, 2, 0.15);
+    backdrop-filter: blur(20px);
+    border: 2px solid var(--video-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    animation: breathePulse 2s ease-in-out infinite;
+  }
+
+  .tenda-center-play.show {
+    opacity: 1;
+  }
+
+  @keyframes breathePulse {
+    0%, 100% {
+      transform: translate(-50%, -50%) scale(1);
+      box-shadow: 0 0 20px rgba(227, 252, 2, 0.4);
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(1.05);
+      box-shadow: 0 0 40px rgba(227, 252, 2, 0.6);
+    }
+  }
+
+  .tenda-center-play svg {
+    width: 50px;
+    height: 50px;
+    fill: var(--video-accent);
+    filter: drop-shadow(0 0 10px rgba(227, 252, 2, 0.8));
+  }
+
+  /* Scroll Indicator */
+  .scroll-indicator {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    animation: fadeIn 1s ease-out 1.2s backwards;
+  }
+
+  .scroll-indicator-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .scroll-indicator-arrow {
+    width: 2px;
+    height: 40px;
+    background: linear-gradient(180deg, transparent, var(--video-accent));
+    animation: scrollBounce 2s ease-in-out infinite;
+    position: relative;
+  }
+
+  .scroll-indicator-arrow::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid var(--video-accent);
+  }
+
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(10px); opacity: 0.5; }
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ===================================
+     RESPONSIVE DESIGN
+     =================================== */
+
+  @media screen and (max-width: 989px) {
+    .tenda-video-container {
+      height: 70vh;
+    }
+
+    .video-hero-title {
+      font-size: clamp(2rem, 6vw, 4rem);
+    }
+
+    .video-hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      margin-bottom: 2rem;
+    }
+
+    .video-hero-cta {
+      gap: 1rem;
+    }
+
+    .video-hero-btn {
+      padding: 1rem 2rem;
+      font-size: 1rem;
+    }
+  }
+
+  /* MOBILE */
+  /* MOBILE ONLY - Shrink video container */
+/* MOBILE - Shrink video container significantly */
+@media screen and (max-width: 749px) {
+  
+  /* Container fits screen edges exactly */
+  .tenda-video-container {
+    height: auto !important; /* Auto height based on content */
+    min-height: auto !important;
+    max-height: none !important;
+    width: 100vw !important; /* Full width edge-to-edge */
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .video-section.hero-video {
+    min-height: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Video - CONTAIN instead of COVER to show everything */
+  .tenda-video-player {
+    object-fit: contain !important; /* Shows entire video, no cropping */
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important; /* Not absolute */
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    min-width: 100% !important;
+    min-height: auto !important;
+    max-width: 100vw !important;
+  }
+  
+  /* Poster image same treatment */
+  .tenda-video-poster {
+    object-fit: contain !important;
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+  }
+  
+  /* Overlay adjusts to video size */
+  .tenda-video-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+  }
+  
+  /* Content over video - centered */
+  .video-hero-content {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90% !important;
+    max-width: 100% !important;
+    padding: 1.5rem 1rem !important;
+  }
+  
+  /* Compact typography */
+  .video-hero-title {
+    font-size: clamp(1.5rem, 7vw, 2rem) !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.875rem !important;
+  }
+  
+  .video-hero-subtitle {
+    font-size: clamp(0.875rem, 3.5vw, 1rem) !important;
+    line-height: 1.4 !important;
+    margin-bottom: 1.25rem !important;
+  }
+  
+  /* Compact buttons */
+  .video-hero-cta {
+    gap: 0.75rem !important;
+    flex-wrap: wrap !important;
+  }
+  
+  .video-hero-btn {
+    padding: 0.875rem 1.5rem !important;
+    font-size: 0.875rem !important;
+    width: 100% !important;
+    max-width: 280px !important;
+  }
+  
+  /* Scroll indicator - lower */
+  .scroll-indicator {
+    bottom: 1rem !important;
+  }
+  
+  .scroll-indicator-text {
+    font-size: 0.75rem !important;
+  }
+  
+  .scroll-indicator-arrow {
+    height: 30px !important;
+  }
+  
+  /* HUD controls - compact */
+  .tenda-hud-controls {
+    bottom: 10px !important;
+    right: 10px !important;
+    gap: 8px !important;
+  }
+  
+  .tenda-mute-btn,
+  .tenda-fullscreen-btn {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  
+  .tenda-mute-btn svg,
+  .tenda-fullscreen-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  
+  /* Center play button */
+  .tenda-center-play {
+    width: 80px !important;
+    height: 80px !important;
+  }
+  
+  .tenda-center-play svg {
+    width: 35px !important;
+    height: 35px !important;
+  }
+  
+  /* Progress bar */
+  .tenda-progress-bar {
+    bottom: 0 !important;
+  }
+}
+
+/* Alternative: If you want specific aspect ratio */
+@media screen and (max-width: 749px) {
+  /* Option A: 16:9 aspect ratio container */
+  .tenda-video-container.aspect-16-9 {
+    height: 0 !important;
+    padding-bottom: 56.25% !important; /* 16:9 ratio */
+    position: relative !important;
+  }
+  
+  /* Option B: 4:3 aspect ratio container */
+  .tenda-video-container.aspect-4-3 {
+    height: 0 !important;
+    padding-bottom: 75% !important; /* 4:3 ratio */
+    position: relative !important;
+  }
+  
+  /* Option C: Square container */
+  .tenda-video-container.aspect-1-1 {
+    height: 0 !important;
+    padding-bottom: 100% !important; /* 1:1 ratio */
+    position: relative !important;
+  }
+}
+
+/* Extra small devices */
+@media screen and (max-width: 400px) {
+  .video-hero-title {
+    font-size: 1.375rem !important;
+  }
+  
+  .video-hero-subtitle {
+    font-size: 0.8125rem !important;
+  }
+  
+  .video-hero-btn {
+    padding: 0.75rem 1.25rem !important;
+    font-size: 0.8125rem !important;
+  }
+}
+
+/* Landscape orientation */
+@media screen and (max-width: 749px) and (orientation: landscape) {
+  .video-hero-content {
+    padding: 1rem 0.875rem !important;
+  }
+  
+  .video-hero-title {
+    font-size: 1.375rem !important;
+    margin-bottom: 0.625rem !important;
+  }
+  
+  .video-hero-subtitle {
+    font-size: 0.75rem !important;
+    margin-bottom: 0.875rem !important;
+  }
+  
+  .video-hero-btn {
+    padding: 0.625rem 1.25rem !important;
+    font-size: 0.75rem !important;
+  }
+}
+
+/* Remove any horizontal overflow */
+@media screen and (max-width: 749px) {
+  body {
+    overflow-x: hidden !important;
+  }
+  
+  .video-section.hero-video,
+  .tenda-video-container {
+    overflow: hidden !important;
+  }
+}
+
+</style>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign poster_image = section.settings.cover_image
+-%}
+
+<!-- NEBULA ENVIRONMENT -->
+<canvas id="dataDustCanvas"></canvas>
+<div class="nebula-leak-1"></div>
+<div class="nebula-leak-2"></div>
+<div class="nebula-leak-3"></div>
+
+<div class="video-section hero-video section-{{ section.id }}-padding">
+  
+  <div class="tenda-video-container">
+    <!-- Poster Image (Shows if no video or while loading) -->
+    {%- if poster_image -%}
+      <img 
+        src="{{ poster_image | image_url: width: 1920 }}"
+        srcset="{{ poster_image | image_url: width: 750 }} 750w,
+                {{ poster_image | image_url: width: 1100 }} 1100w,
+                {{ poster_image | image_url: width: 1500 }} 1500w,
+                {{ poster_image | image_url: width: 1920 }} 1920w"
+        sizes="100vw"
+        alt="{{ section.settings.heading | escape }}"
+        class="tenda-video-poster"
+        loading="eager"
+      >
+    {%- endif -%}
+
+    <!-- Video Element (Stealth Autoplay) -->
+    {%- if section.settings.video -%}
+      {{
+        section.settings.video
+        | video_tag:
+          id: 'tendaHeroVideo',
+          class: 'tenda-video-player',
+          image_size: '1100x',
+          autoplay: true,
+          loop: true,
+          muted: true,
+          playsinline: true,
+          controls: false
+      }}
+    {%- elsif section.settings.video_url -%}
+      <!-- Fallback for external videos -->
+      <div style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;">
+        {%- if section.settings.video_url.type == 'youtube' -%}
+          <iframe
+            id="tendaHeroVideo"
+            src="https://www.youtube.com/embed/{{ section.settings.video_url.id }}?autoplay=1&mute=1&loop=1&playlist={{ section.settings.video_url.id }}&controls=0&modestbranding=1&playsinline=1"
+            style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+          ></iframe>
+        {%- else -%}
+          <iframe
+            id="tendaHeroVideo"
+            src="https://player.vimeo.com/video/{{ section.settings.video_url.id }}?autoplay=1&muted=1&loop=1&background=1&controls=0"
+            style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+          ></iframe>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <!-- Overlay Gradient -->
+    <div class="tenda-video-overlay"></div>
+
+    <!-- Hero Content Overlay -->
+    <div class="video-hero-content" id="heroContent">
+      {%- unless section.settings.heading == blank -%}
+        {%- liquid
+          assign heading_words = section.settings.heading | split: ' '
+          assign last_word_index = heading_words.size | minus: 1
+        -%}
+        <h1 class="video-hero-title">
+          {%- for word in heading_words -%}
+            {%- if forloop.index0 == last_word_index -%}
+              <span class="accent">{{ word }}</span>
+            {%- else -%}
+              {{ word }}{% unless forloop.last %} {% endunless %}
+            {%- endif -%}
+          {%- endfor -%}
+        </h1>
+      {%- endunless -%}
+      
+      {%- unless section.settings.subheading == blank -%}
+        <p class="video-hero-subtitle">
+          {{ section.settings.subheading }}
+        </p>
+      {%- endunless -%}
+
+      {%- if section.settings.button_label != blank or section.settings.button_label_2 != blank -%}
+        <div class="video-hero-cta">
+          {%- if section.settings.button_label != blank -%}
+            <a href="{{ section.settings.button_link }}" class="video-hero-btn video-hero-btn-primary" id="primaryCTA">
+              <span>{{ section.settings.button_label }}</span>
+            </a>
+          {%- endif -%}
+          
+          {%- if section.settings.button_label_2 != blank -%}
+            <a href="{{ section.settings.button_link_2 }}" class="video-hero-btn video-hero-btn-secondary">
+              <span>{{ section.settings.button_label_2 }}</span>
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator">
+      <span class="scroll-indicator-text">Scroll</span>
+      <div class="scroll-indicator-arrow"></div>
+    </div>
+
+    <!-- Custom Tenda Video Controls (HUD) -->
+    <div class="tenda-video-controls">
+      <!-- Progress Bar -->
+      <div class="tenda-progress-bar" id="progressBar">
+        <div class="tenda-progress-fill" id="progressFill"></div>
+      </div>
+
+      <!-- Floating HUD Controls -->
+      <div class="tenda-hud-controls">
+        <!-- Mute/Unmute Button -->
+        <button class="tenda-mute-btn" id="muteBtn" aria-label="Toggle Mute">
+          <svg id="muteIcon" viewBox="0 0 24 24">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          </svg>
+          <svg id="unmuteIcon" viewBox="0 0 24 24" style="display:none;">
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+          </svg>
+        </button>
+
+        <!-- Fullscreen Button -->
+        <button class="tenda-fullscreen-btn" id="fullscreenBtn" aria-label="Toggle Fullscreen">
+          <svg viewBox="0 0 24 24">
+            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Center Play/Pause Pulse -->
+      <div class="tenda-center-play" id="centerPlay">
+        <svg viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ===================================
+     NEBULA DATA DUST PARTICLE SYSTEM
+     =================================== */
+
+  (function() {
+    'use strict';
+
+    const canvas = document.getElementById('dataDustCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    const isMobile = window.innerWidth < 750;
+    const particleCount = isMobile ? 100 : 300;
+    let scrollVelocity = 0;
+    let lastScrollY = window.pageYOffset;
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.z = Math.random() * 1500 + 500;
+        this.baseSpeed = isMobile ? 0.3 : 0.5 + Math.random() * 1.5;
+        this.size = (1500 / this.z) * (isMobile ? 1.5 : 2);
+        this.opacity = Math.random() * 0.6 + 0.2;
+      }
+
+      update(warpSpeed) {
+        this.z -= this.baseSpeed * warpSpeed;
+
+        if (this.z <= 1) {
+          this.reset();
+          this.z = 1500;
+        }
+
+        const scale = 1500 / this.z;
+        this.size = scale * (isMobile ? 1.5 : 2);
+        this.opacity = Math.min(1, scale * (isMobile ? 0.5 : 0.4));
+
+        this.screenX = (this.x - width / 2) * scale + width / 2;
+        this.screenY = (this.y - height / 2) * scale + height / 2;
+      }
+
+      draw() {
+        const tailLength = isMobile ? scrollVelocity * 2 : scrollVelocity * 3;
+        if (tailLength > 5) {
+          ctx.strokeStyle = `rgba(227, 252, 2, ${this.opacity * 0.3})`;
+          ctx.lineWidth = this.size * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(this.screenX, this.screenY);
+          ctx.lineTo(
+            this.screenX + (Math.random() - 0.5) * tailLength,
+            this.screenY + tailLength
+          );
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = `rgba(227, 252, 2, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.screenX, this.screenY, this.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (!isMobile) {
+          ctx.fillStyle = `rgba(227, 252, 2, ${this.opacity * 0.2})`;
+          ctx.beginPath();
+          ctx.arc(this.screenX, this.screenY, this.size * 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    function init() {
+      resize();
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    window.addEventListener('scroll', function() {
+      const currentScrollY = window.pageYOffset;
+      scrollVelocity = Math.abs(currentScrollY - lastScrollY);
+      lastScrollY = currentScrollY;
+      
+      setTimeout(() => {
+        scrollVelocity *= 0.9;
+      }, 50);
+    }, { passive: true });
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      const warpSpeed = 1 + (scrollVelocity / 10);
+
+      particles.forEach(particle => {
+        particle.update(warpSpeed);
+        particle.draw();
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', resize);
+
+    init();
+    animate();
+
+  })();
+
+  /* ===================================
+     LENIS SMOOTH SCROLL (DESKTOP ONLY)
+     =================================== */
+
+  if (typeof Lenis !== 'undefined' && window.innerWidth >= 750) {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 2
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    if (typeof ScrollTrigger !== 'undefined') {
+      lenis.on('scroll', ScrollTrigger.update);
+    }
+  }
+
+  /* ===================================
+     CUSTOM TENDA VIDEO PLAYER
+     =================================== */
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const video = document.getElementById('tendaHeroVideo');
+    const muteBtn = document.getElementById('muteBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    const centerPlay = document.getElementById('centerPlay');
+    const heroContent = document.getElementById('heroContent');
+    const muteIcon = document.getElementById('muteIcon');
+    const unmuteIcon = document.getElementById('unmuteIcon');
+    const videoSection = document.querySelector('.video-section.hero-video');
+    const primaryCTA = document.getElementById('primaryCTA');
+
+    // Only add controls for native video (not iframes)
+    if (!video || video.tagName !== 'VIDEO') return;
+
+    // Mute/Unmute Toggle
+    if (muteBtn) {
+      muteBtn.addEventListener('click', function() {
+        video.muted = !video.muted;
+        
+        if (video.muted) {
+          muteIcon.style.display = 'none';
+          unmuteIcon.style.display = 'block';
+          muteBtn.classList.remove('active');
+          document.body.classList.remove('video-focused');
+        } else {
+          muteIcon.style.display = 'block';
+          unmuteIcon.style.display = 'none';
+          muteBtn.classList.add('active');
+          document.body.classList.add('video-focused');
+        }
+      });
+    }
+
+    // Fullscreen Toggle
+    if (fullscreenBtn) {
+      fullscreenBtn.addEventListener('click', function() {
+        if (!document.fullscreenElement) {
+          videoSection.requestFullscreen().catch(err => {
+            console.log('Fullscreen error:', err);
+          });
+        } else {
+          document.exitFullscreen();
+        }
+      });
+    }
+
+    // Play/Pause on Video Click
+    video.addEventListener('click', function() {
+      if (video.paused) {
+        video.play();
+        centerPlay.classList.remove('show');
+      } else {
+        video.pause();
+        centerPlay.classList.add('show');
+        setTimeout(() => {
+          if (video.paused) {
+            centerPlay.classList.remove('show');
+          }
+        }, 2000);
+      }
+    });
+
+    // Progress Bar Update
+    video.addEventListener('timeupdate', function() {
+      const progress = (video.currentTime / video.duration) * 100;
+      progressFill.style.width = progress + '%';
+    });
+
+    // Progress Bar Click to Seek
+    if (progressBar) {
+      progressBar.addEventListener('click', function(e) {
+        const rect = progressBar.getBoundingClientRect();
+        const pos = (e.clientX - rect.left) / rect.width;
+        video.currentTime = pos * video.duration;
+      });
+    }
+
+    // Waitlist CTA - Blur Video
+    if (primaryCTA) {
+      primaryCTA.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href && (href.includes('waitlist') || href.includes('modal') || href.includes('#'))) {
+          videoSection.classList.add('blurred');
+        }
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Hero Video (Tenda)",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Make your numbers move.",
+      "label": "Hero title",
+      "info": "Last word will be highlighted in neon yellow"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "url",
+      "id": "button_link_2",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "header",
+      "content": "Video Settings"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Upload Video",
+      "info": "For best results, use MP4 format. Custom controls work with uploaded videos."
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "accept": ["youtube", "vimeo"],
+      "label": "Or use video URL",
+      "info": "YouTube or Vimeo (note: custom controls are limited with external videos)"
+    },
+    {
+      "type": "image_picker",
+      "id": "cover_image",
+      "label": "Poster image",
+      "info": "Shows before video loads or as fallback"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Make section full width",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Video (Tenda)"
+    }
+  ]
+}
+{% endschema %}

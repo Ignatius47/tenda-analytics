@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "academy_main": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "{% render 'tenda-academy-snippet' %}"
+      }
+    }
+  },
+  "order": ["academy_main"]
+}

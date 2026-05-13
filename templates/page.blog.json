@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "blog": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "{% render 'blog-page' %}"
+      }
+    }
+  },
+  "order": ["blog"]
+}

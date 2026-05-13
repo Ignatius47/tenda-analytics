@@ -1,0 +1,772 @@
+{% comment %}
+═══════════════════════════════════════════════════════════════
+TENDA DOWNLOAD HANDSHAKE - FINAL WORKING VERSION
+Version: 1.1 - App Proxy Fixed
+
+CRITICAL FIX:
+The Shopify CLI tunnel is pointing to the WRONG app.
+Your Flask app (port 8000) needs to be the app proxy target.
+
+Current Issue:
+- Shopify CLI tunnel: https://libs-cruise-involve-pads.trycloudflare.com
+- Points to: React Router app (port 64629)
+- Should point to: Flask app (port 8000)
+
+SOLUTION:
+See installation instructions below for proper setup.
+═══════════════════════════════════════════════════════════════
+{% endcomment %}
+
+<style>
+/* ═══════════════════════════════════════════════════════
+   TENDA DOWNLOAD BUTTON STYLES
+   ═══════════════════════════════════════════════════════ */
+
+.tenda-download-btn {
+  width: 100%;
+  background: #E3FC02 !important;
+  color: #000 !important;
+  border: none !important;
+  padding: 1.25rem 2rem !important;
+  border-radius: 8px !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.75rem !important;
+  transition: all 0.3s ease !important;
+  margin-top: 1rem !important;
+  box-shadow: 0 4px 15px rgba(227, 252, 2, 0.3) !important;
+}
+
+.tenda-download-btn:hover {
+  background: #ffffff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(227, 252, 2, 0.5) !important;
+}
+
+.tenda-download-btn:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+.tenda-download-btn .download-icon {
+  font-size: 1.5rem;
+}
+
+.tenda-download-btn .download-text {
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.tenda-inventory-badge {
+  background: rgba(227, 252, 2, 0.15) !important;
+  color: #E3FC02 !important;
+  border: 1px solid rgba(227, 252, 2, 0.3) !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  display: inline-block !important;
+}
+
+.tenda-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(25px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.tenda-modal-content {
+  width: 90%;
+  max-width: 500px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 3rem;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.tenda-modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: 2rem;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.4);
+  transition: color 0.2s ease;
+}
+
+.tenda-modal-close:hover {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.tenda-modal-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.tenda-modal-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #000;
+  margin-bottom: 0.5rem;
+}
+
+.tenda-modal-title .accent {
+  color: #E3FC02;
+}
+
+.tenda-modal-subtitle {
+  color: rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.tenda-modal-benefits {
+  text-align: left;
+  margin: 0 auto 2rem;
+  max-width: 350px;
+}
+
+.tenda-benefit-item {
+  margin-bottom: 0.75rem;
+  color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tenda-modal-form {
+  margin-bottom: 1rem;
+}
+
+.tenda-modal-input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: 2px solid rgba(227, 252, 2, 0.3);
+  border-radius: 12px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.tenda-modal-input:focus {
+  outline: none;
+  border-color: #E3FC02;
+}
+
+.tenda-modal-submit {
+  width: 100%;
+  background: #E3FC02;
+  color: #000;
+  border: none;
+  padding: 1.25rem;
+  border-radius: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tenda-modal-submit:hover {
+  background: #ffffff;
+  box-shadow: 0 8px 25px rgba(227, 252, 2, 0.4);
+}
+
+.tenda-modal-footer {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.5);
+  margin-top: 1.5rem;
+}
+
+.tenda-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: 700;
+  z-index: 10001;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: toastSlide 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes toastSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.tenda-toast.success {
+  background: #E3FC02;
+  color: #000;
+}
+
+.tenda-toast.error {
+  background: #ff4444;
+  color: #fff;
+}
+
+.tenda-progress-wrapper {
+  margin-top: 1rem;
+  display: none;
+}
+
+.tenda-progress-wrapper.active {
+  display: block;
+}
+
+.tenda-progress-label {
+  color: #E3FC02;
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.tenda-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tenda-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #E3FC02 0%, #f6ff4d 50%, #E3FC02 100%);
+  background-size: 200% 100%;
+  width: 0%;
+  transition: width 0.3s ease;
+  animation: shimmer 1.5s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+</style>
+
+<script>
+(function() {
+  'use strict';
+  
+  console.log('═══════════════════════════════════════');
+  console.log('🔐 TENDA DOWNLOAD HANDSHAKE v1.1');
+  console.log('═══════════════════════════════════════');
+  
+  // ═══════════════════════════════════════════════════════
+  // CONFIGURATION
+  // ═══════════════════════════════════════════════════════
+  
+  // CORRECT: Use Shopify App Proxy path
+  // This will be proxied to your Flask backend automatically
+const PROXY_BASE_PATH = 'https://api-handshake-production.up.railway.app/api/proxy';  
+  console.log('Proxy path:', PROXY_BASE_PATH);
+  
+  // Only run on product pages
+  if (!window.location.pathname.includes('/products/')) {
+    console.log('⚠️ Not a product page - exiting');
+    return;
+  }
+  
+  // ═══════════════════════════════════════════════════════
+  // UTILITY FUNCTIONS
+  // ═══════════════════════════════════════════════════════
+  
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+  }
+  
+  function setCookie(name, value, days = 365) {
+    const maxAge = days * 24 * 60 * 60;
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+  }
+  
+  function getStoredEmail() {
+    let email = localStorage.getItem('tenda_email');
+    if (!email) email = getCookie('tenda_email');
+    {% if customer %}
+      email = email || '{{ customer.email }}';
+    {% endif %}
+    return email;
+  }
+  
+  function setStoredEmail(email) {
+    localStorage.setItem('tenda_email', email);
+    setCookie('tenda_email', email);
+  }
+  
+  function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `tenda-toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.3s ease';
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+  
+  // ═══════════════════════════════════════════════════════
+  // API FUNCTIONS
+  // ═══════════════════════════════════════════════════════
+  
+  async function verifySubscriber(email) {
+    console.log('🔍 Verifying subscriber:', email);
+    console.log('Calling:', `${PROXY_BASE_PATH}/verify`);
+    
+    try {
+      const response = await fetch(`${PROXY_BASE_PATH}/verify`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ email: email })
+      });
+      
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        console.error('❌ Verify API error:', response.status);
+        if (response.status === 404) {
+          console.error('❌ 404 ERROR - App proxy not configured correctly');
+          console.error('Expected endpoint:', `${PROXY_BASE_PATH}/verify`);
+          console.error('Shopify should proxy this to your Flask app');
+        }
+        return { is_subscriber: false };
+      }
+      
+      const data = await response.json();
+      console.log('✅ Verification result:', data);
+      
+      return data;
+      
+    } catch (error) {
+      console.error('❌ Verify error:', error);
+      return { is_subscriber: false };
+    }
+  }
+  
+  async function getDownloadURL(email, productHandle) {
+    console.log('📥 Getting download URL');
+    console.log('   Email:', email);
+    console.log('   Product:', productHandle);
+    console.log('   Calling:', `${PROXY_BASE_PATH}/download`);
+    
+    try {
+      const response = await fetch(`${PROXY_BASE_PATH}/download`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          product_handle: productHandle
+        })
+      });
+      
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        console.error('❌ Download API error:', response.status);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Download failed');
+      }
+      
+      const data = await response.json();
+      console.log('✅ Download data:', data);
+      
+      return data;
+      
+    } catch (error) {
+      console.error('❌ Download error:', error);
+      throw error;
+    }
+  }
+  
+  // ═══════════════════════════════════════════════════════
+  // MODAL FUNCTIONS
+  // ═══════════════════════════════════════════════════════
+  
+  function showSubscribeModal(prefilledEmail = '') {
+    if (document.getElementById('tendaModal')) {
+      return;
+    }
+    
+    const modal = document.createElement('div');
+    modal.id = 'tendaModal';
+    modal.className = 'tenda-modal-overlay';
+    
+    modal.innerHTML = `
+      <div class="tenda-modal-content">
+        <div class="tenda-modal-close" id="tendaModalClose">&times;</div>
+        
+        <div class="tenda-modal-icon">🔓</div>
+        
+        <h2 class="tenda-modal-title">
+          Access <span class="accent">Intelligence</span>
+        </h2>
+        
+        <p class="tenda-modal-subtitle">
+          Subscribe to unlock instant access to this playbook.
+        </p>
+        
+        <div class="tenda-modal-benefits">
+          <div class="tenda-benefit-item">⚡ Instant download access</div>
+          <div class="tenda-benefit-item">⚡ All playbooks & templates</div>
+          <div class="tenda-benefit-item">⚡ Weekly operational insights</div>
+        </div>
+        
+        <form id="tendaSubscribeForm" class="tenda-modal-form" method="post" action="/contact#contact_form">
+          <input type="hidden" name="form_type" value="customer">
+          <input type="hidden" name="utf8" value="✓">
+          <input type="hidden" name="contact[tags]" value="newsletter,subscriber,intelligence_network">
+          <input type="hidden" name="contact[accepts_marketing]" value="true">
+          
+          <input 
+            type="email" 
+            name="contact[email]" 
+            class="tenda-modal-input"
+            placeholder="your@email.com"
+            value="${prefilledEmail}"
+            required>
+          
+          <button type="submit" class="tenda-modal-submit">
+            Unlock Access
+          </button>
+        </form>
+        
+        <p class="tenda-modal-footer">
+          Free intelligence. No spam. Unsubscribe anytime.
+        </p>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+    
+    const closeBtn = document.getElementById('tendaModalClose');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeModal);
+    }
+    
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+    
+    const form = document.getElementById('tendaSubscribeForm');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        const emailInput = this.querySelector('input[type="email"]');
+        const email = emailInput.value;
+        
+        console.log('📧 Form submitted with email:', email);
+        
+        setStoredEmail(email);
+        sessionStorage.setItem('tenda_pending_download', '{{ product.handle }}');
+      });
+    }
+  }
+  
+  function closeModal() {
+    const modal = document.getElementById('tendaModal');
+    if (modal) {
+      modal.remove();
+      document.body.style.overflow = '';
+    }
+  }
+  
+  // ═══════════════════════════════════════════════════════
+  // DOWNLOAD HANDLER
+  // ═══════════════════════════════════════════════════════
+  
+  async function handleDownload(button, productHandle) {
+    console.log('═══════════════════════════════════════');
+    console.log('🖱️ DOWNLOAD CLICKED');
+    console.log('Product:', productHandle);
+    console.log('═══════════════════════════════════════');
+    
+    const downloadText = button.querySelector('.download-text');
+    const originalText = downloadText.textContent;
+    
+    downloadText.textContent = 'VERIFYING...';
+    button.disabled = true;
+    
+    try {
+      const email = getStoredEmail();
+      console.log('📧 Stored email:', email);
+      
+      if (!email) {
+        console.log('❌ No email found - showing modal');
+        downloadText.textContent = originalText;
+        button.disabled = false;
+        showSubscribeModal();
+        return;
+      }
+      
+      const verification = await verifySubscriber(email);
+      
+      if (!verification.is_subscriber) {
+        console.log('❌ Not subscribed - showing modal');
+        downloadText.textContent = originalText;
+        button.disabled = false;
+        showSubscribeModal(email);
+        return;
+      }
+      
+      console.log('✅ VERIFIED SUBSCRIBER');
+      
+      downloadText.textContent = 'PREPARING...';
+      
+      const downloadData = await getDownloadURL(email, productHandle);
+      
+      if (!downloadData.authorized || !downloadData.file_url) {
+        throw new Error('Download not authorized');
+      }
+      
+      downloadText.textContent = 'DOWNLOADING...';
+      
+      setTimeout(() => {
+        console.log('📥 Downloading file:', downloadData.file_url);
+        
+        window.location.href = downloadData.file_url;
+        
+        downloadText.textContent = 'DOWNLOAD AGAIN';
+        button.disabled = false;
+        
+        const downloads = JSON.parse(localStorage.getItem('tenda_downloads') || '[]');
+        if (!downloads.includes(productHandle)) {
+          downloads.push(productHandle);
+          localStorage.setItem('tenda_downloads', JSON.stringify(downloads));
+        }
+        
+        showToast('📥 Download started! Check your downloads folder.');
+        
+      }, 500);
+      
+    } catch (error) {
+      console.error('❌ Download failed:', error);
+      downloadText.textContent = originalText;
+      button.disabled = false;
+      showToast('Download failed. Please try again.', 'error');
+    }
+  }
+  
+  // ═══════════════════════════════════════════════════════
+  // DOM MANIPULATION
+  // ═══════════════════════════════════════════════════════
+  
+  function injectDownloadButton() {
+    console.log('🔧 Injecting download button...');
+    
+    const addToCartBtn = document.querySelector(
+      'button[name="add"], ' +
+      'button[type="submit"][name*="add"], ' +
+      '.product-form__submit, ' +
+      '[data-add-to-cart], ' +
+      'input[type="submit"][value*="Add"]'
+    );
+    
+    if (!addToCartBtn) {
+      console.log('⚠️ No add to cart button found');
+      return;
+    }
+    
+    console.log('✅ Found add to cart button');
+    
+    addToCartBtn.style.display = 'none';
+    
+    const downloadBtn = document.createElement('button');
+    downloadBtn.type = 'button';
+    downloadBtn.className = 'tenda-download-btn';
+    downloadBtn.innerHTML = `
+      <span class="download-icon">📥</span>
+      <span class="download-text">DOWNLOAD NOW</span>
+    `;
+    
+    addToCartBtn.parentNode.insertBefore(downloadBtn, addToCartBtn.nextSibling);
+    
+    downloadBtn.addEventListener('click', function() {
+      handleDownload(this, '{{ product.handle }}');
+    });
+    
+    console.log('✅ Download button injected');
+  }
+  
+  function updateInventoryDisplay() {
+    console.log('🔧 Updating inventory display...');
+    
+    const inventory = {{ product.variants.first.inventory_quantity | default: 0 }};
+    console.log('📦 Inventory:', inventory);
+    
+    const stockElements = document.querySelectorAll(
+      '.badge, ' +
+      '[class*="badge"], ' +
+      '[class*="stock"], ' +
+      '[class*="availability"], ' +
+      '.product__inventory, ' +
+      '.product-availability'
+    );
+    
+    stockElements.forEach(function(element) {
+      const text = element.textContent.trim().toLowerCase();
+      
+      if (text.includes('out of stock') || text.includes('unavailable')) {
+        element.textContent = `${inventory} Available`;
+        element.className += ' tenda-inventory-badge';
+        console.log('✅ Updated stock badge:', element);
+      }
+    });
+  }
+  
+  // ═══════════════════════════════════════════════════════
+  // INITIALIZATION
+  // ═══════════════════════════════════════════════════════
+  
+  window.addEventListener('DOMContentLoaded', function() {
+    
+    console.log('📄 DOM Loaded');
+    console.log('Current URL:', window.location.pathname);
+    
+    {% if product.price == 0 %}
+      console.log('✅ FREE PRODUCT DETECTED');
+      console.log('Product Handle: {{ product.handle }}');
+      console.log('Product Title: {{ product.title }}');
+      console.log('Inventory: {{ product.variants.first.inventory_quantity }}');
+      
+      injectDownloadButton();
+      updateInventoryDisplay();
+      
+      const pendingDownload = sessionStorage.getItem('tenda_pending_download');
+      if (pendingDownload && pendingDownload === '{{ product.handle }}') {
+        console.log('🎯 Pending download detected');
+        sessionStorage.removeItem('tenda_pending_download');
+        
+        const email = getStoredEmail();
+        if (email) {
+          console.log('🔄 Auto-triggering download...');
+          
+          setTimeout(() => {
+            const btn = document.querySelector('.tenda-download-btn');
+            if (btn) {
+              btn.click();
+            }
+          }, 1000);
+        }
+      }
+      
+    {% else %}
+      console.log('⚠️ PAID PRODUCT - Keeping normal add to cart');
+    {% endif %}
+    
+  });
+  
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeModal();
+    }
+  });
+  
+  console.log('═══════════════════════════════════════');
+  console.log('✅ TENDA HANDSHAKE INITIALIZED');
+  console.log('Waiting for user interaction...');
+  console.log('═══════════════════════════════════════');
+  
+})();
+</script>
+
+{% comment %}
+═══════════════════════════════════════════════════════════════
+INSTALLATION & TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════
+
+1. INSTALL THIS SNIPPET:
+   - Shopify Admin → Themes → Edit code
+   - Snippets → Add new snippet: tenda-download-handshake
+   - Paste this entire file
+   - Save
+
+2. ADD TO THEME:
+   - Layout → theme.liquid
+   - Before </body>, add: {% render 'tenda-download-handshake' %}
+   - Save
+
+3. CONFIGURE APP PROXY:
+   The Shopify CLI tunnel is currently pointing to the WRONG app.
+   
+   YOUR SHOPIFY CLI OUTPUT SHOWS:
+   app_proxy │ Using URL: https://libs-cruise-involve-pads.trycloudflare.com/api/proxy
+   
+   This tunnel points to React Router (port 64629), NOT your Flask app (port 8000).
+   
+   TO FIX:
+   a) Stop Shopify CLI (Ctrl+C)
+   b) Edit shopify.app.toml in your Shopify app project:
+      [app_proxy]
+      url = "/apps/tenda-handshake"
+      subpath = "/api/proxy"
+   
+   c) Create a custom web.toml in your Flask project:
+      type = "backend"
+      port = 8000
+      
+   d) Restart: shopify app dev --tunnel-url=http://localhost:8000
+   
+   OR
+   
+   e) Manually configure in Shopify Admin:
+      - Apps → Development → Your App → Configuration
+      - App proxy:
+        Subpath prefix: apps
+        Subpath: tenda-handshake
+        Proxy URL: http://localhost:8000/api/proxy
+        
+4. TEST:
+   Visit a free product page and open console.
+   You should see:
+   - "FREE PRODUCT DETECTED"
+   - "Download button injected"
+   - Click download → No 404 error
+   
+═══════════════════════════════════════════════════════════════
+{% endcomment %}

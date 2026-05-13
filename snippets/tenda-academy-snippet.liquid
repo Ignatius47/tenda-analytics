@@ -1,0 +1,1973 @@
+{% comment %}
+  Tenda Hub - Upgraded Tabbed Interface
+  Academy + Professional Consultant Portal
+{% endcomment %}
+
+<style>
+:root {
+  --neon: #E3FC02;
+  --neon-glow: rgba(227, 252, 2, 0.4);
+  --neon-subtle: rgba(227, 252, 2, 0.15);
+  --neon-border: rgba(227, 252, 2, 0.1);
+  --bg: #1F1F21;
+  --glass: rgba(255, 255, 255, 0.03);
+  --text: #f5f5f7;
+  --muted: rgba(245, 245, 247, 0.6);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+.tenda-hub {
+  background: linear-gradient(180deg, 
+    #1F1F21 0%,
+    #171719 15%,
+    #1F1F21 35%,
+    #232325 55%,
+    #1F1F21 75%,
+    #171719 100%
+  );
+  min-height: 100vh;
+}
+
+/* ===================================
+   STICKY TAB NAVIGATION
+   =================================== */
+
+.hub-nav {
+  position: sticky;
+  top: 80px;
+  z-index: 100;
+  background: rgba(31, 31, 33, 0.95);
+  backdrop-filter: blur(30px);
+  border-bottom: 1px solid var(--neon-border);
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.tab-triggers {
+  display: flex;
+  gap: 0;
+  position: relative;
+}
+
+.tab-trigger {
+  padding: 1.5rem 3rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-bottom: 3px solid transparent;
+  color: var(--muted);
+  position: relative;
+  background: transparent;
+  border: none;
+  white-space: nowrap;
+}
+
+.tab-trigger:hover {
+  color: var(--text);
+  background: rgba(227, 252, 2, 0.05);
+}
+
+.tab-trigger.active {
+  color: var(--neon);
+  border-bottom-color: var(--neon);
+  background: rgba(227, 252, 2, 0.08);
+  box-shadow: 0 -2px 20px var(--neon-glow) inset;
+}
+
+.tab-trigger.active::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--neon);
+  box-shadow: 0 0 15px var(--neon-glow);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* ===================================
+   TAB CONTENT
+   =================================== */
+
+.hub-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 5%;
+}
+
+.tab-content {
+  display: none;
+  animation: fadeSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===================================
+   REVEALS
+   =================================== */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ===================================
+   HERO SECTIONS
+   =================================== */
+
+.hero-section {
+  text-align: center;
+  padding: 12vh 5% 8vh;
+}
+
+.hero-eyebrow {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--neon);
+  margin-bottom: 1.5rem;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  color: var(--muted);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Neon Button */
+.tenda-btn-neon {
+  padding: 1.25rem 3rem;
+  background: transparent;
+  color: var(--neon);
+  border: 2px solid var(--neon);
+  border-radius: 12px;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 20px rgba(227, 252, 2, 0.2);
+}
+
+.tenda-btn-neon:hover {
+  background: var(--neon);
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--neon-glow);
+}
+
+/* ===================================
+   CATEGORY FILTERS
+   =================================== */
+
+.filter-pills {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 3rem 0;
+}
+
+.filter-pill {
+  padding: 0.75rem 1.5rem;
+  border-radius: 980px;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  background: var(--glass);
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.filter-pill:hover {
+  border-color: rgba(227, 252, 2, 0.3);
+  background: rgba(227, 252, 2, 0.05);
+  color: var(--text);
+}
+
+.filter-pill.active {
+  background: var(--neon);
+  color: #000;
+  border-color: var(--neon);
+  box-shadow: 0 4px 20px var(--neon-glow);
+}
+
+/* ===================================
+   ACADEMY GRID
+   =================================== */
+.academy-grid,
+.academy-grid-symmetric {
+  margin-top: 3rem;
+}
+
+/* Container for symmetric layout */
+.academy-grid-symmetric {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Top Row - Two Equal Cards */
+.symmetric-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+/* Bottom Row - Single Centered Card */
+.symmetric-row-single {
+  display: grid;
+  grid-template-columns: 1fr;
+  max-width: calc(50% - 1rem);
+  margin: 0 auto;
+}
+
+/* Symmetric Resource Card - Enhanced Glassmorphism */
+.resource-card-symmetric {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid var(--neon);
+  border-radius: 24px;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  
+  /* Ensure flex layout for perfect bottom alignment */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Hover Glow Effect */
+.hover-glow-symmetric {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(227, 252, 2, 0.08) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.resource-card-symmetric:hover .hover-glow-symmetric {
+  opacity: 1;
+}
+
+.resource-card-symmetric:hover {
+  transform: translateY(-12px) scale(1.02);
+  border-color: var(--neon);
+  box-shadow: 
+    0 25px 70px rgba(0, 0, 0, 0.7),
+    0 0 60px rgba(227, 252, 2, 0.3),
+    inset 0 0 40px rgba(227, 252, 2, 0.05);
+}
+
+/* Card Content Wrapper - Ensures Perfect Alignment */
+.card-content-symmetric {
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  gap: 2rem;
+}
+
+/* Icon */
+.resource-icon-symmetric {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 0 20px rgba(227, 252, 2, 0.4));
+}
+
+/* Category Tags - Neon Yellow Background */
+.resource-tag-symmetric {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 15px rgba(227, 252, 2, 0.3);
+  transition: all 0.3s ease;
+}
+
+.resource-tag-symmetric.featured {
+  background: var(--neon);
+  color: #000000;
+  border: 1px solid var(--neon);
+}
+
+.resource-tag-symmetric.playbook {
+  background: var(--neon);
+  color: #000000;
+  border: 1px solid var(--neon);
+}
+
+.resource-tag-symmetric.checklist {
+  background: var(--neon);
+  color: #000000;
+  border: 1px solid var(--neon);
+}
+
+.resource-card-symmetric:hover .resource-tag-symmetric {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(227, 252, 2, 0.5);
+}
+
+/* Title */
+.resource-title-symmetric {
+  font-size: 1.625rem;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+/* Meta */
+.resource-meta-symmetric {
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Description */
+.resource-description-symmetric {
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 1.0625rem;
+  margin-bottom: 0;
+}
+
+/* Download Link - Perfectly Aligned at Bottom */
+.download-link-symmetric {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--neon);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.0625rem;
+  padding: 1.25rem 2rem;
+  background: rgba(227, 252, 2, 0.08);
+  border: 1.5px solid rgba(227, 252, 2, 0.3);
+  border-radius: 12px;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-top: auto;
+  width: fit-content;
+  box-shadow: 0 0 20px rgba(227, 252, 2, 0.15);
+}
+
+.download-link-symmetric:hover {
+  background: var(--neon);
+  color: #000000;
+  border-color: var(--neon);
+  transform: translateX(8px);
+  box-shadow: 0 8px 30px rgba(227, 252, 2, 0.4);
+}
+
+.download-link-symmetric svg {
+  transition: transform 0.3s ease;
+}
+
+.download-link-symmetric:hover svg {
+  transform: translateY(3px);
+}
+
+/* ===================================
+   ACCESS RESTRICTED MODAL
+   =================================== */
+
+.tenda-access-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tenda-access-modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.tenda-access-modal-content {
+  width: 90%;
+  max-width: 550px;
+  background: rgba(20, 20, 22, 0.95);
+  backdrop-filter: blur(40px) saturate(160%);
+  -webkit-backdrop-filter: blur(40px) saturate(160%);
+  border: 2px solid rgba(227, 252, 2, 0.4);
+  border-radius: 32px;
+  padding: 3.5rem 3rem;
+  text-align: center;
+  box-shadow: 
+    0 0 0 1px rgba(227, 252, 2, 0.2),
+    0 60px 140px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  position: relative;
+  transform: scale(0.9) translateY(30px);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tenda-access-modal.active .tenda-access-modal-content {
+  transform: scale(1) translateY(0);
+}
+
+/* Top seam */
+.tenda-access-modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(227, 252, 2, 0.8) 30%, 
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(227, 252, 2, 0.8) 70%, 
+    transparent 100%
+  );
+}
+
+.tenda-access-icon {
+  width: 90px;
+  height: 90px;
+  background: linear-gradient(135deg, rgba(227, 252, 2, 0.2) 0%, rgba(227, 252, 2, 0.1) 100%);
+  border: 2.5px solid rgba(227, 252, 2, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  margin: 0 auto 2rem;
+  animation: modalIconBounce 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s backwards;
+}
+
+@keyframes modalIconBounce {
+  0% { opacity: 0; transform: scale(0.3) rotate(-20deg); }
+  60% { transform: scale(1.15) rotate(10deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.tenda-access-title {
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: #E3FC02;
+  margin-bottom: 1.25rem;
+  text-shadow: 0 0 30px rgba(227, 252, 2, 0.5);
+  animation: modalTextSlide 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s backwards;
+}
+
+@keyframes modalTextSlide {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.tenda-access-message {
+  font-size: 1.1875rem;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  animation: modalTextSlide 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.45s backwards;
+}
+
+.tenda-access-close {
+  padding: 1.125rem 2.5rem;
+  background: var(--neon);
+  color: #000000;
+  border: none;
+  border-radius: 14px;
+  font-weight: 900;
+  font-size: 1.0625rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  box-shadow: 0 10px 35px rgba(227, 252, 2, 0.4);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: modalButtonSlide 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.55s backwards;
+}
+
+@keyframes modalButtonSlide {
+  0% { opacity: 0; transform: translateY(25px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.tenda-access-close:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 50px rgba(227, 252, 2, 0.6);
+}
+
+.tenda-access-close:active {
+  transform: scale(0.97);
+}
+
+/* ===================================
+   MOBILE RESPONSIVE
+   =================================== */
+
+@media (max-width: 1024px) {
+  .symmetric-row {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .symmetric-row-single {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-content-symmetric {
+    padding: 2rem 1.75rem;
+  }
+
+  .resource-icon-symmetric {
+    font-size: 2.5rem;
+  }
+
+  .resource-title-symmetric {
+    font-size: 1.375rem;
+  }
+
+  .download-link-symmetric {
+    padding: 1rem 1.75rem;
+    font-size: 1rem;
+  }
+
+  .tenda-access-modal-content {
+    padding: 3rem 2rem;
+    border-radius: 28px;
+  }
+
+  .tenda-access-icon {
+    width: 75px;
+    height: 75px;
+    font-size: 2.5rem;
+  }
+
+  .tenda-access-title {
+    font-size: 1.875rem;
+  }
+
+  .tenda-access-message {
+    font-size: 1.0625rem;
+  }
+}
+
+/* ===================================
+   TIMELINE
+   =================================== */
+
+.timeline-container {
+  max-width: 1000px;
+  margin: 5rem auto;
+  position: relative;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 40px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.timeline-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  background: var(--neon);
+  box-shadow: 0 0 10px var(--neon-glow);
+  transition: height 0.8s ease;
+}
+
+.timeline-line.active::before {
+  height: 100%;
+}
+
+.timeline-steps {
+  padding-left: 100px;
+  position: relative;
+}
+
+.timeline-step {
+  position: relative;
+  margin-bottom: 5rem;
+  opacity: 0.3;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.timeline-step.active {
+  opacity: 1;
+}
+
+.step-icon {
+  position: absolute;
+  left: -83px;
+  top: 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(227, 252, 2, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 800;
+  color: var(--neon);
+}
+
+.timeline-step.active .step-icon {
+  background: var(--neon);
+  border-color: var(--neon);
+  box-shadow: 0 0 30px var(--neon-glow);
+  transform: scale(1.1);
+  color: #000;
+}
+
+.step-number {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--neon);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.step-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.step-description {
+  font-size: 1.0625rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* Tenda Styled File Upload Wrapper */
+  .upload-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .file-upload-wrapper {
+    position: relative;
+    border: 1px dashed rgba(227, 252, 2, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .file-upload-wrapper:hover {
+    border-color: var(--neon);
+    background: rgba(227, 252, 2, 0.05);
+  }
+
+  .file-input-hidden {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .upload-label {
+    color: #fff;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    pointer-events: none;
+  }
+
+  .upload-label svg {
+    color: var(--neon);
+  }
+
+  .divider-text {
+    align-self: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+/* ===================================
+   EXPERTISE GRID
+   =================================== */
+
+.expertise-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin: 5rem 0;
+}
+
+.expertise-card {
+  background: var(--glass);
+  backdrop-filter: blur(30px);
+  border: 0.5px solid var(--neon-border);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.expertise-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: var(--neon);
+  box-shadow: 0 0 10px var(--neon-glow);
+  transition: all 0.4s ease;
+}
+
+.expertise-card:hover {
+  transform: translateY(-10px) scale(1.05);
+  border-color: var(--neon);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px var(--neon-subtle);
+}
+
+.expertise-card:hover::before {
+  left: 0;
+  right: 0;
+  box-shadow: 0 0 25px var(--neon-glow);
+  animation: neonPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes neonPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.expertise-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1.5rem;
+  color: var(--neon);
+}
+
+.expertise-title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.expertise-description {
+  font-size: 0.9375rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ===================================
+   FORM
+   =================================== */
+
+.application-form {
+  background: var(--glass);
+  backdrop-filter: blur(30px);
+  border: 0.5px solid var(--neon-border);
+  border-radius: 30px;
+  padding: 4rem;
+  max-width: 800px;
+  margin: 5rem auto;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.form-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.form-subtitle {
+  font-size: 1.125rem;
+  color: var(--muted);
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 1.25rem 1.25rem 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-size: 1rem;
+  color: var(--text);
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.form-input.valid,
+.form-textarea.valid {
+  border-color: var(--neon);
+  box-shadow: 0 0 0 3px rgba(227, 252, 2, 0.1);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--neon);
+  box-shadow: 0 0 0 3px rgba(227, 252, 2, 0.1), 0 0 20px rgba(227, 252, 2, 0.2);
+}
+
+.form-input:focus ~ .form-label,
+.form-input:not(:placeholder-shown) ~ .form-label,
+.form-textarea:focus ~ .form-label,
+.form-textarea:not(:placeholder-shown) ~ .form-label {
+  top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--neon);
+}
+
+.form-label {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  font-size: 1rem;
+  color: var(--muted);
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+  padding-top: 1.5rem;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 1.25rem 2rem;
+  background: var(--neon);
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px var(--neon-glow);
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--neon-glow);
+}
+
+/* ===================================
+   SECTION DIVIDER
+   =================================== */
+
+.section-divider {
+  width: 80%;
+  height: 2px;
+  margin: 8vh auto;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(227, 252, 2, 0.6) 20%,
+    rgba(227, 252, 2, 1) 50%,
+    rgba(227, 252, 2, 0.6) 80%,
+    transparent 100%
+  );
+  box-shadow: 0 0 20px var(--neon-glow);
+  border-radius: 50px;
+}
+
+/* ===================================
+   RESPONSIVE
+   =================================== */
+
+@media (max-width: 1024px) {
+  .academy-grid,
+  .expertise-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .resource-card.featured {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .hub-nav {
+    top: 60px;
+  }
+
+  .tab-trigger {
+    padding: 1rem 1.5rem;
+    font-size: 0.9375rem;
+  }
+
+  .academy-grid,
+  .expertise-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .timeline-steps {
+    padding-left: 60px;
+  }
+
+  .step-icon {
+    left: -70px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
+
+  .timeline-line {
+    left: 20px;
+  }
+
+  .application-form {
+    padding: 2rem;
+  }
+}
+
+.tenda-neon-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1); /* Subtle dark track */
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* The Grabber (Thumb) - Chrome/Safari/Edge */
+.tenda-neon-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  background: #E3FC02; /* Neon Yellow */
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(227, 252, 2, 0.6); /* The Glow */
+  border: 2px solid #000;
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Hover Effect for Apple-level feel */
+.tenda-neon-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2); /* Physical Feedback */
+  box-shadow: 0 0 25px rgba(227, 252, 2, 0.9);
+}
+
+/* The Grabber (Thumb) - Firefox */
+.tenda-neon-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: #E3FC02;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(227, 252, 2, 0.6);
+  border: 2px solid #000;
+}
+
+/* ===================================
+   CUSTOM SCROLLBAR
+   =================================== */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neon);
+  border-radius: 10px;
+  box-shadow: 0 0 10px var(--neon-glow);
+}
+</style>
+
+<div class="tenda-hub">
+
+  <!-- Sticky Tab Navigation -->
+  <nav class="hub-nav">
+    <div class="tab-triggers">
+      <button class="tab-trigger active" onclick="switchTab('academy')">
+        Tenda Academy
+      </button>
+      <button class="tab-trigger" onclick="switchTab('consultants')">
+        Work with Tenda
+      </button>
+    </div>
+  </nav>
+
+  <div class="hub-container">
+
+    <!-- ===================================
+         ACADEMY TAB
+         =================================== -->
+    <section id="academy" class="tab-content active">
+      
+      <!-- Hero -->
+      <div class="hero-section reveal">
+        <div class="hero-eyebrow">Tenda Academy</div>
+        <h1 class="hero-title">Precision Growth: Real-World Retail Intelligence</h1>
+        <p class="hero-subtitle">
+          Tenda Growth Academy is an education platform created by Tenda Analytics to equip African retail and consumer brands with the practical skills they need to grow sustainably.
+
+We combine analytics, field experience, and operator stories to demystify topics like margin management, procurement, stock health, store operations, and demand generation. Instead of theory, we focus on what actually works on the ground – in shops, on shelves, and inside growing brands.
+
+Through video series, toolkits, and (soon) a podcast, Tenda Growth Academy helps founders, commercial leaders, and operations teams turn everyday data into better decisions, tighter execution, and healthier businesses.
+        </p>
+      </div>
+
+      <!-- Category Filters -->
+      <div class="filter-pills reveal">
+        <button class="filter-pill active" data-category="all">All Resources</button>
+        <button class="filter-pill" data-category="retail">Retail</button>
+        <button class="filter-pill" data-category="marketing">Marketing</button>
+        <button class="filter-pill" data-category="operations">Operations</button>
+        <button class="filter-pill" data-category="analytics">Analytics</button>
+      </div>
+
+      <!-- Academy Grid - Balanced Symmetry Layout -->
+<div class="academy-grid-symmetric">        
+  
+  <!-- TOP ROW: Two Equal Cards -->
+  <div class="symmetric-row">
+    
+    <!-- Card 1: Retail KPI Framework -->
+    <div class="resource-card-symmetric reveal" data-category="retail" data-file="/files/retail-kpi-framework.pdf">
+      <div class="card-content-symmetric">
+        <div>
+          <span class="resource-icon-symmetric">🎯</span>
+          <span class="resource-tag-symmetric featured">Featured</span>
+          <h3 class="resource-title-symmetric">The Retail Operator's Complete KPI Framework</h3>
+          <p class="resource-meta-symmetric">Target: Retail Operators | 15-min read</p>
+          <p class="resource-description-symmetric">
+            Master the 10 metrics that matter most from revenue per SKU to stock turn rate. This is our flagship playbook.
+          </p>
+        </div>
+        <a href="#" class="download-link-symmetric" data-file="/files/retail-kpi-framework.pdf">
+          Download Now
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+        </a>
+      </div>
+      <div class="hover-glow-symmetric"></div>
+    </div>
+
+    <!-- Card 2: Campaign Attribution Framework -->
+    <div class="resource-card-symmetric reveal reveal-delay-1" data-category="marketing" data-file="/files/campaign-attribution.pdf">
+      <div class="card-content-symmetric">
+        <div>
+          <span class="resource-icon-symmetric">📊</span>
+          <span class="resource-tag-symmetric playbook">Playbook</span>
+          <h3 class="resource-title-symmetric">Campaign Attribution Framework</h3>
+          <p class="resource-meta-symmetric">Target: Marketing Teams | 15-min read</p>
+          <p class="resource-description-symmetric">
+            A simple system to link every campaign to revenue across paid social, influencers, email, WhatsApp, ecommerce, and in-store.
+          </p>
+        </div>
+        <a href="#" class="download-link-symmetric" data-file="/files/campaign-attribution.pdf">
+          Download Now
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+        </a>
+      </div>
+      <div class="hover-glow-symmetric"></div>
+    </div>
+    
+  </div>
+
+  <!-- BOTTOM ROW: Single Centered Card -->
+  <div class="symmetric-row-single">
+    
+    <!-- Card 3: Inventory Health Checklist -->
+    <div class="resource-card-symmetric reveal reveal-delay-2" data-category="operations" data-file="/files/inventory-checklist.pdf">
+      <div class="card-content-symmetric">
+        <div>
+          <span class="resource-icon-symmetric">📦</span>
+          <span class="resource-tag-symmetric checklist">Checklist</span>
+          <h3 class="resource-title-symmetric">Inventory Health Checklist</h3>
+          <p class="resource-meta-symmetric">Target: Ops Managers | 10-min read</p>
+          <p class="resource-description-symmetric">
+            A practical checklist to spot stockouts, dead stock, and cash leaks. Review key KPIs and walk away with clear actions to protect margin and free up cash.
+          </p>
+        </div>
+        <a href="#" class="download-link-symmetric" data-file="/files/inventory-checklist.pdf">
+          Download Now
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+        </a>
+      </div>
+      <div class="hover-glow-symmetric"></div>
+    </div>
+    
+  </div>
+
+</div>
+
+<!-- Access Restricted Modal -->
+<div class="tenda-access-modal" id="tendaAccessModal">
+  <div class="tenda-access-modal-content">
+    <div class="tenda-access-icon">🔒</div>
+    <h2 class="tenda-access-title">Access Restricted</h2>
+    <p class="tenda-access-message">
+      Please join our network to unlock Tenda playbooks and operational intelligence.
+    </p>
+    <button class="tenda-access-close" id="tendaAccessClose">
+      Understood
+    </button>
+  </div>
+</div>
+
+    </section>
+
+    <!-- ===================================
+         WORK WITH TENDA TAB - UPGRADED
+         =================================== -->
+    <section id="consultants" class="tab-content">
+      
+      <!-- Hero -->
+      <div class="hero-section reveal">
+        <div class="hero-eyebrow">Join the Network</div>
+        <h1 class="hero-title">Consult with Tenda Analytics</h1>
+        <p class="hero-subtitle">
+          Join a curated network of consultants helping African businesses turn data into decisions across marketing, retail operations and analytics.
+        </p>
+        <a href="#application-form-section" class="tenda-btn-neon" style="display: inline-flex; align-items: center; gap: 0.75rem; margin-top: 2rem;">
+          <span>Apply Now</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Section Divider -->
+      <div class="section-divider"></div>
+
+      <!-- Areas of Expertise (3x2 Grid) -->
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <h2 class="hero-title" style="font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1rem;">Areas of Expertise</h2>
+        <p class="hero-subtitle">We're looking for consultants with deep experience in these areas.</p>
+      </div>
+
+      <div class="expertise-grid">
+        <div class="expertise-card reveal">
+          <svg class="expertise-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+          </svg>
+          <h3 class="expertise-title">Marketing</h3>
+          <p class="expertise-description">Campaign strategy, acquisition, performance marketing and growth.</p>
+        </div>
+
+        <div class="expertise-card reveal reveal-delay-1">
+          <svg class="expertise-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <line x1="3" y1="9" x2="21" y2="9"/>
+          </svg>
+          <h3 class="expertise-title">Retail</h3>
+          <p class="expertise-description">Inventory management, merchandising and supply chain optimization.</p>
+        </div>
+
+        <div class="expertise-card reveal reveal-delay-2">
+          <svg class="expertise-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <h3 class="expertise-title">Service Ops</h3>
+          <p class="expertise-description">Process optimization, capacity planning and operational efficiency.</p>
+        </div>
+
+        <div class="expertise-card reveal reveal-delay-3">
+          <svg class="expertise-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="20" x2="12" y2="10"/>
+            <line x1="18" y1="20" x2="18" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="16"/>
+          </svg>
+          <h3 class="expertise-title">Analytics</h3>
+          <p class="expertise-description">BI setup, dashboard design and data strategy consulting.</p>
+        </div>
+
+        <div class="expertise-card reveal reveal-delay-4">
+          <svg class="expertise-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"/>
+            <polyline points="8 6 2 12 8 18"/>
+          </svg>
+          <h3 class="expertise-title">Engineering</h3>
+          <p class="expertise-description">Data engineering, ETL pipelines and integration architecture.</p>
+        </div>
+
+        <div class="expertise-card reveal">
+          <svg class="expertise-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+          <h3 class="expertise-title">Content</h3>
+          <p class="expertise-description">Content strategy, copywriting and multimedia production.</p>
+        </div>
+      </div>
+
+      <!-- Section Divider -->
+      <div class="section-divider"></div>
+
+      <!-- 4-Step Timeline -->
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <h2 class="hero-title" style="font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1rem;">The Tenda Process</h2>
+        <p class="hero-subtitle">How we build outcome-driven relationships with our consultants.</p>
+      </div>
+
+      <div class="timeline-container reveal">
+        <div class="timeline-line" id="timelineLine"></div>
+        
+        <div class="timeline-steps">
+          <div class="timeline-step" data-step="1">
+            <div class="step-icon">1</div>
+            <div class="step-number">Step 01</div>
+            <h3 class="step-title">Apply</h3>
+            <p class="step-description">
+              Share your expertise and 2-3 projects you're proud of. We review all applications within 5 business days.
+            </p>
+          </div>
+
+          <div class="timeline-step" data-step="2">
+            <div class="step-icon">2</div>
+            <div class="step-number">Step 02</div>
+            <h3 class="step-title">Conversation</h3>
+            <p class="step-description">
+              We schedule a call to understand your approach, expertise and the kinds of projects that excite you.
+            </p>
+          </div>
+
+          <div class="timeline-step" data-step="3">
+            <div class="step-icon">3</div>
+            <div class="step-number">Step 03</div>
+            <h3 class="step-title">Pilot</h3>
+            <p class="step-description">
+              Work on a small, paid pilot project to ensure quality and fit before larger engagements.
+            </p>
+          </div>
+
+          <div class="timeline-step" data-step="4">
+            <div class="step-icon">4</div>
+            <div class="step-number">Step 04</div>
+            <h3 class="step-title">Collaboration</h3>
+            <p class="step-description">
+              Join the network and get matched with clients that align with your expertise and availability.
+            </p>
+          </div>
+        </div>
+
+        <!-- Closure -->
+        <div style="margin-top: 4rem; padding: 2rem 3rem; background: rgba(227, 252, 2, 0.05); border-left: 4px solid var(--neon); border-radius: 12px; font-size: 1.125rem; line-height: 1.7; color: rgba(245, 245, 247, 0.9);">
+          We build outcome-driven relationships focused on measurable impact. Every engagement is structured around clear KPIs, transparent communication and competitive compensation.
+        </div>
+      </div>
+
+      <!-- Section Divider -->
+      <div class="section-divider"></div>
+
+      <div style="text-align: center; margin-bottom: 3rem; padding: 0 1rem;">
+  <h2 class="hero-title" style="font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1rem;">What We're Looking For</h2>
+  <p class="hero-subtitle">Requirements for joining the Tenda consultant network.</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; max-width: 1200px; margin: 3rem auto; padding: 0 1.5rem;">
+  
+  <div style="background: var(--glass); backdrop-filter: blur(30px); border: 0.5px solid var(--neon-border); border-top: 3px solid var(--neon); border-radius: 24px; padding: clamp(1.5rem, 5vw, 3rem); display: flex; flex-direction: column;">
+    <h3 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 2rem; color: var(--neon); padding-bottom: 0.15em;">Must-Haves</h3>
+    <ul style="list-style: none; padding: 0; margin: 0;">
+      <li style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; font-size: 1.0625rem; line-height: 1.6;">
+        <svg style="width: 24px; height: 24px; flex-shrink: 0; color: var(--neon); margin-top: 2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span>3+ years relevant experience</span>
+      </li>
+      <li style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; font-size: 1.0625rem; line-height: 1.6;">
+        <svg style="width: 24px; height: 24px; flex-shrink: 0; color: var(--neon); margin-top: 2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span>2+ case examples showing business impact</span>
+      </li>
+      <li style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; font-size: 1.0625rem; line-height: 1.6;">
+        <svg style="width: 24px; height: 24px; flex-shrink: 0; color: var(--neon); margin-top: 2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span>Comfortable making data-led decisions</span>
+      </li>
+      <li style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; font-size: 1.0625rem; line-height: 1.6;">
+        <svg style="width: 24px; height: 24px; flex-shrink: 0; color: var(--neon); margin-top: 2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span>Reliable availability and communication</span>
+      </li>
+      <li style="display: flex; align-items: flex-start; gap: 1rem; font-size: 1.0625rem; line-height: 1.6;">
+        <svg style="width: 24px; height: 24px; flex-shrink: 0; color: var(--neon); margin-top: 2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span>Aligned with Tenda’s ethics & standards</span>
+      </li>
+    </ul>
+  </div>
+
+  <div style="background: var(--glass); backdrop-filter: blur(30px); border: 0.5px solid var(--neon-border); border-top: 3px solid rgba(255, 255, 255, 0.2); border-radius: 24px; padding: clamp(1.5rem, 5vw, 3rem); display: flex; flex-direction: column;">
+    <h3 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 2rem; padding-bottom: 0.15em; color: #fff;">Nice-to-Haves</h3>
+    <ul style="list-style: none; padding: 0; margin: 0;">
+      <li style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; font-size: 1.0625rem; line-height: 1.6;">
+        <div style="width: 8px; height: 8px; flex-shrink: 0; background: rgba(255, 255, 255, 0.3); border-radius: 50%; margin-top: 8px;"></div>
+        <span>Experience with African retail or digital products</span>
+      </li>
+      <li style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; font-size: 1.0625rem; line-height: 1.6;">
+        <div style="width: 8px; height: 8px; flex-shrink: 0; background: rgba(255, 255, 255, 0.3); border-radius: 50%; margin-top: 8px;"></div>
+        <span>Familiarity with Power BI, Metabase, or Notion</span>
+      </li>
+      <li style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; font-size: 1.0625rem; line-height: 1.6;">
+        <div style="width: 8px; height: 8px; flex-shrink: 0; background: rgba(255, 255, 255, 0.3); border-radius: 50%; margin-top: 8px;"></div>
+        <span>Prior consulting or agency experience</span>
+      </li>
+      <li style="display: flex; align-items: flex-start; gap: 1rem; font-size: 1.0625rem; line-height: 1.6;">
+        <div style="width: 8px; height: 8px; flex-shrink: 0; background: rgba(255, 255, 255, 0.3); border-radius: 50%; margin-top: 8px;"></div>
+        <span>Comfort speaking on webinars or podcasts</span>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+      <!-- Section Divider -->
+      <div class="section-divider"></div>
+
+      <!-- Advanced Application Form -->
+      <div id="application-form-section">
+        <form class="application-form reveal" id="applicationForm" style="position: relative; overflow: hidden;">
+          
+          <!-- Form Progress Bar -->
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: rgba(255, 255, 255, 0.05); overflow: hidden;">
+            <div id="formProgressBar" style="height: 100%; width: 0; background: var(--neon); box-shadow: 0 0 15px var(--neon-glow); transition: width 0.4s ease;"></div>
+          </div>
+
+          <div class="form-header" style="margin-top: 1rem;">
+            <h2 class="form-title">Application Form</h2>
+            <p class="form-subtitle">Tell us about your experience and we'll be in touch within 5 business days.</p>
+          </div>
+
+          <!-- Personal Info -->
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+            <div class="form-group">
+              <input type="text" id="firstName" class="form-input" placeholder=" " required>
+              <label class="form-label" for="firstName">First Name *</label>
+            </div>
+            <div class="form-group">
+              <input type="text" id="lastName" class="form-input" placeholder=" " required>
+              <label class="form-label" for="lastName">Last Name *</label>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+            <div class="form-group">
+              <input type="email" id="email" class="form-input" placeholder=" " required>
+              <label class="form-label" for="email">Email *</label>
+            </div>
+            <div class="form-group">
+              <input type="tel" id="phone" class="form-input" placeholder=" ">
+              <label class="form-label" for="phone">Phone Number</label>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+            <div class="form-group">
+              <input type="text" id="location" class="form-input" placeholder=" " required>
+              <label class="form-label" for="location">City, Country *</label>
+            </div>
+            <div class="form-group">
+              <input type="url" id="linkedin" class="form-input" placeholder=" ">
+              <label class="form-label" for="linkedin">LinkedIn Profile</label>
+            </div>
+          </div>
+
+          <!-- Multi-Select Expertise -->
+          <div class="form-group">
+            <label style="display: block; margin-bottom: 1rem; font-size: 1rem; color: var(--muted);">Primary Expertise (Select all that apply) *</label>
+            <div style="display: grid; gap: 1rem;">
+              <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(255, 255, 255, 0.03); border: 1.5px solid rgba(255, 255, 255, 0.1); border-radius: 12px; cursor: pointer; transition: all 0.3s ease;">
+                <input type="checkbox" name="expertise" value="marketing" class="expertise-checkbox" style="width: 20px; height: 20px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 4px; background: transparent; cursor: pointer; appearance: none;">
+                <span>Marketing & Growth</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(255, 255, 255, 0.03); border: 1.5px solid rgba(255, 255, 255, 0.1); border-radius: 12px; cursor: pointer; transition: all 0.3s ease;">
+                <input type="checkbox" name="expertise" value="retail" class="expertise-checkbox" style="width: 20px; height: 20px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 4px; background: transparent; cursor: pointer; appearance: none;">
+                <span>Retail Operations</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(255, 255, 255, 0.03); border: 1.5px solid rgba(255, 255, 255, 0.1); border-radius: 12px; cursor: pointer; transition: all 0.3s ease;">
+                <input type="checkbox" name="expertise" value="analytics" class="expertise-checkbox" style="width: 20px; height: 20px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 4px; background: transparent; cursor: pointer; appearance: none;">
+                <span>Data & Analytics</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Experience & Portfolio -->
+          <div class="form-group">
+            <textarea id="experience" class="form-textarea" placeholder=" " required></textarea>
+            <label class="form-label" for="experience">Tell us about your experience (200-300 words) *</label>
+          </div>
+
+          <div class="form-group">
+            <textarea id="portfolio" class="form-textarea" placeholder=" " required></textarea>
+            <label class="form-label" for="portfolio">Share 2-3 projects you're proud of (include outcomes) *</label>
+          </div>
+
+          <div class="upload-container">
+  <div class="file-upload-wrapper">
+    <input type="file" id="cvFile" name="attachment" class="file-input-hidden" accept=".pdf,.doc,.docx">
+    <div class="upload-label">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </svg>
+      <span id="fileNameDisplay">Upload CV/Portfolio (PDF/Doc)</span>
+    </div>
+  </div>
+
+  <div class="divider-text">Or</div>
+
+  <div class="form-group" style="margin-bottom: 0;">
+    <input type="url" id="cvLink" name="cv_url" class="form-input" placeholder=" ">
+    <label class="form-label" for="cvLink">Link to Portfolio (Drive, GitHub, etc.)</label>
+  </div>
+</div>
+
+          <!-- Availability Slider -->
+          <div class="form-group">
+            <label style="display: block; text-align: center; font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem;">Monthly Availability (hours)</label>
+            <input type="range" min="0" max="160" value="40" step="10" id="availabilitySlider" class="tenda-neon-slider">
+            <div id="sliderValue" style="text-align: center; margin-top: 1rem; font-size: 1.5rem; font-weight: 700; color: var(--neon);">40 hours</div>
+          </div>
+
+          <!-- Project Type -->
+          <div class="form-group">
+            <select id="projectType" class="form-select" required>
+              <option value="">Preferred project types *</option>
+              <option value="short-term">Short-term projects (1-3 months)</option>
+              <option value="long-term">Long-term engagements (3+ months)</option>
+              <option value="both">Both short and long-term</option>
+            </select>
+          </div>
+
+          <!-- Referral & Notes -->
+          <div class="form-group">
+            <input type="text" id="referral" class="form-input" placeholder=" ">
+            <label class="form-label" for="referral">How did you hear about Tenda?</label>
+          </div>
+
+          <div class="form-group">
+            <textarea id="notes" class="form-textarea" placeholder=" "></textarea>
+            <label class="form-label" for="notes">Additional notes or questions</label>
+          </div>
+
+          <button type="submit" class="submit-btn">Submit Application</button>
+        </form>
+      </div>
+
+    </section>
+
+  </div>
+
+</div>
+
+<script>
+// Tab Switching
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
+  
+  document.getElementById(tabId).classList.add('active');
+  event.currentTarget.classList.add('active');
+  
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  
+  setTimeout(() => {
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  }, 100);
+}
+
+// Script to show selected filename
+  document.getElementById('cvFile').addEventListener('change', function(e) {
+    const fileName = e.target.files[0] ? e.target.files[0].name : "Upload CV/Portfolio (PDF/Doc)";
+    document.getElementById('fileNameDisplay').textContent = fileName;
+    document.getElementById('fileNameDisplay').style.color = "#E3FC02"; // Tenda Neon color
+  });
+
+// Intersection Observer
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Category Filtering
+document.querySelectorAll('.filter-pill').forEach(pill => {
+  pill.addEventListener('click', function() {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    
+    const category = this.dataset.category;
+    
+    document.querySelectorAll('.resource-card').forEach(card => {
+      if (category === 'all' || card.dataset.category === category) {
+        card.style.display = 'block';
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'scale(1)';
+        }, 10);
+      } else {
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          card.style.display = 'none';
+        }, 300);
+      }
+    });
+  });
+});
+
+// Timeline Animation
+const timelineSteps = document.querySelectorAll('.timeline-step');
+const timelineLine = document.getElementById('timelineLine');
+
+function animateTimeline() {
+  const windowCenter = window.innerHeight / 2;
+  
+  timelineSteps.forEach((step, index) => {
+    const rect = step.getBoundingClientRect();
+    const stepCenter = rect.top + rect.height / 2;
+    
+    if (stepCenter < windowCenter + 100) {
+      step.classList.add('active');
+      
+      if (index === timelineSteps.length - 1 && step.classList.contains('active')) {
+        timelineLine.classList.add('active');
+      }
+    }
+  });
+}
+
+window.addEventListener('scroll', animateTimeline);
+animateTimeline();
+
+// Form Progress & Validation
+const form = document.getElementById('applicationForm');
+const progressBar = document.getElementById('formProgressBar');
+const requiredFields = form.querySelectorAll('[required]');
+
+function updateProgress() {
+  let filledFields = 0;
+  requiredFields.forEach(field => {
+    if (field.type === 'checkbox') {
+      const checkboxes = form.querySelectorAll('input[name="' + field.name + '"]:checked');
+      if (checkboxes.length > 0) filledFields++;
+    } else if (field.value.trim() !== '') {
+      filledFields++;
+    }
+  });
+  
+  const progress = (filledFields / requiredFields.length) * 100;
+  progressBar.style.width = progress + '%';
+}
+
+requiredFields.forEach(field => {
+  field.addEventListener('input', function() {
+    updateProgress();
+    if (this.value.trim() !== '' && this.checkValidity()) {
+      this.classList.add('valid');
+    } else {
+      this.classList.remove('valid');
+    }
+  });
+  field.addEventListener('change', updateProgress);
+});
+
+// Availability Slider
+const slider = document.getElementById('availabilitySlider');
+const sliderValue = document.getElementById('sliderValue');
+
+slider.addEventListener('input', function() {
+  sliderValue.textContent = this.value + ' hours';
+});
+
+// Checkbox Styling
+const checkboxes = document.querySelectorAll('.expertise-checkbox');
+checkboxes.forEach(cb => {
+  cb.addEventListener('change', function() {
+    if (this.checked) {
+      this.style.background = '#E3FC02';
+      this.style.borderColor = '#E3FC02';
+      this.style.boxShadow = '0 0 10px rgba(227, 252, 2, 0.4)';
+    } else {
+      this.style.background = 'transparent';
+      this.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+      this.style.boxShadow = 'none';
+    }
+    updateProgress();
+  });
+});
+
+// Form Submission
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  alert('Application submitted! We\'ll review it and get back to you within 5 business days.');
+  form.reset();
+  progressBar.style.width = '0%';
+  sliderValue.textContent = '40 hours';
+  checkboxes.forEach(cb => {
+    cb.style.background = 'transparent';
+    cb.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+    cb.style.boxShadow = 'none';
+  });
+});
+
+// Smooth Scroll for Apply CTA
+const applyCTA = document.querySelector('a[href="#application-form-section"]');
+if (applyCTA) {
+  applyCTA.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('application-form-section').scrollIntoView({behavior: 'smooth'});
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  
+  // ===================================
+  // DOWNLOAD GATE LOGIC
+  // ===================================
+  
+  const downloadLinks = document.querySelectorAll('.download-link-symmetric');
+  const accessModal = document.getElementById('tendaAccessModal');
+  const accessCloseBtn = document.getElementById('tendaAccessClose');
+  
+  // Check subscription status
+  // You can replace this with your actual subscription check logic
+  function isSubscribed() {
+    // Check localStorage
+    const localCheck = localStorage.getItem('tenda_subscribed');
+    
+    // Check cookie
+    const cookieCheck = document.cookie.split('; ').find(row => row.startsWith('tenda_subscribed='));
+    
+    // Return true if either exists
+    return localCheck === 'true' || cookieCheck;
+  }
+  
+  // Show access modal
+  function showAccessModal() {
+    accessModal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent background scroll
+  }
+  
+  // Hide access modal
+  function hideAccessModal() {
+    accessModal.classList.remove('active');
+    document.body.style.overflow = ''; // Restore scroll
+  }
+  
+  // Scroll to footer subscribe section
+  function scrollToSubscribe() {
+    // Try multiple possible selectors for the subscribe section
+    const subscribeSection = 
+      document.getElementById('footer-subscribe') ||
+      document.querySelector('[id*="newsletter"]') ||
+      document.querySelector('[id*="subscribe"]') ||
+      document.querySelector('footer form') ||
+      document.querySelector('footer');
+    
+    if (subscribeSection) {
+      subscribeSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  }
+  
+  // Trigger download
+  function triggerDownload(fileUrl) {
+    // Create a temporary link and click it
+    const link = document.createElement('a');
+    link.href = fileUrl;
+    link.download = fileUrl.split('/').pop();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    console.log('Download initiated:', fileUrl);
+  }
+  
+  // Attach click handlers to all download links
+  downloadLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      const fileUrl = this.getAttribute('data-file') || this.getAttribute('href');
+      
+      if (isSubscribed()) {
+        // User is subscribed - allow download
+        console.log('User is subscribed - downloading file');
+        triggerDownload(fileUrl);
+      } else {
+        // User is NOT subscribed - show modal and redirect
+        console.log('User is not subscribed - showing access modal');
+        
+        // Show access modal
+        showAccessModal();
+        
+        // After brief delay, scroll to subscribe section
+        setTimeout(() => {
+          scrollToSubscribe();
+        }, 1500);
+      }
+    });
+  });
+  
+  // Close modal on button click
+  if (accessCloseBtn) {
+    accessCloseBtn.addEventListener('click', hideAccessModal);
+  }
+  
+  // Close modal on backdrop click
+  if (accessModal) {
+    accessModal.addEventListener('click', function(e) {
+      if (e.target === accessModal) {
+        hideAccessModal();
+      }
+    });
+  }
+  
+  // Close modal on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && accessModal.classList.contains('active')) {
+      hideAccessModal();
+    }
+  });
+  
+  // ===================================
+  // SUBSCRIPTION SUCCESS HANDLER
+  // Call this when user successfully subscribes
+  // ===================================
+  
+  window.markUserAsSubscribed = function() {
+    // Set localStorage
+    localStorage.setItem('tenda_subscribed', 'true');
+    
+    // Set cookie (expires in 365 days)
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (365 * 24 * 60 * 60 * 1000));
+    document.cookie = `tenda_subscribed=true; expires=${expires.toUTCString()}; path=/`;
+    
+    console.log('User marked as subscribed');
+  };
+  
+  // ===================================
+  // OPTIONAL: Integrate with Shopify Newsletter Form
+  // ===================================
+  
+  // If you have a newsletter form, you can attach this handler
+  const newsletterForm = document.querySelector('form[action*="contact"]');
+  
+  if (newsletterForm) {
+    newsletterForm.addEventListener('submit', function(e) {
+      // After form submits successfully, mark user as subscribed
+      // You may need to check for success in different ways depending on your setup
+      
+      setTimeout(() => {
+        // Check if submission was successful (adjust based on your form logic)
+        if (window.location.hash === '#newsletter' || window.location.search.includes('customer_posted=true')) {
+          window.markUserAsSubscribed();
+        }
+      }, 1000);
+    });
+  }
+
+  const fileInput = document.getElementById('cvFile');
+const fileNameDisplay = document.getElementById('fileNameDisplay');
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB Universal Limit
+
+fileInput.addEventListener('change', function() {
+  const file = this.files[0];
+  
+  if (file) {
+    if (file.size > MAX_FILE_SIZE) {
+      // Error State: Tenda Neon Warning
+      fileNameDisplay.textContent = "File too large (Max 10MB)";
+      fileNameDisplay.style.color = "#FF4444"; // Emergency Red
+      this.value = ""; // Clear the input
+    } else {
+      // Success State: Tenda Neon Confirmation
+      fileNameDisplay.textContent = file.name;
+      fileNameDisplay.style.color = "#E3FC02"; // Neon Yellow
+    }
+  }
+});
+  
+  // ===================================
+  // CATEGORY FILTERING (Updated for Symmetric Cards)
+  // ===================================
+  
+  document.querySelectorAll('.filter-pill').forEach(pill => {
+    pill.addEventListener('click', function() {
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      this.classList.add('active');
+      
+      const category = this.dataset.category;
+      
+      document.querySelectorAll('.resource-card-symmetric').forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+          card.style.display = 'flex'; // Changed from 'block' to 'flex'
+          setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'scale(1)';
+          }, 10);
+        } else {
+          card.style.opacity = '0';
+          card.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            card.style.display = 'none';
+          }, 300);
+        }
+      });
+    });
+  });
+  
+  console.log('Tenda Academy download gate initialized');
+});
+
+// ===================================
+// USAGE EXAMPLE: How to mark user as subscribed
+// ===================================
+
+/*
+  Call this function when user successfully subscribes to your newsletter:
+  
+  window.markUserAsSubscribed();
+  
+  This will:
+  1. Set localStorage item 'tenda_subscribed' to 'true'
+  2. Set a cookie 'tenda_subscribed' that expires in 365 days
+  3. Allow the user to download playbooks without seeing the modal
+*/
+
+</script>

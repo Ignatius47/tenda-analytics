@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "data_consulting_content": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "{% render 'data-consulting-page' %}"
+      }
+    }
+  },
+  "order": [
+    "data_consulting_content"
+  ]
+}

@@ -1,0 +1,1137 @@
+{% comment %}
+  Tenda Analytics - Interactive FAQ Page
+  Updated with official FAQ content
+  Features: Staggered animations, instant search, category navigation, smooth accordions
+{% endcomment %}
+
+<style>
+:root {
+  --neon: #E3FC02;
+  --neon-glow: rgba(227, 252, 2, 0.4);
+  --neon-subtle: rgba(227, 252, 2, 0.15);
+  --neon-border: rgba(227, 252, 2, 0.1);
+  --bg: #1F1F21;
+  --glass: rgba(255, 255, 255, 0.03);
+  --text: #f5f5f7;
+  --muted: rgba(245, 245, 247, 0.6);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(180deg, 
+    #1F1F21 0%,
+    #171719 15%,
+    #1F1F21 50%,
+    #171719 100%
+  );
+  color: var(--text);
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===================================
+   HERO SECTION
+   =================================== */
+
+.faq-hero {
+  text-align: center;
+  padding: 8vh 5% 6vh;
+  position: relative;
+  border-bottom: 1px solid var(--neon-border);
+}
+
+.faq-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--neon) 50%,
+    transparent 100%
+  );
+}
+
+.hero-eyebrow {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--neon);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeIn 0.8s ease 0.2s forwards;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  color: var(--muted);
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  line-height: 1.6;
+  opacity: 0;
+  animation: fadeIn 0.8s ease 0.4s forwards;
+}
+
+/* ===================================
+   SEARCH BAR
+   =================================== */
+
+.search-container {
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+  opacity: 0;
+  animation: fadeIn 0.8s ease 0.6s forwards;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1.25rem 3.5rem 1.25rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--neon-border);
+  border-radius: 12px;
+  font-size: 1rem;
+  color: var(--text);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.search-input::placeholder {
+  color: var(--muted);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--neon);
+  box-shadow: 0 0 0 4px rgba(227, 252, 2, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.search-icon {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--neon);
+  font-size: 1.5rem;
+  pointer-events: none;
+}
+
+/* ===================================
+   MAIN CONTAINER
+   =================================== */
+
+.faq-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem 5%;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 4rem;
+}
+
+/* ===================================
+   CATEGORY SIDEBAR
+   =================================== */
+
+.category-nav {
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
+}
+
+.category-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.category-item {
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.category-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  border-color: var(--neon-border);
+}
+
+.category-item.active {
+  background: rgba(227, 252, 2, 0.1);
+  color: var(--neon);
+  border-color: var(--neon);
+  box-shadow: 0 0 20px rgba(227, 252, 2, 0.2);
+}
+
+/* ===================================
+   FAQ CONTENT
+   =================================== */
+
+.faq-content {
+  opacity: 0;
+  animation: fadeIn 0.8s ease 0.8s forwards;
+}
+
+.faq-category {
+  margin-bottom: 4rem;
+}
+
+.category-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--neon-border);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.category-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--neon);
+  color: #000;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.25rem;
+}
+
+/* ===================================
+   ACCORDION ITEMS
+   =================================== */
+
+.faq-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.faq-item {
+  background: var(--glass);
+  backdrop-filter: blur(25px);
+  border: 1px solid var(--neon-border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideUp 0.5s ease forwards;
+}
+
+@keyframes slideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.faq-item:hover {
+  transform: translateY(-4px);
+  border-color: var(--neon);
+  box-shadow: 0 8px 30px rgba(227, 252, 2, 0.15);
+}
+
+.faq-item.active {
+  border-color: var(--neon);
+  box-shadow: 0 0 30px rgba(227, 252, 2, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.faq-item.hidden {
+  display: none;
+}
+
+.faq-question {
+  padding: 1.5rem 2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.faq-question:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.question-text {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.question-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--neon);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  padding-bottom: 2px;
+  font-size: 1.5rem;
+  font-weight: 900;
+  flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.faq-item.active .question-icon {
+  transform: rotate(45deg);
+  background: var(--text);
+  color: var(--bg);
+  padding-bottom: 0;
+  padding-left: 1px;
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.faq-item.active .faq-answer {
+  max-height: 1000px;
+}
+
+.answer-content {
+  padding: 0 2rem 1.5rem;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.answer-content p {
+  margin-bottom: 1rem;
+}
+
+.answer-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ===================================
+   NO RESULTS STATE
+   =================================== */
+
+.no-results {
+  text-align: center;
+  padding: 4rem 2rem;
+  display: none;
+}
+
+.no-results.show {
+  display: block;
+}
+
+.no-results-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.3;
+}
+
+.no-results-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.no-results-subtext {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+/* ===================================
+   RESPONSIVE
+   =================================== */
+
+@media (max-width: 1024px) {
+  .faq-main {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .category-nav {
+    position: static;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .category-list {
+    flex-direction: row;
+    white-space: nowrap;
+  }
+
+  .category-item {
+    padding: 0.75rem 1.25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .faq-hero {
+    padding: 6vh 5% 4vh;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .faq-main {
+    padding: 2rem 5%;
+  }
+
+  .category-title {
+    font-size: 1.5rem;
+  }
+
+  .faq-question {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .question-text {
+    font-size: 1rem;
+  }
+
+  .answer-content {
+    padding: 0 1.5rem 1.25rem;
+    font-size: 0.9375rem;
+  }
+}
+
+/* ===================================
+   SCROLLBAR
+   =================================== */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neon);
+  border-radius: 10px;
+  box-shadow: 0 0 10px var(--neon-glow);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f6ff4d;
+  box-shadow: 0 0 15px rgba(227, 252, 2, 0.6);
+}
+</style>
+
+<!-- Hero Section -->
+<section class="faq-hero">
+  <div class="hero-eyebrow">Support & Guidance</div>
+  <h1 class="hero-title">Frequently Asked Questions</h1>
+  <p class="hero-subtitle">
+    Everything you need to know about Tenda Analytics, from growth advisory to platform features.
+  </p>
+
+  <!-- Search Bar -->
+  <div class="search-container">
+    <input 
+      type="text" 
+      class="search-input" 
+      id="faqSearch"
+      placeholder="Search questions... (e.g., 'pricing', 'data security', 'integration')"
+      autocomplete="off">
+    <span class="search-icon">🔍</span>
+  </div>
+</section>
+
+<!-- Main Content -->
+<div class="faq-main">
+  
+  <!-- Category Navigation -->
+  <nav class="category-nav">
+    <ul class="category-list" id="categoryNav">
+      <li class="category-item active" data-category="general">General</li>
+      <li class="category-item" data-category="product">Product & Features</li>
+      <li class="category-item" data-category="advisory">Growth & Advisory</li>
+      <li class="category-item" data-category="digital">Digital Products</li>
+      <li class="category-item" data-category="getting-started">Getting Started</li>
+      <li class="category-item" data-category="pricing">Pricing & Plans</li>
+      <li class="category-item" data-category="security">Security</li>
+      <li class="category-item" data-category="support">Support</li>
+      <li class="category-item" data-category="contact">Contact</li>
+    </ul>
+  </nav>
+
+  <!-- FAQ Content -->
+  <div class="faq-content">
+
+    <!-- No Results State -->
+    <div class="no-results" id="noResults">
+      <div class="no-results-icon">🔍</div>
+      <div class="no-results-text">No matches found</div>
+      <div class="no-results-subtext">Try a different search term</div>
+    </div>
+
+    <!-- General Questions -->
+    <section class="faq-category" id="general" data-category="general">
+      <h2 class="category-title">
+        <span class="category-icon">📊</span>
+        General Questions
+      </h2>
+      <div class="faq-items">
+        
+        <div class="faq-item" style="animation-delay: 0.1s">
+          <div class="faq-question">
+            <span class="question-text">What is Tenda Analytics?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Tenda Analytics is a growth and data partner for African retail, service and digital businesses. We combine hands‑on advisory services, data consulting, digital products and a smart BI platform (coming soon) to help you turn messy sales, inventory and customer data into clear daily decisions about stock, pricing and growth.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.15s">
+          <div class="faq-question">
+            <span class="question-text">Who is Tenda Analytics for?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>We work with retailers, distributors, service businesses and digital/tech products from mid‑sized chains to ambitious SMEs that want to modernise operations, marketing and expansion using data‑driven decision‑making, not guesswork.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.2s">
+          <div class="faq-question">
+            <span class="question-text">What services and products do you offer?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Tenda has four main pillars:</p>
+              <p><strong>Growth & Advisory Services</strong> (strategy, marketing systems, campaigns, retail & service operations, decision support)</p>
+              <p><strong>Data Consulting & Analytics</strong> (data strategy, analytics, infrastructure, dashboards)</p>
+              <p><strong>Digital Products</strong> (templates, playbooks, tools and learning experiences)</p>
+              <p><strong>Tenda BI Platform</strong> (a smart retail & services BI workspace currently in early access)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.25s">
+          <div class="faq-question">
+            <span class="question-text">How is Tenda different from other analytics tools or agencies?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Unlike generic BI tools or one‑off agencies, Tenda is built specifically for African operators and blends strategy, operations and deep data work. We help you decide which KPIs matter, integrate with local tools (POS, payments, bookings, ecommerce), and stay with you through execution so insights turn into measurable changes in revenue, margin, stock health and customer growth.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Product & Features -->
+    <section class="faq-category" id="product" data-category="product">
+      <h2 class="category-title">
+        <span class="category-icon">⚡</span>
+        Product & Features
+      </h2>
+      <div class="faq-items">
+        
+        <div class="faq-item" style="animation-delay: 0.1s">
+          <div class="faq-question">
+            <span class="question-text">What kind of data can I track with Tenda?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Across our services and platform, you can track sales, inventory levels, utilisation, customer behaviour, supplier performance, margins and operational metrics in one place by store, channel, service line or product.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.15s">
+          <div class="faq-question">
+            <span class="question-text">What are the pillars of Tenda's approach?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p><strong>Opportunity:</strong> Spot growth areas and revenue leaks quickly.</p>
+              <p><strong>Conversion:</strong> Turn insights into actions that boost sales and utilisation.</p>
+              <p><strong>Retention & Efficiency:</strong> Cut waste, reduce stockouts/empty slots and build loyal customers.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.2s">
+          <div class="faq-question">
+            <span class="question-text">Do I need technical skills to work with Tenda?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>No. Our advisory, audits and digital products are designed for founders, managers and teams without coding or data science backgrounds. For the BI platform, we guide you through setup so you can read and act on dashboards in minutes, not hours.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.25s">
+          <div class="faq-question">
+            <span class="question-text">Can Tenda integrate with my existing systems?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Yes. Through our data consulting and platform we connect to popular POS, inventory, ecommerce, booking and payment tools used across African markets, and we can also work with CSV/Excel exports where needed.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.3s">
+          <div class="faq-question">
+            <span class="question-text">Does the Tenda platform work offline?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>The platform is cloud‑based, with a mobile‑first experience. We're actively building features and workflows that support low‑connectivity environments, including lightweight reporting and export options.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Growth & Advisory / Data Consulting -->
+    <section class="faq-category" id="advisory" data-category="advisory">
+      <h2 class="category-title">
+        <span class="category-icon">📈</span>
+        Growth & Advisory / Data Consulting
+      </h2>
+      <div class="faq-items">
+        
+        <div class="faq-item" style="animation-delay: 0.1s">
+          <div class="faq-question">
+            <span class="question-text">What are your Growth & Advisory services?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Our advisory practice covers:</p>
+              <p>Strategy & go‑to‑market</p>
+              <p>Marketing systems & campaigns (CRM, lifecycle flows, paid media, community)</p>
+              <p>Retail & service operations (assortment, inventory, capacity, utilisation)</p>
+              <p>Data‑led decision support (recurring reviews of KPIs, targets vs actuals, next moves)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.15s">
+          <div class="faq-question">
+            <span class="question-text">What are your Data Consulting & Analytics services?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>We help you with:</p>
+              <p>Data strategy & governance</p>
+              <p>Data analytics on POS, ecommerce, booking and campaign data</p>
+              <p>Data infrastructure & engineering ("single source of truth")</p>
+              <p>Data visualisation & dashboards for leadership and frontline teams</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.2s">
+          <div class="faq-question">
+            <span class="question-text">Do you offer one‑off audits or ongoing support?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Yes. Many clients start with a focused audit (for example, a Retail Data & Growth Audit or Service Utilisation Lab) and then move into ongoing decision support, retainer advisory or platform onboarding.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Digital Products & Learning -->
+    <section class="faq-category" id="digital" data-category="digital">
+      <h2 class="category-title">
+        <span class="category-icon">📚</span>
+        Digital Products & Learning
+      </h2>
+      <div class="faq-items">
+        
+        <div class="faq-item" style="animation-delay: 0.1s">
+          <div class="faq-question">
+            <span class="question-text">What digital products do you offer?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>We're building a library of templates, trackers and playbooks such as KPI dashboards, campaign planners, inventory and utilisation trackers and short courses through Tenda Academy to help teams get more value from their data even before using the full advisory or platform.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.15s">
+          <div class="faq-question">
+            <span class="question-text">How can I access Tenda Academy, events and content?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>You can join our clinics, webinars, labs and podcasts via the Events and Academy sections on our site, and subscribe to our newsletter to get new resources and case studies.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Getting Started -->
+    <section class="faq-category" id="getting-started" data-category="getting-started">
+      <h2 class="category-title">
+        <span class="category-icon">🚀</span>
+        Getting Started
+      </h2>
+      <div class="faq-items">
+        
+        <div class="faq-item" style="animation-delay: 0.1s">
+          <div class="faq-question">
+            <span class="question-text">How do I work with Tenda today?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>You can:</p>
+              <p>Book a strategy call to explore advisory or audits</p>
+              <p>Request a data/retail audit (for example, the Retail Data & Growth Audit)</p>
+              <p>Join our waitlist for the Tenda BI platform</p>
+              <p>Purchase digital products or join Tenda Academy programs when available</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.15s">
+          <div class="faq-question">
+            <span class="question-text">When will the Tenda BI Platform be available?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>We are rolling out our MVP via early‑access cohorts. Join the waitlist at tendaanalytics.com to be considered for upcoming cohorts and receive product updates.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.2s">
+          <div class="faq-question">
+            <span class="question-text">Is there a free trial of the platform?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Early users in our beta and Founders' Circle will receive free or discounted access to core platform features for a limited period, along with extra support.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.25s">
+          <div class="faq-question">
+            <span class="question-text">How long does onboarding take?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>For audits and advisory, onboarding typically takes 1–2 short sessions to understand your business, data sources and goals. For the platform, once your tools are connected and KPIs selected, your first dashboards can be live within days.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Pricing & Plans -->
+    <section class="faq-category" id="pricing" data-category="pricing">
+      <h2 class="category-title">
+        <span class="category-icon">💰</span>
+        Pricing & Plans
+      </h2>
+      <div class="faq-items">
+        
+        <div class="faq-item" style="animation-delay: 0.1s">
+          <div class="faq-question">
+            <span class="question-text">How much does it cost to work with Tenda?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>We offer project‑based pricing for audits and advisory, subscription pricing for ongoing decision support and the BI platform, and one‑off or bundle pricing for digital products. Detailed pricing is shared during discovery and will be published as we approach full platform launch.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.15s">
+          <div class="faq-question">
+            <span class="question-text">Do you offer special rates for early adopters?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Yes. Early clients and Founders' Circle members receive preferential pricing, bundled services and access to experiments and features before they are widely available.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.2s">
+          <div class="faq-question">
+            <span class="question-text">Are there long‑term contracts?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Most advisory and audit projects are scoped over fixed time frames. Platform and decision‑support subscriptions are offered on flexible monthly or annual plans, with no long lock‑in unless you request it.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Security & Compliance -->
+    <section class="faq-category" id="security" data-category="security">
+      <h2 class="category-title">
+        <span class="category-icon">🔒</span>
+        Security & Compliance
+      </h2>
+      <div class="faq-items">
+        
+        <div class="faq-item" style="animation-delay: 0.1s">
+          <div class="faq-question">
+            <span class="question-text">Is my data secure with Tenda?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Yes. We use industry‑standard encryption, secure cloud infrastructure and role‑based access controls. Any data used in advisory or analytics projects is handled under confidentiality agreements.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.15s">
+          <div class="faq-question">
+            <span class="question-text">Who can access my data?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Only authorised team members you designate, and specific Tenda staff involved in your project or platform support. Access is controlled via roles and permissions.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.2s">
+          <div class="faq-question">
+            <span class="question-text">Where is my data stored?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Platform and project data is stored on secure cloud infrastructure (such as AWS or equivalent), with regular backups and adherence to international best practices for data protection.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Support & Community -->
+    <section class="faq-category" id="support" data-category="support">
+      <h2 class="category-title">
+        <span class="category-icon">💬</span>
+        Support & Community
+      </h2>
+      <div class="faq-items">
+        
+        <div class="faq-item" style="animation-delay: 0.1s">
+          <div class="faq-question">
+            <span class="question-text">What kind of support do you offer?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>We provide onboarding support, email/chat support, documentation and video tutorials. Depending on your plan, you can also get dedicated account management and regular strategy or data review sessions.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.15s">
+          <div class="faq-question">
+            <span class="question-text">What is the Tendas' Founders' Circle?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>The Founders' Circle is our early‑adopter community. Members get: early access to features and programs, direct input into our roadmap, and opportunities to be featured in case studies, events and content.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.2s">
+          <div class="faq-question">
+            <span class="question-text">Can I request custom features or projects?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Yes. We co‑design features and projects with clients when there is a strong fit. This can include custom dashboards, integrations, analytics or growth experiments.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Contact & Next Steps -->
+    <section class="faq-category" id="contact" data-category="contact">
+      <h2 class="category-title">
+        <span class="category-icon">📞</span>
+        Contact & Next Steps
+      </h2>
+      <div class="faq-items">
+        
+        <div class="faq-item" style="animation-delay: 0.1s">
+          <div class="faq-question">
+            <span class="question-text">How can I get in touch with the Tenda team?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Use the contact form on our website, email info@tendaanalytics.com, or connect with us on LinkedIn and other social channels listed on our site.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.15s">
+          <div class="faq-question">
+            <span class="question-text">I have more questions, who do I ask?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>You can reply to any of our emails, message us via the site chat, or book a quick call. We're happy to talk through your specific context.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" style="animation-delay: 0.2s">
+          <div class="faq-question">
+            <span class="question-text">What should I do next?</span>
+            <span class="question-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="answer-content">
+              <p>Join the waitlist at tendaanalytics.com, follow Tenda on LinkedIn and other platforms for updates, and book a strategy call if you'd like to explore an audit or advisory project before the platform launches.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+// ===================================
+// ACCORDION FUNCTIONALITY
+// ===================================
+
+const faqItems = document.querySelectorAll('.faq-item');
+
+faqItems.forEach(item => {
+  const question = item.querySelector('.faq-question');
+  
+  question.addEventListener('click', () => {
+    const isActive = item.classList.contains('active');
+    
+    // Close all items
+    faqItems.forEach(i => i.classList.remove('active'));
+    
+    // Toggle current item
+    if (!isActive) {
+      item.classList.add('active');
+    }
+  });
+});
+
+// ===================================
+// SEARCH FUNCTIONALITY
+// ===================================
+
+const searchInput = document.getElementById('faqSearch');
+const noResults = document.getElementById('noResults');
+
+searchInput.addEventListener('input', (e) => {
+  const searchTerm = e.target.value.toLowerCase().trim();
+  let visibleCount = 0;
+  
+  faqItems.forEach((item, index) => {
+    const questionText = item.querySelector('.question-text').textContent.toLowerCase();
+    const answerText = item.querySelector('.answer-content').textContent.toLowerCase();
+    
+    const matches = questionText.includes(searchTerm) || answerText.includes(searchTerm);
+    
+    if (matches || searchTerm === '') {
+      item.classList.remove('hidden');
+      visibleCount++;
+      
+      // Smooth re-entrance animation
+      item.style.animation = 'none';
+      setTimeout(() => {
+        item.style.animation = `slideUp 0.3s ease ${index * 0.05}s forwards`;
+      }, 10);
+    } else {
+      item.classList.add('hidden');
+    }
+  });
+  
+  // Show/hide no results message
+  if (visibleCount === 0 && searchTerm !== '') {
+    noResults.classList.add('show');
+  } else {
+    noResults.classList.remove('show');
+  }
+  
+  // Hide empty categories
+  const categories = document.querySelectorAll('.faq-category');
+  categories.forEach(category => {
+    const visibleItems = category.querySelectorAll('.faq-item:not(.hidden)');
+    if (visibleItems.length === 0) {
+      category.style.display = 'none';
+    } else {
+      category.style.display = 'block';
+    }
+  });
+});
+
+// ===================================
+// CATEGORY NAVIGATION
+// ===================================
+
+const categoryItems = document.querySelectorAll('.category-item');
+const categories = document.querySelectorAll('.faq-category');
+
+categoryItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const targetCategory = item.dataset.category;
+    const targetSection = document.getElementById(targetCategory);
+    
+    // Update active state
+    categoryItems.forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    
+    // Smooth scroll to section
+    targetSection.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  });
+});
+
+// ===================================
+// INTERSECTION OBSERVER FOR CATEGORY NAV
+// ===================================
+
+const observerOptions = {
+  root: null,
+  rootMargin: '-20% 0px -70% 0px',
+  threshold: 0
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const categoryId = entry.target.id;
+      
+      categoryItems.forEach(item => {
+        if (item.dataset.category === categoryId) {
+          categoryItems.forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+        }
+      });
+    }
+  });
+}, observerOptions);
+
+categories.forEach(category => {
+  observer.observe(category);
+});
+
+// ===================================
+// KEYBOARD ACCESSIBILITY
+// ===================================
+
+document.addEventListener('keydown', (e) => {
+  // ESC key closes all accordions
+  if (e.key === 'Escape') {
+    faqItems.forEach(item => item.classList.remove('active'));
+  }
+  
+  // CMD/CTRL + K focuses search
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    searchInput.focus();
+  }
+});
+</script>

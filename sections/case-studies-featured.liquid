@@ -1,0 +1,322 @@
+{% comment %}
+  Featured Case Study Section
+{% endcomment %}
+
+<style>
+.featured-case {
+  padding: 100px 5%;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: #1F1F21;
+}
+
+.featured-case__container {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(227,252,2,0.15);
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.featured-case__container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #E3FC02 50%, transparent 100%);
+  box-shadow: 0 0 10px rgba(227,252,2,0.6);
+}
+
+.featured-case__container:hover {
+  border-color: rgba(227,252,2,0.4);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(227,252,2,0.15);
+  transform: translateY(-5px);
+}
+
+.featured-case__grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 0;
+}
+
+.featured-case__image {
+  position: relative;
+  height: 600px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(227,252,2,0.05) 0%, transparent 100%);
+}
+
+.featured-case__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(30%) contrast(1.1);
+  transition: transform 0.6s ease;
+}
+
+.featured-case__container:hover .featured-case__image img {
+  transform: scale(1.05);
+}
+
+.featured-case__content {
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.featured-case__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(227,252,2,0.12);
+  border: 1px solid rgba(227,252,2,0.3);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #E3FC02;
+  margin-bottom: 2rem;
+  width: fit-content;
+  box-shadow: 0 0 10px rgba(227,252,2,0.2);
+}
+
+.featured-case__title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.featured-case__description {
+  font-size: 1.125rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
+
+.metrics-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  padding: 2rem;
+  background: rgba(0,0,0,0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(227,252,2,0.1);
+}
+
+.metric {
+  text-align: center;
+}
+
+.metric__label {
+  font-size: 0.8125rem;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.metric__value {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #E3FC02;
+  line-height: 1;
+  text-shadow: 0 0 15px rgba(227,252,2,0.4);
+}
+
+.metric__arrow {
+  display: inline-block;
+  margin-left: 0.5rem;
+  color: #E3FC02;
+  font-size: 2rem;
+}
+
+.featured-case__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: #E3FC02;
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  font-weight: 800;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(227,252,2,0.3);
+  width: fit-content;
+}
+
+.featured-case__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(227,252,2,0.5);
+}
+
+.featured-case__cta svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+@media screen and (max-width: 1024px) {
+  .featured-case__grid {
+    grid-template-columns: 1fr;
+  }
+  .featured-case__image {
+    height: 400px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .featured-case__content {
+    padding: 2.5rem 2rem;
+  }
+  .metrics-comparison {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+</style>
+
+<section class="featured-case">
+  <div class="featured-case__container">
+    <div class="featured-case__grid">
+      
+      <div class="featured-case__image">
+        {% if section.settings.featured_image %}
+          <img src="{{ section.settings.featured_image | image_url: width: 1200 }}" alt="{{ section.settings.client_name }}" loading="lazy">
+        {% else %}
+          <img src="{{ 'case-study-featured.jpg' | asset_url }}" alt="Fashion retailer storefront" loading="lazy">
+        {% endif %}
+      </div>
+
+      <div class="featured-case__content">
+        <div class="featured-case__badge">
+          Featured Case Study
+        </div>
+
+        <h2 class="featured-case__title">
+          {{ section.settings.title | default: "Fashion retailer increases profitability by 34% in 6 months" }}
+        </h2>
+
+        <p class="featured-case__description">
+          {{ section.settings.description | default: "A multi-location fashion brand with 8 stores across Kenya was losing money on promotions and carrying 40% dead stock. We implemented unified data dashboards and profitability tracking." }}
+        </p>
+
+        <div class="metrics-comparison">
+          <div class="metric">
+            <div class="metric__label">{{ section.settings.metric_1_label | default: "Gross Margin" }}</div>
+            <div class="metric__value">
+              {{ section.settings.metric_1_value | default: "+34%" }}
+              <span class="metric__arrow">↑</span>
+            </div>
+          </div>
+          <div class="metric">
+            <div class="metric__label">{{ section.settings.metric_2_label | default: "Dead Stock" }}</div>
+            <div class="metric__value">
+              {{ section.settings.metric_2_value | default: "-42%" }}
+              <span class="metric__arrow">↓</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="{{ section.settings.cta_url | default: '/pages/case-study-fashion-retailer' }}" class="featured-case__cta">
+          {{ section.settings.cta_text | default: "Read Full Case Study" }}
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Premium Divider -->
+<div style="width: 100%; height: 2px; margin: 3rem 0 4rem 0; background: linear-gradient(90deg, transparent 0%, rgba(227, 252, 2, 0.6) 20%, rgba(227, 252, 2, 1) 50%, rgba(227, 252, 2, 0.6) 80%, transparent 100%); box-shadow: 0 0 20px rgba(227, 252, 2, 0.4); border-radius: 50px;"></div>
+
+{% schema %}
+{
+  "name": "Featured Case Study",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "featured_image",
+      "label": "Featured Image"
+    },
+    {
+      "type": "text",
+      "id": "client_name",
+      "label": "Client Name",
+      "default": "Fashion Retailer"
+    },
+    {
+      "type": "text",
+      "id": "industry",
+      "label": "Industry",
+      "default": "Fashion & Apparel"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Fashion retailer increases profitability by 34% in 6 months"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "A multi-location fashion brand with 8 stores across Kenya was losing money on promotions and carrying 40% dead stock."
+    },
+    {
+      "type": "text",
+      "id": "metric_1_label",
+      "label": "Metric 1 Label",
+      "default": "Gross Margin"
+    },
+    {
+      "type": "text",
+      "id": "metric_1_value",
+      "label": "Metric 1 Value",
+      "default": "+34%"
+    },
+    {
+      "type": "text",
+      "id": "metric_2_label",
+      "label": "Metric 2 Label",
+      "default": "Dead Stock"
+    },
+    {
+      "type": "text",
+      "id": "metric_2_value",
+      "label": "Metric 2 Value",
+      "default": "-42%"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Button Text",
+      "default": "Read Full Case Study"
+    },
+    {
+  "type": "url",
+  "id": "cta_url",
+  "label": "CTA Button URL"
+}
+
+  ]
+}
+{% endschema %}

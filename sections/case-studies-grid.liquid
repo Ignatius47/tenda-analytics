@@ -1,0 +1,307 @@
+{% comment %}
+  Case Studies Grid Section with Category Title
+{% endcomment %}
+
+<style>
+.category-divider {
+  padding: 100px 5% 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+  background: #1F1F21;
+}
+
+.category-divider__title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.category-divider__subtitle {
+  font-size: 1.125rem;
+  color: rgba(255,255,255,0.55);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.cases-grid {
+  padding: 60px 5% 100px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: #1F1F21;
+}
+
+.cases-grid__container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2.5rem;
+}
+
+.case-card {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(30px) saturate(150%);
+  border: 1px solid rgba(227,252,2,0.15);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.case-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #E3FC02 50%, transparent 100%);
+  z-index: 2;
+}
+
+.case-card:hover {
+  border-color: rgba(227,252,2,0.5);
+  transform: translateY(-10px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(227,252,2,0.2);
+}
+
+.case-card__image {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(227,252,2,0.03) 0%, transparent 100%);
+}
+
+.case-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(40%) contrast(1.1);
+  transition: transform 0.8s ease;
+}
+
+.case-card:hover .case-card__image img {
+  transform: scale(1.08);
+}
+
+.case-card__logo {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255,255,255,0.95);
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  z-index: 3;
+}
+
+.case-card__logo img {
+  height: 24px;
+  width: auto;
+  display: block;
+}
+
+.case-card__content {
+  padding: 2.5rem;
+}
+
+.case-card__industry {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #E3FC02;
+  margin-bottom: 1.25rem;
+  padding: 0.375rem 0.875rem;
+  background: rgba(227,252,2,0.1);
+  border: 1px solid rgba(227,252,2,0.25);
+  border-radius: 6px;
+}
+
+.case-card__title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.case-card__description {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.case-card__metrics {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.metric-pill {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(227,252,2,0.2);
+  border-radius: 100px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.case-card:hover .metric-pill {
+  border-color: rgba(227,252,2,0.5);
+  box-shadow: 0 0 15px rgba(227,252,2,0.3);
+}
+
+.metric-pill__value {
+  color: #E3FC02;
+}
+
+@media screen and (max-width: 1024px) {
+  .cases-grid__container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .case-card__content {
+    padding: 2rem 1.5rem;
+  }
+}
+</style>
+
+<section class="category-divider">
+  <h2 class="category-divider__title">{{ section.settings.category_title }}</h2>
+  <p class="category-divider__subtitle">{{ section.settings.category_subtitle }}</p>
+</section>
+
+<section class="cases-grid">
+  <div class="cases-grid__container">
+    {% for block in section.blocks %}
+      <div class="case-card" {{ block.shopify_attributes }}>
+        <div class="case-card__image">
+          {% if block.settings.image %}
+            <img src="{{ block.settings.image | image_url: width: 800 }}" alt="{{ block.settings.title }}" loading="lazy">
+          {% endif %}
+          
+          {% if block.settings.logo %}
+            <div class="case-card__logo">
+              <img src="{{ block.settings.logo | image_url: width: 150 }}" alt="Client logo">
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="case-card__content">
+          <span class="case-card__industry">{{ block.settings.industry }}</span>
+          
+          <h3 class="case-card__title">{{ block.settings.title }}</h3>
+
+          <p class="case-card__description">{{ block.settings.description }}</p>
+
+          <div class="case-card__metrics">
+            <div class="metric-pill">
+              <span class="metric-pill__value">{{ block.settings.metric_1_value }}</span>
+              <span>{{ block.settings.metric_1_label }}</span>
+            </div>
+            <div class="metric-pill">
+              <span class="metric-pill__value">{{ block.settings.metric_2_value }}</span>
+              <span>{{ block.settings.metric_2_label }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Premium Divider -->
+<div style="width: 100%; height: 2px; margin: 3rem 0 4rem 0; background: linear-gradient(90deg, transparent 0%, rgba(227, 252, 2, 0.6) 20%, rgba(227, 252, 2, 1) 50%, rgba(227, 252, 2, 0.6) 80%, transparent 100%); box-shadow: 0 0 20px rgba(227, 252, 2, 0.4); border-radius: 50px;"></div>
+
+{% schema %}
+{
+  "name": "Case Studies Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "category_title",
+      "label": "Category Title",
+      "default": "Success Stories"
+    },
+    {
+      "type": "textarea",
+      "id": "category_subtitle",
+      "label": "Category Subtitle",
+      "default": "How we've helped businesses achieve measurable growth."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "case_study",
+      "name": "Case Study",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Case Study Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Client Logo"
+        },
+        {
+          "type": "text",
+          "id": "industry",
+          "label": "Industry",
+          "default": "Retail"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Client increases revenue by 50%"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "How we helped this client achieve significant growth."
+        },
+        {
+          "type": "text",
+          "id": "metric_1_value",
+          "label": "Metric 1 Value",
+          "default": "+50%"
+        },
+        {
+          "type": "text",
+          "id": "metric_1_label",
+          "label": "Metric 1 Label",
+          "default": "Revenue Growth"
+        },
+        {
+          "type": "text",
+          "id": "metric_2_value",
+          "label": "Metric 2 Value",
+          "default": "-30%"
+        },
+        {
+          "type": "text",
+          "id": "metric_2_label",
+          "label": "Metric 2 Label",
+          "default": "Cost Reduction"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

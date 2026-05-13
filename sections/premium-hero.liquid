@@ -1,230 +1,477 @@
 {% comment %}
-  Premium Hero Section
-  Apple / Vercel / Prisma inspired hero
-  - Floating gradient orbs
-  - Grid dot background
-  - Animated eyebrow pill
-  - Scroll fade-in text cascade
-  - Dual CTA buttons
+  Premium Hero — Prisma-Inspired
+  Signature elements:
+  - Full-viewport dark canvas
+  - Conic gradient glowing ring (GPU-composited CSS)
+  - Atmospheric purple/cyan orbs behind the ring
+  - Floating glass pill cards (data metrics)
+  - Cinematic headline with inline gradient accent
+  - Cascade fade-in entrance
+  - Lightweight mouse parallax (rAF, max 12px offset)
+  - Smooth scroll indicator
 {% endcomment %}
 
 <style>
-/* ── SECTION ──────────────────────────────────────────────────── */
-.ta-hero {
+/* ════════════════════════════════════════════════════════════════
+   HERO CANVAS
+   ════════════════════════════════════════════════════════════════ */
+.ta-phero {
   position: relative;
-  padding: var(--hero-pt, 140px) 1.5rem var(--hero-pb, 100px);
-  overflow: hidden;
-  background: var(--ta-bg, #08080A);
-  min-height: var(--hero-min-height, auto);
+  min-height: 100svh;
+  min-height: var(--hero-min-h, 100vh);
   display: flex;
   align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--ta-bg, #060608);
+  padding: var(--hero-pt, 120px) 1.5rem var(--hero-pb, 100px);
 }
 
-/* ── GRID BACKGROUND ────────────────────────────────────────────── */
-.ta-hero__grid {
+/* ── Grid dot background ── */
+.ta-phero__grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse 75% 70% at 50% 40%, black 0%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 40%, black 0%, transparent 100%);
+    linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
   pointer-events: none;
+  z-index: 0;
 }
 
-html[data-theme="light"] .ta-hero__grid {
+html[data-theme="light"] .ta-phero__grid {
   background-image:
-    linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+    linear-gradient(to right, rgba(0,0,0,0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.045) 1px, transparent 1px);
 }
 
-/* ── GRADIENT ORBS ──────────────────────────────────────────────── */
-.ta-hero__orb {
+/* ── Radial vignette at bottom ── */
+.ta-phero::after {
+  content: '';
   position: absolute;
-  border-radius: 50%;
+  bottom: 0; left: 0; right: 0;
+  height: 35%;
+  background: linear-gradient(to top, var(--ta-bg, #060608), transparent);
   pointer-events: none;
-  filter: blur(100px);
-}
-
-.ta-hero__orb--1 {
-  top: -10%;
-  left: 40%;
-  width: 600px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(227,252,2,0.12) 0%, transparent 70%);
-  animation: ta-hero-orb1 12s ease-in-out infinite;
-}
-
-.ta-hero__orb--2 {
-  top: 20%;
-  right: -10%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(100,150,255,0.06) 0%, transparent 70%);
-  animation: ta-hero-orb2 16s ease-in-out infinite;
-}
-
-.ta-hero__orb--3 {
-  bottom: -20%;
-  left: -10%;
-  width: 600px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(227,252,2,0.05) 0%, transparent 70%);
-  animation: ta-hero-orb3 20s ease-in-out infinite;
-}
-
-@keyframes ta-hero-orb1 {
-  0%, 100% { transform: translateY(0) translateX(0) scale(1); }
-  33%       { transform: translateY(-30px) translateX(20px) scale(1.05); }
-  66%       { transform: translateY(15px) translateX(-15px) scale(0.96); }
-}
-
-@keyframes ta-hero-orb2 {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50%       { transform: translateY(-40px) scale(1.06); }
-}
-
-@keyframes ta-hero-orb3 {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  50%       { transform: translateY(30px) translateX(25px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ta-hero__orb { animation: none !important; }
-}
-
-/* ── CONTENT ─────────────────────────────────────────────────────── */
-.ta-hero__inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  position: relative;
   z-index: 1;
-  text-align: center;
 }
 
-/* ── EYEBROW PILL ────────────────────────────────────────────────── */
-.ta-hero__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(227,252,2,0.08);
-  border: 1px solid rgba(227,252,2,0.2);
-  border-radius: 100px;
-  padding: 0.4rem 1.1rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #E3FC02;
-  margin-bottom: 1.75rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  text-shadow: 0 0 12px rgba(227,252,2,0.4);
+/* ════════════════════════════════════════════════════════════════
+   RING STAGE — absolutely centred, sits in hero background
+   ════════════════════════════════════════════════════════════════ */
+.ta-phero__ring-stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(700px, 95vw);
+  height: min(700px, 95vw);
+  z-index: 1;
+  pointer-events: none;
 }
 
-html[data-theme="light"] .ta-hero__eyebrow {
-  background: rgba(180,160,0,0.08);
-  border-color: rgba(180,160,0,0.2);
-  color: #6B5D00;
-  text-shadow: none;
+/* Outer atmosphere orbs */
+.ta-phero__orb-purple {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 110%; height: 110%;
+  background: radial-gradient(circle, rgba(124,58,237,0.28) 0%, transparent 60%);
+  filter: blur(60px);
+  animation: ta-orb-breathe 10s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
-.ta-hero__eyebrow-dot {
-  width: 6px;
-  height: 6px;
-  background: #E3FC02;
+.ta-phero__orb-cyan {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 85%; height: 85%;
+  background: radial-gradient(circle, rgba(6,182,212,0.22) 0%, transparent 60%);
+  filter: blur(50px);
+  animation: ta-orb-breathe 14s ease-in-out infinite reverse;
+  will-change: transform, opacity;
+}
+
+.ta-phero__orb-accent {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%; height: 60%;
+  background: radial-gradient(circle, rgba(227,252,2,0.10) 0%, transparent 60%);
+  filter: blur(40px);
+  animation: ta-orb-breathe 18s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes ta-orb-breathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: 0.8; }
+  50%       { transform: translate(-50%, -50%) scale(1.12); opacity: 1;   }
+}
+
+/* ── Ring wrapper (the actual glowing circle) ── */
+.ta-phero__ring-wrap {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
-  box-shadow: 0 0 8px rgba(227,252,2,0.9);
-  animation: ta-hero-dot 2.5s ease-in-out infinite;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Crisp gradient ring via mask technique */
+.ta-phero__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 1.5px;
+  background: conic-gradient(
+    from 120deg at 50% 50%,
+    #06B6D4 0%,
+    #7C3AED 32%,
+    #E3FC02 62%,
+    #7C3AED 82%,
+    #06B6D4 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: ta-ring-spin 14s linear infinite;
+  will-change: transform;
+}
+
+/* Glow halo — blurred copy */
+.ta-phero__ring-glow {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  padding: 14px;
+  background: conic-gradient(
+    from 120deg at 50% 50%,
+    #06B6D4 0%,
+    #7C3AED 32%,
+    #E3FC02 62%,
+    #7C3AED 82%,
+    #06B6D4 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  filter: blur(22px);
+  opacity: 0.4;
+  animation: ta-ring-spin 14s linear infinite;
+  will-change: transform;
+}
+
+/* Inner smaller ring for depth */
+.ta-phero__ring-inner {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  padding: 1px;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(6,182,212,0.4),
+    rgba(124,58,237,0.4),
+    rgba(227,252,2,0.25),
+    rgba(6,182,212,0.4)
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: ta-ring-spin 22s linear infinite reverse;
+  opacity: 0.5;
+  will-change: transform;
+}
+
+@keyframes ta-ring-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Light mode ring adaptation ── */
+html[data-theme="light"] .ta-phero__ring-glow { opacity: 0.2; }
+html[data-theme="light"] .ta-phero__orb-purple {
+  background: radial-gradient(circle, rgba(109,40,217,0.15) 0%, transparent 60%);
+}
+html[data-theme="light"] .ta-phero__orb-cyan {
+  background: radial-gradient(circle, rgba(8,145,178,0.12) 0%, transparent 60%);
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .ta-phero__ring,
+  .ta-phero__ring-glow,
+  .ta-phero__ring-inner,
+  .ta-phero__orb-purple,
+  .ta-phero__orb-cyan,
+  .ta-phero__orb-accent { animation: none !important; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FLOATING GLASS CARDS
+   ════════════════════════════════════════════════════════════════ */
+.ta-phero__floats {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Base float card */
+.ta-phero__fcard {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: rgba(255, 255, 255, 0.055);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  padding: 0.55rem 1.1rem 0.55rem 0.6rem;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+html[data-theme="light"] .ta-phero__fcard {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.09);
+}
+
+/* Icon circle on left */
+.ta-phero__fcard-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
   flex-shrink: 0;
 }
 
-html[data-theme="light"] .ta-hero__eyebrow-dot {
-  background: #8a7a00;
-  box-shadow: 0 0 6px rgba(138,122,0,0.5);
+.ta-phero__fcard-icon--green  { background: rgba(52, 211, 153, 0.2); }
+.ta-phero__fcard-icon--purple { background: rgba(124, 58, 237, 0.2); }
+.ta-phero__fcard-icon--cyan   { background: rgba(6, 182, 212, 0.2);  }
+.ta-phero__fcard-icon--accent { background: rgba(227, 252, 2, 0.15); }
+
+.ta-phero__fcard-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
-@keyframes ta-hero-dot {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(227,252,2,0.8); }
-  50%       { box-shadow: 0 0 0 8px rgba(227,252,2,0); }
+.ta-phero__fcard-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1;
 }
 
-/* ── HEADLINE ──────────────────────────────────────────────────── */
-.ta-hero__title {
-  font-size: clamp(3rem, 8vw, 6.5rem);
+html[data-theme="light"] .ta-phero__fcard-label { color: #8E8EA6; }
+
+.ta-phero__fcard-value {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.ta-phero__fcard-value--green  { color: #34D399; }
+.ta-phero__fcard-value--purple { color: #A78BFA; }
+.ta-phero__fcard-value--cyan   { color: #67E8F9; }
+.ta-phero__fcard-value--accent { color: #E3FC02; }
+html[data-theme="light"] .ta-phero__fcard-value--accent { color: #6B5C00; }
+
+/* Positions and float animations */
+.ta-phero__fcard--1 {
+  top: 22%; left: 8%;
+  animation: ta-fcard-float-1 7s ease-in-out infinite;
+}
+.ta-phero__fcard--2 {
+  top: 18%; right: 8%;
+  animation: ta-fcard-float-2 9s ease-in-out infinite 0.8s;
+}
+.ta-phero__fcard--3 {
+  bottom: 28%; left: 6%;
+  animation: ta-fcard-float-3 8s ease-in-out infinite 0.4s;
+}
+.ta-phero__fcard--4 {
+  bottom: 26%; right: 7%;
+  animation: ta-fcard-float-1 10s ease-in-out infinite 1.2s;
+}
+
+@keyframes ta-fcard-float-1 {
+  0%, 100% { transform: translateY(0)   rotate(-1.5deg); }
+  50%       { transform: translateY(-14px) rotate(-1.5deg); }
+}
+@keyframes ta-fcard-float-2 {
+  0%, 100% { transform: translateY(0)   rotate(2deg); }
+  50%       { transform: translateY(-18px) rotate(2deg); }
+}
+@keyframes ta-fcard-float-3 {
+  0%, 100% { transform: translateY(0)   rotate(-0.5deg); }
+  50%       { transform: translateY(-10px) rotate(-0.5deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ta-phero__fcard--1,
+  .ta-phero__fcard--2,
+  .ta-phero__fcard--3,
+  .ta-phero__fcard--4 { animation: none !important; }
+}
+
+@media (max-width: 900px) {
+  .ta-phero__fcard--1 { top: 10%; left: 2%; }
+  .ta-phero__fcard--2 { top: 10%; right: 2%; }
+  .ta-phero__fcard--3, .ta-phero__fcard--4 { display: none; }
+}
+
+@media (max-width: 600px) {
+  .ta-phero__floats { display: none; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   HERO CONTENT
+   ════════════════════════════════════════════════════════════════ */
+.ta-phero__content {
+  position: relative;
+  z-index: 4;
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+  /* Mouse parallax target */
+  transition: transform 0.12s linear;
+  will-change: transform;
+}
+
+/* ── Eyebrow pill ── */
+.ta-phero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(124, 58, 237, 0.12);
+  border: 1px solid rgba(124, 58, 237, 0.28);
+  border-radius: 100px;
+  padding: 0.4rem 1.1rem;
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #A78BFA;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+html[data-theme="light"] .ta-phero__eyebrow {
+  background: rgba(109, 40, 217, 0.07);
+  border-color: rgba(109, 40, 217, 0.2);
+  color: #6D28D9;
+}
+
+.ta-phero__eyebrow-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #7C3AED;
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.9);
+  animation: ta-dot-pulse 2.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes ta-dot-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.7); }
+  50%       { box-shadow: 0 0 0 7px rgba(124, 58, 237, 0); }
+}
+
+/* ── Headline ── */
+.ta-phero__title {
+  font-family: var(--ta-font-display, 'Plus Jakarta Sans', sans-serif);
+  font-size: clamp(2.75rem, 7.5vw, 6rem);
   font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1.05;
-  color: #FFFFFF;
+  letter-spacing: -0.045em;
+  line-height: 1.04;
+  color: var(--ta-text-primary, #F8F8FF);
   margin: 0 0 1.5rem;
 }
 
-html[data-theme="light"] .ta-hero__title { color: #1D1D1F; }
+html[data-theme="light"] .ta-phero__title { color: #1A1A2E; }
 
-.ta-hero__title-accent {
-  background: linear-gradient(135deg, #E3FC02 0%, #c8e800 40%, #f0ff50 70%, #E3FC02 100%);
+/* Gradient accent span inside title */
+.ta-phero__title-grad {
+  background: linear-gradient(
+    125deg,
+    #06B6D4 0%,
+    #7C3AED 38%,
+    #E3FC02 72%,
+    #06B6D4 100%
+  );
   background-size: 250% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: ta-gradient-flow 5s ease-in-out infinite;
+  animation: ta-grad-shift 6s ease-in-out infinite;
 }
 
-html[data-theme="light"] .ta-hero__title-accent {
-  background: linear-gradient(135deg, #7a6c00 0%, #5a5000 60%);
-  background-size: 250% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  animation: ta-gradient-flow 5s ease-in-out infinite;
-}
-
-@keyframes ta-gradient-flow {
+@keyframes ta-grad-shift {
   0%, 100% { background-position: 0% 50%; }
   50%       { background-position: 100% 50%; }
 }
 
-/* ── SUBHEADING ─────────────────────────────────────────────────── */
-.ta-hero__subtitle {
-  font-size: clamp(1.1rem, 2vw, 1.35rem);
-  line-height: 1.65;
-  color: rgba(255,255,255,0.58);
-  max-width: 680px;
+/* ── Subtitle ── */
+.ta-phero__sub {
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  line-height: 1.7;
+  color: var(--ta-text-secondary, rgba(248,248,255,0.55));
+  max-width: 620px;
   margin: 0 auto 3rem;
 }
 
-html[data-theme="light"] .ta-hero__subtitle { color: #6E6E73; }
+html[data-theme="light"] .ta-phero__sub { color: #52526B; }
 
-/* ── CTA BUTTONS ─────────────────────────────────────────────────── */
-.ta-hero__actions {
+/* ── CTA group ── */
+.ta-phero__ctas {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.875rem;
   flex-wrap: wrap;
 }
 
-.ta-hero__btn-primary {
+/* Primary CTA — neon yellow */
+.ta-phero__cta-primary {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.9rem 2.25rem;
+  padding: 0.875rem 2.25rem;
   background: #E3FC02;
   color: #0A0A0A;
   border-radius: 100px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 700;
   text-decoration: none;
-  box-shadow: 0 0 24px rgba(227,252,2,0.3), 0 4px 16px rgba(0,0,0,0.2);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: -0.01em;
   border: none;
   cursor: pointer;
-  letter-spacing: -0.01em;
+  box-shadow:
+    0 0 24px rgba(227,252,2,0.3),
+    0 4px 16px rgba(0,0,0,0.25);
+  transition:
+    transform 0.2s var(--ta-ease),
+    box-shadow 0.2s var(--ta-ease);
   position: relative;
   overflow: hidden;
 }
 
-.ta-hero__btn-primary::before {
+.ta-phero__cta-primary::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -232,222 +479,305 @@ html[data-theme="light"] .ta-hero__subtitle { color: #6E6E73; }
   transition: background 0.2s ease;
 }
 
-.ta-hero__btn-primary:hover {
+.ta-phero__cta-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 36px rgba(227,252,2,0.5), 0 8px 24px rgba(0,0,0,0.25);
+  box-shadow:
+    0 0 40px rgba(227,252,2,0.5),
+    0 8px 28px rgba(0,0,0,0.3);
 }
 
-.ta-hero__btn-primary:hover::before {
-  background: rgba(255,255,255,0.1);
-}
+.ta-phero__cta-primary:hover::after { background: rgba(255,255,255,0.1); }
+.ta-phero__cta-primary:active { transform: translateY(0); }
 
-.ta-hero__btn-primary:active { transform: translateY(0); }
-
-.ta-hero__btn-secondary {
+/* Secondary CTA — glass */
+.ta-phero__cta-secondary {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.9rem 2.25rem;
-  background: transparent;
-  color: rgba(255,255,255,0.85);
+  padding: 0.875rem 2rem;
+  background: rgba(255,255,255,0.055);
+  color: rgba(255,255,255,0.82);
   border-radius: 100px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
-  border: 1px solid rgba(255,255,255,0.15);
-  transition: all 0.25s ease;
+  letter-spacing: -0.01em;
+  border: 1px solid rgba(255,255,255,0.12);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  letter-spacing: -0.01em;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
-html[data-theme="light"] .ta-hero__btn-secondary {
-  color: #1D1D1F;
-  border-color: rgba(0,0,0,0.15);
+html[data-theme="light"] .ta-phero__cta-secondary {
+  color: #1A1A2E;
+  background: rgba(255,255,255,0.7);
+  border-color: rgba(0,0,0,0.12);
 }
 
-.ta-hero__btn-secondary:hover {
-  border-color: rgba(255,255,255,0.3);
-  background: rgba(255,255,255,0.06);
+.ta-phero__cta-secondary:hover {
+  border-color: rgba(124,58,237,0.4);
+  background: rgba(124,58,237,0.08);
   transform: translateY(-1px);
 }
 
-html[data-theme="light"] .ta-hero__btn-secondary:hover {
-  border-color: rgba(0,0,0,0.25);
-  background: rgba(0,0,0,0.04);
+/* Arrow icons */
+.ta-phero__arrow {
+  width: 16px; height: 16px;
+  transition: transform 0.18s ease;
 }
 
-/* Arrow icon in button */
-.ta-hero__arrow {
-  width: 18px;
-  height: 18px;
-  transition: transform 0.2s ease;
-}
-
-.ta-hero__btn-primary:hover .ta-hero__arrow,
-.ta-hero__btn-secondary:hover .ta-hero__arrow {
+.ta-phero__cta-primary:hover .ta-phero__arrow,
+.ta-phero__cta-secondary:hover .ta-phero__arrow {
   transform: translateX(3px);
 }
 
-/* ── SOCIAL PROOF STRIP ──────────────────────────────────────────── */
-.ta-hero__social-proof {
+/* ── Trust strip ── */
+.ta-phero__trust {
   margin-top: 3.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
+  gap: 2.5rem;
   flex-wrap: wrap;
 }
 
-.ta-hero__trust-item {
+.ta-phero__trust-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.82rem;
-  color: rgba(255,255,255,0.42);
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.36);
+  letter-spacing: 0.01em;
 }
 
-html[data-theme="light"] .ta-hero__trust-item { color: #98989D; }
+html[data-theme="light"] .ta-phero__trust-item { color: #8E8EA6; }
 
-.ta-hero__trust-icon {
-  color: #E3FC02;
-  font-size: 1rem;
+.ta-phero__trust-icon { font-size: 0.85rem; opacity: 0.7; }
+
+/* ── Scroll caret ── */
+.ta-phero__scroll {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,0.25);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s ease;
 }
 
-html[data-theme="light"] .ta-hero__trust-icon { color: #7a6c00; }
+.ta-phero__scroll:hover { color: rgba(255,255,255,0.5); }
 
-/* ── SCROLL ANIMATIONS ───────────────────────────────────────────── */
-.ta-hero__eyebrow,
-.ta-hero__title,
-.ta-hero__subtitle,
-.ta-hero__actions,
-.ta-hero__social-proof {
+html[data-theme="light"] .ta-phero__scroll { color: rgba(0,0,0,0.3); }
+
+.ta-phero__scroll-mouse {
+  width: 20px; height: 32px;
+  border: 1.5px solid currentColor;
+  border-radius: 10px;
+  position: relative;
+}
+
+.ta-phero__scroll-mouse::before {
+  content: '';
+  position: absolute;
+  top: 5px; left: 50%;
+  transform: translateX(-50%);
+  width: 3px; height: 6px;
+  background: currentColor;
+  border-radius: 3px;
+  animation: ta-scroll-dot 2s ease-in-out infinite;
+}
+
+@keyframes ta-scroll-dot {
+  0%   { transform: translateX(-50%) translateY(0); opacity: 1; }
+  80%  { transform: translateX(-50%) translateY(10px); opacity: 0; }
+  81%  { transform: translateX(-50%) translateY(0); opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ENTRANCE ANIMATIONS
+   ════════════════════════════════════════════════════════════════ */
+.ta-phero__eyebrow,
+.ta-phero__title,
+.ta-phero__sub,
+.ta-phero__ctas,
+.ta-phero__trust {
   opacity: 0;
-  transform: translateY(24px);
-  animation: ta-hero-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform: translateY(28px);
+  animation: ta-phero-rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.ta-hero__eyebrow      { animation-delay: 0.05s; }
-.ta-hero__title        { animation-delay: 0.18s; }
-.ta-hero__subtitle     { animation-delay: 0.30s; }
-.ta-hero__actions      { animation-delay: 0.42s; }
-.ta-hero__social-proof { animation-delay: 0.54s; }
+.ta-phero__eyebrow  { animation-delay: 0.1s; }
+.ta-phero__title    { animation-delay: 0.24s; }
+.ta-phero__sub      { animation-delay: 0.38s; }
+.ta-phero__ctas     { animation-delay: 0.5s; }
+.ta-phero__trust    { animation-delay: 0.62s; }
 
-@keyframes ta-hero-fade-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+.ta-phero__ring-stage {
+  opacity: 0;
+  animation: ta-phero-fadein 1.2s ease 0.05s forwards;
+}
+
+.ta-phero__floats {
+  opacity: 0;
+  animation: ta-phero-fadein 1s ease 0.7s forwards;
+}
+
+@keyframes ta-phero-rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ta-phero-fadein {
+  to { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ta-hero__eyebrow,
-  .ta-hero__title,
-  .ta-hero__subtitle,
-  .ta-hero__actions,
-  .ta-hero__social-proof {
+  .ta-phero__eyebrow,
+  .ta-phero__title,
+  .ta-phero__sub,
+  .ta-phero__ctas,
+  .ta-phero__trust,
+  .ta-phero__ring-stage,
+  .ta-phero__floats {
+    animation: none !important;
     opacity: 1 !important;
     transform: none !important;
-    animation: none !important;
   }
-}
-
-/* ── DIVIDER LINE ──────────────────────────────────────────────── */
-.ta-hero__divider {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08) 30%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.08) 70%, transparent);
-}
-
-html[data-theme="light"] .ta-hero__divider {
-  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.06) 30%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.06) 70%, transparent);
 }
 </style>
 
+{%- liquid
+  assign has_trust = false
+  for block in section.blocks
+    if block.type == 'trust_item'
+      assign has_trust = true
+    endif
+  endfor
+  assign has_floats = false
+  for block in section.blocks
+    if block.type == 'float_card'
+      assign has_floats = true
+    endif
+  endfor
+-%}
+
 <section
-  class="ta-hero"
+  class="ta-phero"
+  id="ta-phero-{{ section.id }}"
   style="
     --hero-pt: {{ section.settings.padding_top }}px;
     --hero-pb: {{ section.settings.padding_bottom }}px;
-    {% if section.settings.min_height > 0 %}--hero-min-height: {{ section.settings.min_height }}px;{% endif %}
+    --hero-min-h: {{ section.settings.min_height | default: 100 }}vh;
   "
 >
   <!-- Grid background -->
   {%- if section.settings.show_grid -%}
-    <div class="ta-hero__grid" aria-hidden="true"></div>
+    <div class="ta-phero__grid" aria-hidden="true"></div>
   {%- endif -%}
 
-  <!-- Floating orbs -->
-  {%- if section.settings.show_orbs -%}
-    <div class="ta-hero__orb ta-hero__orb--1" aria-hidden="true"></div>
-    <div class="ta-hero__orb ta-hero__orb--2" aria-hidden="true"></div>
-    <div class="ta-hero__orb ta-hero__orb--3" aria-hidden="true"></div>
+  <!-- Ring stage -->
+  {%- if section.settings.show_ring -%}
+    <div class="ta-phero__ring-stage" aria-hidden="true">
+      <div class="ta-phero__orb-purple"></div>
+      <div class="ta-phero__orb-cyan"></div>
+      <div class="ta-phero__orb-accent"></div>
+      <div class="ta-phero__ring-wrap">
+        <div class="ta-phero__ring"></div>
+        <div class="ta-phero__ring-glow"></div>
+        <div class="ta-phero__ring-inner"></div>
+      </div>
+    </div>
   {%- endif -%}
 
-  <div class="ta-hero__inner">
+  <!-- Floating glass cards -->
+  {%- if has_floats -%}
+    <div class="ta-phero__floats" aria-hidden="true">
+      {%- assign fcard_i = 0 -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'float_card' -%}
+          {%- assign fcard_i = fcard_i | plus: 1 -%}
+          <div
+            class="ta-phero__fcard ta-phero__fcard--{{ fcard_i }}"
+            {{ block.shopify_attributes }}
+          >
+            <div class="ta-phero__fcard-icon ta-phero__fcard-icon--{{ block.settings.color }}">
+              {{ block.settings.icon }}
+            </div>
+            <div class="ta-phero__fcard-body">
+              <span class="ta-phero__fcard-label">{{ block.settings.label }}</span>
+              <span class="ta-phero__fcard-value ta-phero__fcard-value--{{ block.settings.color }}">{{ block.settings.value }}</span>
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
 
-    <!-- Eyebrow pill -->
+  <!-- Main content -->
+  <div class="ta-phero__content" id="ta-phero-content-{{ section.id }}">
+
     {%- if section.settings.eyebrow != blank -%}
-      <div class="ta-hero__eyebrow">
-        <span class="ta-hero__eyebrow-dot" aria-hidden="true"></span>
+      <div class="ta-phero__eyebrow">
+        <span class="ta-phero__eyebrow-dot" aria-hidden="true"></span>
         {{ section.settings.eyebrow }}
       </div>
     {%- endif -%}
 
-    <!-- Headline -->
-    {%- if section.settings.title != blank or section.settings.title_accent != blank -%}
-      <h1 class="ta-hero__title">
-        {%- if section.settings.title != blank -%}
-          {{ section.settings.title }}
-          {%- if section.settings.title_accent != blank -%}<br>{%- endif -%}
-        {%- endif -%}
-        {%- if section.settings.title_accent != blank -%}
-          <span class="ta-hero__title-accent">{{ section.settings.title_accent }}</span>
+    {%- if section.settings.title != blank -%}
+      <h1 class="ta-phero__title">
+        {{ section.settings.title }}
+        {%- if section.settings.title_grad != blank -%}
+          <br><span class="ta-phero__title-grad">{{ section.settings.title_grad }}</span>
         {%- endif -%}
       </h1>
     {%- endif -%}
 
-    <!-- Subtitle -->
     {%- if section.settings.subtitle != blank -%}
-      <p class="ta-hero__subtitle">{{ section.settings.subtitle }}</p>
+      <p class="ta-phero__sub">{{ section.settings.subtitle }}</p>
     {%- endif -%}
 
-    <!-- CTA Buttons -->
-    {%- if section.settings.btn_primary_label != blank or section.settings.btn_secondary_label != blank -%}
-      <div class="ta-hero__actions">
-        {%- if section.settings.btn_primary_label != blank -%}
-          <a href="{{ section.settings.btn_primary_link | default: '#' }}" class="ta-hero__btn-primary">
-            {{ section.settings.btn_primary_label }}
-            <svg class="ta-hero__arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+    {%- if section.settings.cta_primary_label != blank or section.settings.cta_secondary_label != blank -%}
+      <div class="ta-phero__ctas">
+        {%- if section.settings.cta_primary_label != blank -%}
+          <a
+            href="{{ section.settings.cta_primary_link | default: '#' }}"
+            class="ta-phero__cta-primary"
+          >
+            {{ section.settings.cta_primary_label }}
+            <svg class="ta-phero__arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
         {%- endif -%}
-        {%- if section.settings.btn_secondary_label != blank -%}
-          <a href="{{ section.settings.btn_secondary_link | default: '#' }}" class="ta-hero__btn-secondary">
-            {{ section.settings.btn_secondary_label }}
-            <svg class="ta-hero__arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+        {%- if section.settings.cta_secondary_label != blank -%}
+          <a
+            href="{{ section.settings.cta_secondary_link | default: '#' }}"
+            class="ta-phero__cta-secondary"
+          >
+            {{ section.settings.cta_secondary_label }}
+            <svg class="ta-phero__arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
         {%- endif -%}
       </div>
     {%- endif -%}
 
-    <!-- Social proof / trust indicators -->
-    {%- assign has_trust = false -%}
-    {%- for block in section.blocks -%}
-      {%- if block.type == 'trust_item' -%}{%- assign has_trust = true -%}{%- endif -%}
-    {%- endfor -%}
-
     {%- if has_trust -%}
-      <div class="ta-hero__social-proof">
+      <div class="ta-phero__trust">
         {%- for block in section.blocks -%}
           {%- if block.type == 'trust_item' -%}
-            <div class="ta-hero__trust-item" {{ block.shopify_attributes }}>
+            <div class="ta-phero__trust-item" {{ block.shopify_attributes }}>
               {%- if block.settings.icon != blank -%}
-                <span class="ta-hero__trust-icon">{{ block.settings.icon }}</span>
+                <span class="ta-phero__trust-icon">{{ block.settings.icon }}</span>
               {%- endif -%}
               <span>{{ block.settings.text }}</span>
             </div>
@@ -458,8 +788,47 @@ html[data-theme="light"] .ta-hero__divider {
 
   </div>
 
-  <div class="ta-hero__divider" aria-hidden="true"></div>
+  <!-- Scroll indicator -->
+  {%- if section.settings.show_scroll_caret -%}
+    <div class="ta-phero__scroll" aria-hidden="true">
+      <div class="ta-phero__scroll-mouse"></div>
+    </div>
+  {%- endif -%}
+
 </section>
+
+<!-- Mouse parallax — rAF-throttled, max 12px, removed on mobile -->
+<script>
+(function () {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window.innerWidth < 768) return;
+
+  var content = document.getElementById('ta-phero-content-{{ section.id }}');
+  if (!content) return;
+
+  var mx = 0, my = 0, cx = 0, cy = 0;
+  var MAX = 10;
+  var raf;
+
+  document.getElementById('ta-phero-{{ section.id }}')
+    .addEventListener('mousemove', function (e) {
+      var rect = this.getBoundingClientRect();
+      mx = ((e.clientX - rect.left) / rect.width  - 0.5) * 2;
+      my = ((e.clientY - rect.top)  / rect.height - 0.5) * 2;
+      if (!raf) raf = requestAnimationFrame(tick);
+    }, { passive: true });
+
+  function tick() {
+    raf = null;
+    cx += (mx - cx) * 0.06;
+    cy += (my - cy) * 0.06;
+    content.style.transform = 'translate3d(' + (cx * MAX) + 'px, ' + (cy * MAX * 0.6) + 'px, 0)';
+    if (Math.abs(mx - cx) > 0.001 || Math.abs(my - cy) > 0.001) {
+      raf = requestAnimationFrame(tick);
+    }
+  }
+})();
+</script>
 
 {% schema %}
 {
@@ -474,26 +843,26 @@ html[data-theme="light"] .ta-hero__divider {
     {
       "type": "text",
       "id": "eyebrow",
-      "label": "Eyebrow pill text",
+      "label": "Eyebrow pill",
       "default": "Data Analytics & Insights"
     },
     {
       "type": "text",
       "id": "title",
-      "label": "Main headline",
+      "label": "Headline (first line)",
       "default": "Turn Your Data Into"
     },
     {
       "type": "text",
-      "id": "title_accent",
-      "label": "Accent headline (gradient)",
+      "id": "title_grad",
+      "label": "Headline gradient line",
       "default": "Competitive Advantage"
     },
     {
       "type": "textarea",
       "id": "subtitle",
-      "label": "Subtitle / description",
-      "default": "Tenda Analytics helps organisations unlock the full power of their data with expert-led consulting, BI platforms, and AI-powered insights."
+      "label": "Subtitle",
+      "default": "Tenda Analytics helps organisations unlock the full power of their data — with expert-led consulting, BI platforms, and AI-powered insights."
     },
     {
       "type": "header",
@@ -501,13 +870,13 @@ html[data-theme="light"] .ta-hero__divider {
     },
     {
       "type": "text",
-      "id": "btn_primary_label",
+      "id": "cta_primary_label",
       "label": "Button label",
       "default": "Explore Services"
     },
     {
       "type": "url",
-      "id": "btn_primary_link",
+      "id": "cta_primary_link",
       "label": "Button link"
     },
     {
@@ -516,18 +885,24 @@ html[data-theme="light"] .ta-hero__divider {
     },
     {
       "type": "text",
-      "id": "btn_secondary_label",
+      "id": "cta_secondary_label",
       "label": "Button label",
       "default": "View Case Studies"
     },
     {
       "type": "url",
-      "id": "btn_secondary_link",
+      "id": "cta_secondary_link",
       "label": "Button link"
     },
     {
       "type": "header",
-      "content": "Visual"
+      "content": "Visual Effects"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_ring",
+      "label": "Show glowing ring",
+      "default": true
     },
     {
       "type": "checkbox",
@@ -537,8 +912,8 @@ html[data-theme="light"] .ta-hero__divider {
     },
     {
       "type": "checkbox",
-      "id": "show_orbs",
-      "label": "Show gradient orbs",
+      "id": "show_scroll_caret",
+      "label": "Show scroll indicator",
       "default": true
     },
     {
@@ -568,12 +943,12 @@ html[data-theme="light"] .ta-hero__divider {
     {
       "type": "range",
       "id": "min_height",
-      "min": 0,
-      "max": 1000,
-      "step": 20,
-      "unit": "px",
-      "label": "Min. height (0 = auto)",
-      "default": 0
+      "min": 60,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Min. height (vh)",
+      "default": 100
     }
   ],
   "blocks": [
@@ -584,14 +959,51 @@ html[data-theme="light"] .ta-hero__divider {
         {
           "type": "text",
           "id": "icon",
-          "label": "Icon (emoji or single char)",
+          "label": "Icon (emoji)",
           "default": "✓"
         },
         {
           "type": "text",
           "id": "text",
           "label": "Text",
-          "default": "No long-term contracts"
+          "default": "Free initial consultation"
+        }
+      ]
+    },
+    {
+      "type": "float_card",
+      "name": "Floating metric card",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (emoji)",
+          "default": "📊"
+        },
+        {
+          "type": "select",
+          "id": "color",
+          "label": "Accent colour",
+          "options": [
+            { "value": "green",  "label": "Green" },
+            { "value": "purple", "label": "Purple" },
+            { "value": "cyan",   "label": "Cyan"   },
+            { "value": "accent", "label": "Yellow (brand)" }
+          ],
+          "default": "green"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Revenue Growth"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "default": "+127%"
         }
       ]
     }
@@ -600,9 +1012,13 @@ html[data-theme="light"] .ta-hero__divider {
     {
       "name": "Premium Hero",
       "blocks": [
-        { "type": "trust_item", "settings": { "icon": "✓", "text": "Free initial consultation" } },
-        { "type": "trust_item", "settings": { "icon": "✓", "text": "500+ clients worldwide" } },
-        { "type": "trust_item", "settings": { "icon": "✓", "text": "Results in 30 days" } }
+        { "type": "trust_item", "settings": { "icon": "✓", "text": "Free consultation" } },
+        { "type": "trust_item", "settings": { "icon": "✓", "text": "500+ clients" } },
+        { "type": "trust_item", "settings": { "icon": "✓", "text": "Results in 30 days" } },
+        { "type": "float_card", "settings": { "icon": "📈", "color": "green",  "label": "Revenue Growth",    "value": "+127%" } },
+        { "type": "float_card", "settings": { "icon": "⚡", "color": "purple", "label": "Faster Decisions",  "value": "3× Speed" } },
+        { "type": "float_card", "settings": { "icon": "🗂️", "color": "cyan",   "label": "Dashboards Built",  "value": "1,200+" } },
+        { "type": "float_card", "settings": { "icon": "🌍", "color": "accent", "label": "Countries Served",  "value": "28" } }
       ]
     }
   ]

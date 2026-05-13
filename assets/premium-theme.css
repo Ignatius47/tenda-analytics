@@ -1,114 +1,189 @@
 /* =============================================================
-   TENDA ANALYTICS — PREMIUM THEME DESIGN SYSTEM
-   Apple-inspired · SaaS-premium · Dark & Light mode
+   TENDA ANALYTICS — PREMIUM THEME DESIGN SYSTEM v2
+   Prisma-inspired · Apple-level polish · Dark & Light mode
    ============================================================= */
 
-/* ─── 1. DESIGN TOKENS ──────────────────────────────────────── */
+/* ─── 0. TYPOGRAPHY FOUNDATION ──────────────────────────────── */
+
+:root {
+  --ta-font-sans:    'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ta-font-display: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ta-font-mono:    'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+/* Override Shopify body font to use our premium stack */
+body {
+  font-family: var(--ta-font-sans) !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+.ta-display, .ta-h1, .ta-h2, .ta-h3 {
+  font-family: var(--ta-font-display) !important;
+}
+
+/* ─── 1. DESIGN TOKENS — DARK MODE (DEFAULT) ────────────────── */
 
 :root,
 html[data-theme="dark"] {
-  /* Backgrounds */
-  --ta-bg:            #08080A;
-  --ta-bg-surface:    #111115;
-  --ta-bg-elevated:   #1C1C20;
-  --ta-bg-overlay:    rgba(8, 8, 10, 0.85);
+  /* ── Core backgrounds ── */
+  --ta-bg:            #060608;
+  --ta-bg-surface:    #0E0E12;
+  --ta-bg-elevated:   #18181E;
+  --ta-bg-overlay:    rgba(6, 6, 8, 0.88);
 
-  /* Borders */
-  --ta-border:        rgba(255, 255, 255, 0.07);
-  --ta-border-strong: rgba(255, 255, 255, 0.14);
+  /* ── Borders ── */
+  --ta-border:        rgba(255, 255, 255, 0.06);
+  --ta-border-strong: rgba(255, 255, 255, 0.12);
+  --ta-border-glow:   rgba(124, 58, 237, 0.3);
 
-  /* Text */
-  --ta-text-primary:   #FFFFFF;
-  --ta-text-secondary: rgba(255, 255, 255, 0.58);
-  --ta-text-tertiary:  rgba(255, 255, 255, 0.32);
+  /* ── Text ── */
+  --ta-text-primary:   #F8F8FF;
+  --ta-text-secondary: rgba(248, 248, 255, 0.55);
+  --ta-text-tertiary:  rgba(248, 248, 255, 0.28);
 
-  /* Brand accent */
+  /* ── Brand accent: neon yellow (CTA, highlights) ── */
   --ta-accent:          #E3FC02;
-  --ta-accent-dim:      rgba(227, 252, 2, 0.15);
+  --ta-accent-dim:      rgba(227, 252, 2, 0.12);
   --ta-accent-glow:     rgba(227, 252, 2, 0.35);
-  --ta-accent-glow-lg:  rgba(227, 252, 2, 0.15);
+  --ta-accent-glow-lg:  rgba(227, 252, 2, 0.12);
 
-  /* Semantic */
-  --ta-success:  #30D158;
-  --ta-warning:  #FFD60A;
-  --ta-error:    #FF453A;
+  /* ── Atmospheric glows: purple + cyan (Prisma-inspired) ── */
+  --ta-glow-purple:     rgba(124, 58, 237, 0.5);
+  --ta-glow-purple-dim: rgba(124, 58, 237, 0.15);
+  --ta-glow-cyan:       rgba(6, 182, 212, 0.45);
+  --ta-glow-cyan-dim:   rgba(6, 182, 212, 0.12);
+  --ta-color-purple:    #7C3AED;
+  --ta-color-cyan:      #06B6D4;
+  --ta-color-blue:      #3B82F6;
 
-  /* Glass */
-  --ta-glass-bg:      rgba(255, 255, 255, 0.04);
-  --ta-glass-border:  rgba(255, 255, 255, 0.08);
+  /* ── Ring gradient (the Prisma signature) ── */
+  --ta-ring-gradient: conic-gradient(
+    from 120deg,
+    #06B6D4 0%,
+    #7C3AED 35%,
+    #E3FC02 65%,
+    #06B6D4 100%
+  );
+
+  /* ── Semantic ── */
+  --ta-success:  #34D399;
+  --ta-warning:  #FBBF24;
+  --ta-error:    #F87171;
+
+  /* ── Glass ── */
+  --ta-glass-bg:      rgba(255, 255, 255, 0.03);
+  --ta-glass-border:  rgba(255, 255, 255, 0.07);
   --ta-glass-blur:    saturate(180%) blur(20px);
 
-  /* Navbar */
-  --ta-nav-bg:        rgba(8, 8, 10, 0.72);
+  /* ── Navbar ── */
+  --ta-nav-bg:        rgba(6, 6, 8, 0.75);
   --ta-nav-border:    rgba(255, 255, 255, 0.06);
 
-  /* Shadows */
-  --ta-shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
-  --ta-shadow-md:  0 4px 16px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
-  --ta-shadow-lg:  0 16px 48px rgba(0, 0, 0, 0.6), 0 6px 20px rgba(0, 0, 0, 0.4);
-  --ta-shadow-xl:  0 32px 80px rgba(0, 0, 0, 0.7);
+  /* ── Shadows ── */
+  --ta-shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.5);
+  --ta-shadow-md:  0 4px 20px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35);
+  --ta-shadow-lg:  0 16px 56px rgba(0, 0, 0, 0.65), 0 6px 24px rgba(0, 0, 0, 0.4);
+  --ta-shadow-xl:  0 32px 90px rgba(0, 0, 0, 0.75);
+  --ta-shadow-glow-purple: 0 0 40px rgba(124, 58, 237, 0.25);
+  --ta-shadow-glow-cyan:   0 0 40px rgba(6, 182, 212, 0.2);
+  --ta-shadow-glow-accent: 0 0 40px rgba(227, 252, 2, 0.25);
 
-  /* Gradients */
-  --ta-gradient-hero:    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(227,252,2,0.12) 0%, transparent 70%);
+  /* ── Hero gradients ── */
+  --ta-gradient-hero:    radial-gradient(ellipse 90% 70% at 50% -5%,
+                           rgba(124,58,237,0.18) 0%,
+                           rgba(6,182,212,0.10) 40%,
+                           transparent 70%);
   --ta-gradient-card:    linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
   --ta-gradient-accent:  linear-gradient(135deg, #E3FC02 0%, #B8CC00 100%);
   --ta-gradient-surface: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  --ta-gradient-purple:  linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
 
-  /* Misc */
-  --ta-radius-sm:  6px;
-  --ta-radius-md:  12px;
-  --ta-radius-lg:  20px;
-  --ta-radius-xl:  28px;
+  /* ── Spacing & radius ── */
+  --ta-radius-sm:   6px;
+  --ta-radius-md:   12px;
+  --ta-radius-lg:   20px;
+  --ta-radius-xl:   28px;
+  --ta-radius-2xl:  36px;
   --ta-radius-full: 9999px;
 
-  --ta-transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  /* ── Easing ── */
+  --ta-ease:        cubic-bezier(0.4, 0, 0.2, 1);
+  --ta-ease-out:    cubic-bezier(0, 0, 0.2, 1);
+  --ta-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ta-transition:  0.22s cubic-bezier(0.4, 0, 0.2, 1);
   --ta-transition-spring: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   color-scheme: dark;
 }
 
 html[data-theme="light"] {
-  /* Backgrounds */
-  --ta-bg:            #FAFAFA;
+  /* ── Core backgrounds ── */
+  --ta-bg:            #F8F8FC;
   --ta-bg-surface:    #FFFFFF;
-  --ta-bg-elevated:   #F2F2F7;
-  --ta-bg-overlay:    rgba(250, 250, 250, 0.85);
+  --ta-bg-elevated:   #F0F0F6;
+  --ta-bg-overlay:    rgba(248, 248, 252, 0.88);
 
-  /* Borders */
+  /* ── Borders ── */
   --ta-border:        rgba(0, 0, 0, 0.07);
   --ta-border-strong: rgba(0, 0, 0, 0.13);
+  --ta-border-glow:   rgba(124, 58, 237, 0.2);
 
-  /* Text */
-  --ta-text-primary:   #1D1D1F;
-  --ta-text-secondary: #6E6E73;
-  --ta-text-tertiary:  #98989D;
+  /* ── Text ── */
+  --ta-text-primary:   #1A1A2E;
+  --ta-text-secondary: #52526B;
+  --ta-text-tertiary:  #8E8EA6;
 
-  /* Brand accent — richer on light */
-  --ta-accent:          #7B6C00;
-  --ta-accent-dim:      rgba(227, 252, 2, 0.20);
-  --ta-accent-glow:     rgba(227, 252, 2, 0.40);
-  --ta-accent-glow-lg:  rgba(227, 252, 2, 0.12);
+  /* ── Brand accent ── */
+  --ta-accent:          #6B5C00;
+  --ta-accent-dim:      rgba(227, 252, 2, 0.18);
+  --ta-accent-glow:     rgba(227, 252, 2, 0.35);
+  --ta-accent-glow-lg:  rgba(227, 252, 2, 0.10);
 
-  /* Glass */
-  --ta-glass-bg:      rgba(255, 255, 255, 0.72);
+  /* ── Atmospheric glows: muted on light ── */
+  --ta-glow-purple:     rgba(124, 58, 237, 0.3);
+  --ta-glow-purple-dim: rgba(124, 58, 237, 0.08);
+  --ta-glow-cyan:       rgba(6, 182, 212, 0.25);
+  --ta-glow-cyan-dim:   rgba(6, 182, 212, 0.07);
+  --ta-color-purple:    #6D28D9;
+  --ta-color-cyan:      #0891B2;
+  --ta-color-blue:      #2563EB;
+
+  /* ── Ring gradient ── */
+  --ta-ring-gradient: conic-gradient(
+    from 120deg,
+    #0891B2 0%,
+    #6D28D9 35%,
+    #CA9A00 65%,
+    #0891B2 100%
+  );
+
+  /* ── Glass ── */
+  --ta-glass-bg:      rgba(255, 255, 255, 0.75);
   --ta-glass-border:  rgba(0, 0, 0, 0.06);
   --ta-glass-blur:    saturate(180%) blur(20px);
 
-  /* Navbar */
-  --ta-nav-bg:        rgba(250, 250, 250, 0.78);
+  /* ── Navbar ── */
+  --ta-nav-bg:        rgba(248, 248, 252, 0.82);
   --ta-nav-border:    rgba(0, 0, 0, 0.06);
 
-  /* Shadows */
-  --ta-shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
-  --ta-shadow-md:  0 4px 16px rgba(0, 0, 0, 0.10), 0 2px 6px rgba(0, 0, 0, 0.06);
-  --ta-shadow-lg:  0 16px 48px rgba(0, 0, 0, 0.12), 0 6px 20px rgba(0, 0, 0, 0.07);
-  --ta-shadow-xl:  0 32px 80px rgba(0, 0, 0, 0.14);
+  /* ── Shadows ── */
+  --ta-shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.07);
+  --ta-shadow-md:  0 4px 20px rgba(0, 0, 0, 0.09), 0 2px 8px rgba(0, 0, 0, 0.05);
+  --ta-shadow-lg:  0 16px 56px rgba(0, 0, 0, 0.11), 0 6px 24px rgba(0, 0, 0, 0.06);
+  --ta-shadow-xl:  0 32px 90px rgba(0, 0, 0, 0.13);
+  --ta-shadow-glow-purple: 0 0 40px rgba(124, 58, 237, 0.12);
+  --ta-shadow-glow-cyan:   0 0 40px rgba(6, 182, 212, 0.10);
+  --ta-shadow-glow-accent: 0 0 40px rgba(227, 252, 2, 0.15);
 
-  /* Gradients */
-  --ta-gradient-hero:    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(227,252,2,0.18) 0%, transparent 70%);
-  --ta-gradient-card:    linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 100%);
+  /* ── Hero gradients ── */
+  --ta-gradient-hero:    radial-gradient(ellipse 90% 70% at 50% -5%,
+                           rgba(109,40,217,0.08) 0%,
+                           rgba(8,145,178,0.05) 40%,
+                           transparent 70%);
+  --ta-gradient-card:    linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 100%);
   --ta-gradient-accent:  linear-gradient(135deg, #E3FC02 0%, #C8DC00 100%);
   --ta-gradient-surface: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 100%);
+  --ta-gradient-purple:  linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
 
   color-scheme: light;
 }

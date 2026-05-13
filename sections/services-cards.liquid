@@ -115,22 +115,6 @@ html[data-theme="light"] .ta-svc__card {
   box-shadow: 0 2px 12px rgba(0,0,0,0.05);
 }
 
-/* Spotlight glow that follows cursor */
-.ta-svc__spotlight {
-  position: absolute;
-  pointer-events: none;
-  width: 260px; height: 260px;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--card-glow-color, rgba(124,58,237,0.18)) 0%, transparent 65%);
-  transform: translate(-50%, -50%);
-  left: 50%; top: 30%;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  filter: blur(10px);
-}
-
-.ta-svc__card:hover .ta-svc__spotlight { opacity: 1; }
-
 /* Top edge glow line */
 .ta-svc__card::before {
   content: '';
@@ -316,9 +300,6 @@ html[data-theme="light"] .ta-svc__card-desc { color: #52526B; }
             style="transition-delay: {{ forloop.index0 | times: 0.08 }}s;"
             {{ block.shopify_attributes }}
           >
-            <!-- Cursor spotlight -->
-            <div class="ta-svc__spotlight"></div>
-
             {%- if block.settings.icon != blank -%}
               <div class="ta-svc__icon">{{ block.settings.icon }}</div>
             {%- endif -%}
@@ -357,18 +338,6 @@ html[data-theme="light"] .ta-svc__card-desc { color: #52526B; }
     });
   }, { threshold: 0.1 });
   cards.forEach(function (c) { io.observe(c); });
-
-  /* Spotlight follow */
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  cards.forEach(function (card) {
-    var spot = card.querySelector('.ta-svc__spotlight');
-    if (!spot) return;
-    card.addEventListener('mousemove', function (e) {
-      var r = card.getBoundingClientRect();
-      spot.style.left = (e.clientX - r.left) + 'px';
-      spot.style.top  = (e.clientY - r.top)  + 'px';
-    }, { passive: true });
-  });
 })();
 </script>
 

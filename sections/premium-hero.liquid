@@ -139,8 +139,7 @@ html[data-theme="light"] .ta-phero__grid {
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  animation: ta-ring-spin 14s linear infinite;
-  will-change: transform;
+  animation: ta-ring-spin 60s linear infinite;
 }
 
 /* Glow halo — blurred copy */
@@ -163,9 +162,8 @@ html[data-theme="light"] .ta-phero__grid {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   filter: blur(22px);
-  opacity: 0.4;
-  animation: ta-ring-spin 14s linear infinite;
-  will-change: transform;
+  opacity: 0.3;
+  animation: ta-ring-spin 60s linear infinite;
 }
 
 /* Inner smaller ring for depth */
@@ -186,9 +184,8 @@ html[data-theme="light"] .ta-phero__grid {
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  animation: ta-ring-spin 22s linear infinite reverse;
-  opacity: 0.5;
-  will-change: transform;
+  animation: ta-ring-spin 90s linear infinite reverse;
+  opacity: 0.4;
 }
 
 @keyframes ta-ring-spin {
@@ -230,9 +227,7 @@ html[data-theme="light"] .ta-phero__orb-cyan {
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  background: rgba(255, 255, 255, 0.055);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  background: rgba(14, 14, 18, 0.88);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 100px;
   padding: 0.55rem 1.1rem 0.55rem 0.6rem;
@@ -368,8 +363,6 @@ html[data-theme="light"] .ta-phero__fcard-value--accent { color: #6B5C00; }
   text-transform: uppercase;
   color: #A78BFA;
   margin-bottom: 2rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 
 html[data-theme="light"] .ta-phero__eyebrow {
@@ -503,8 +496,6 @@ html[data-theme="light"] .ta-phero__sub { color: #52526B; }
   text-decoration: none;
   letter-spacing: -0.01em;
   border: 1px solid rgba(255,255,255,0.12);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   transition:
     border-color 0.2s ease,
     background 0.2s ease,
@@ -796,39 +787,6 @@ html[data-theme="light"] .ta-phero__scroll { color: rgba(0,0,0,0.3); }
   {%- endif -%}
 
 </section>
-
-<!-- Mouse parallax — rAF-throttled, max 12px, removed on mobile -->
-<script>
-(function () {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if (window.innerWidth < 768) return;
-
-  var content = document.getElementById('ta-phero-content-{{ section.id }}');
-  if (!content) return;
-
-  var mx = 0, my = 0, cx = 0, cy = 0;
-  var MAX = 10;
-  var raf;
-
-  document.getElementById('ta-phero-{{ section.id }}')
-    .addEventListener('mousemove', function (e) {
-      var rect = this.getBoundingClientRect();
-      mx = ((e.clientX - rect.left) / rect.width  - 0.5) * 2;
-      my = ((e.clientY - rect.top)  / rect.height - 0.5) * 2;
-      if (!raf) raf = requestAnimationFrame(tick);
-    }, { passive: true });
-
-  function tick() {
-    raf = null;
-    cx += (mx - cx) * 0.06;
-    cy += (my - cy) * 0.06;
-    content.style.transform = 'translate3d(' + (cx * MAX) + 'px, ' + (cy * MAX * 0.6) + 'px, 0)';
-    if (Math.abs(mx - cx) > 0.001 || Math.abs(my - cy) > 0.001) {
-      raf = requestAnimationFrame(tick);
-    }
-  }
-})();
-</script>
 
 {% schema %}
 {

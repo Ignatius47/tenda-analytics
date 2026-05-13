@@ -1,1 +1,103 @@
-{"sections":{"video_aaeTWg":{"type":"video","name":"t:sections.video.presets.name","settings":{"heading":"","button_link":"","button_link_2":"","heading_size":"h1","enable_video_looping":true,"video":"shopify:\/\/files\/videos\/Data-Powered Growth. (4).mp4","video_url":"https:\/\/www.youtube.com\/watch?v=_9VUPq3SxOc","description":"","full_width":false,"color_scheme":"","padding_top":36,"padding_bottom":36}},"1769777775290052a8":{"type":"_blocks","settings":{}},"multirow_J3xATL":{"type":"multirow","name":"t:sections.multirow.presets.name","settings":{}},"multirow_xA8p9G":{"type":"multirow","disabled":true,"name":"t:sections.multirow.presets.name","settings":{}},"image-with-text":{"type":"image-with-text","disabled":true,"settings":{"logo_position":"middle-left","mobile_logo_position":"center","menu":"main-menu","menu_type_desktop":"dropdown","sticky_header_type":"always","show_line_separator":true,"color_scheme":"","menu_color_scheme":"","enable_country_selector":true,"enable_language_selector":true,"enable_customer_avatar":true,"margin_bottom":0,"padding_top":20,"padding_bottom":20}},"featured_collection":{"type":"featured-collection","settings":{"collection":"all","products_to_show":4,"title":"","heading_size":"h2","description":"","show_description":false,"description_style":"body","columns_desktop":4,"enable_desktop_slider":false,"full_width":false,"show_view_all":false,"view_all_style":"solid","color_scheme":"scheme-1","image_ratio":"portrait","image_shape":"default","show_secondary_image":false,"show_vendor":false,"show_rating":false,"quick_add":"none","columns_mobile":"2","swipe_on_mobile":false,"padding_top":0,"padding_bottom":40}}},"order":["video_aaeTWg","1769777775290052a8","multirow_J3xATL","multirow_xA8p9G","image-with-text","featured_collection"]}
+{
+  "sections": {
+    "premium_hero": {
+      "type": "premium-hero",
+      "blocks": {
+        "trust_1": { "type": "trust_item", "settings": { "icon": "✓", "text": "Free consultation" } },
+        "trust_2": { "type": "trust_item", "settings": { "icon": "✓", "text": "500+ clients" } },
+        "trust_3": { "type": "trust_item", "settings": { "icon": "✓", "text": "Results in 30 days" } },
+        "float_1": { "type": "float_card", "settings": { "icon": "📈", "color": "green",  "label": "Revenue Growth",   "value": "+127%" } },
+        "float_2": { "type": "float_card", "settings": { "icon": "⚡", "color": "purple", "label": "Faster Decisions", "value": "3× Speed" } },
+        "float_3": { "type": "float_card", "settings": { "icon": "🗂️", "color": "cyan",   "label": "Dashboards Built", "value": "1,200+" } },
+        "float_4": { "type": "float_card", "settings": { "icon": "🌍", "color": "accent", "label": "Countries Served", "value": "28" } }
+      },
+      "block_order": ["trust_1", "trust_2", "trust_3", "float_1", "float_2", "float_3", "float_4"],
+      "settings": {}
+    },
+    "services_cards": {
+      "type": "services-cards",
+      "blocks": {
+        "svc_1": { "type": "service", "settings": { "glow": "cyan",   "icon": "📊", "title": "BI Dashboards",        "description": "Custom Power BI & Looker dashboards that surface the metrics your team actually needs — built for daily decision-making.", "link_label": "Explore dashboards", "link_url": "/pages/bi-dashboards" } },
+        "svc_2": { "type": "service", "settings": { "glow": "purple", "icon": "🔍", "title": "Data Analytics",       "description": "Deep-dive analysis across sales, inventory and customer cohorts. We turn raw exports into clear strategic direction.", "link_label": "See our analytics", "link_url": "/pages/data-analytics" } },
+        "svc_3": { "type": "service", "settings": { "glow": "blue",   "icon": "⚙️", "title": "Systems & Automation", "description": "Connect your tools, automate your reporting pipeline, and eliminate the manual work that slows your team down every week.", "link_label": "View automation", "link_url": "/pages/automation" } },
+        "svc_4": { "type": "service", "settings": { "glow": "green",  "icon": "📈", "title": "Growth Strategy",      "description": "Advisory sessions that translate your data into a 90-day growth roadmap — MRR targets, margin optimisation, retention plays.", "link_label": "Book a session", "link_url": "/pages/growth-strategy" } },
+        "svc_5": { "type": "service", "settings": { "glow": "accent", "icon": "🎯", "title": "Campaign Analytics",   "description": "Attribution modelling and ROAS tracking across all paid channels so every marketing dollar is accountable.", "link_label": "Learn more", "link_url": "/pages/campaign-analytics" } },
+        "svc_6": { "type": "service", "settings": { "glow": "cyan",   "icon": "🎓", "title": "Tenda Academy",        "description": "Live workshops and on-demand courses that upskill your team to read data confidently and act on it independently.", "link_label": "Browse courses", "link_url": "/pages/academy" } }
+      },
+      "block_order": ["svc_1", "svc_2", "svc_3", "svc_4", "svc_5", "svc_6"],
+      "settings": {}
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "testi_1": { "type": "testimonial", "settings": { "stars": 5, "quote": "Tenda Analytics transformed the way we use data. We went from gut-feel decisions to confident, insight-led strategies in under a month.", "name": "Sarah K.", "role": "Head of Growth, RetailCo" } },
+        "testi_2": { "type": "testimonial", "settings": { "stars": 5, "quote": "The BI dashboards they built for us have saved our team 15 hours a week. The quality and attention to detail is truly enterprise-grade.", "name": "James M.", "role": "CEO, FinServ Ltd" } },
+        "testi_3": { "type": "testimonial", "settings": { "stars": 5, "quote": "Finally a partner who speaks both business and data fluently. Their advisory work directly contributed to our 40% revenue uplift last quarter.", "name": "Amara D.", "role": "CMO, E-Commerce Brand" } }
+      },
+      "block_order": ["testi_1", "testi_2", "testi_3"],
+      "settings": {}
+    },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "all",
+        "products_to_show": 4,
+        "title": "",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "columns_desktop": 4,
+        "enable_desktop_slider": false,
+        "full_width": false,
+        "show_view_all": false,
+        "view_all_style": "solid",
+        "color_scheme": "scheme-1",
+        "image_ratio": "portrait",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 0,
+        "padding_bottom": 40
+      }
+    },
+    "video_aaeTWg": {
+      "type": "video",
+      "disabled": true,
+      "name": "t:sections.video.presets.name",
+      "settings": {
+        "heading": "",
+        "button_link": "",
+        "button_link_2": "",
+        "heading_size": "h1",
+        "enable_video_looping": true,
+        "video": "shopify:\/\/files\/videos\/Data-Powered Growth. (4).mp4",
+        "video_url": "https:\/\/www.youtube.com\/watch?v=_9VUPq3SxOc",
+        "description": "",
+        "full_width": false,
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "1769777775290052a8": { "type": "_blocks", "disabled": true, "settings": {} },
+    "multirow_J3xATL":   { "type": "multirow", "disabled": true, "name": "t:sections.multirow.presets.name", "settings": {} },
+    "multirow_xA8p9G":   { "type": "multirow", "disabled": true, "name": "t:sections.multirow.presets.name", "settings": {} },
+    "image-with-text":   { "type": "image-with-text", "disabled": true, "settings": {} }
+  },
+  "order": [
+    "premium_hero",
+    "services_cards",
+    "testimonials",
+    "featured_collection",
+    "video_aaeTWg",
+    "1769777775290052a8",
+    "multirow_J3xATL",
+    "multirow_xA8p9G",
+    "image-with-text"
+  ]
+}
